@@ -25,7 +25,7 @@ export function convertGraphToStats({
     entryPoint,
     platform: graph.transformOptions.platform ?? 'unknown',
     preModules: preModules.map((module) => convertModule(projectRoot, graph, module)),
-    graph: convertGraph(projectRoot, graph),
+    graph: convertGraph(projectRoot, entryPoint, graph),
     options: convertOptions(options),
   };
 }
@@ -40,13 +40,23 @@ function convertOptions(options: ConvertOptions['options']) {
   };
 }
 
-function convertGraph(projectRoot: string, graph: ConvertOptions['graph']) {
+function convertGraph(projectRoot: string, entryPoint: string, graph: ConvertOptions['graph']) {
+  const dependencies = new Map<string, MetroStatsModule>();
+
+  function walk(modulePath: string) {
+    const module = graph.dependencies.get(modulePath);
+    if (module && !dependencies.has(modulePath)) {
+      dependencies.set(modulePath, convertModule(projectRoot, graph, module));
+      module.dependencies.forEach((modulePath) => walk(modulePath.absolutePath));
+    }
+  }
+
+  walk(entryPoint);
+
   return {
     ...graph,
     entryPoints: Array.from(graph.entryPoints.values()),
-    dependencies: Array.from(graph.dependencies.values()).map((dependency) =>
-      convertModule(projectRoot, graph, dependency)
-    ),
+    dependencies: Array.from(dependencies.values()),
   };
 }
 

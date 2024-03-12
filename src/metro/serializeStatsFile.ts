@@ -64,16 +64,24 @@ const writeQueue = Promise.resolve();
  * This is appended on a new line, so we can load the stats selectively.
  */
 export async function addStatsEntry(projectRoot: string, stats: MetroStatsEntry) {
-  const entry = JSON.stringify([
+  const entryData = JSON.stringify([
     stats.platform,
     stats.projectRoot,
     stats.entryPoint,
     stats.preModules,
-    stats.graph,
+    '{{EXPO_ATLAS_GRAPH}}', // Huge object, is serialized in separate stringify calls
     stats.options,
   ]);
 
-  await writeQueue.then(() => fs.promises.appendFile(getStatsPath(projectRoot), `${entry}\n`));
+  const dependencyData = stats.graph.dependencies.map((dependency) => JSON.stringify(dependency));
+  const graphData = JSON.stringify({
+    ...stats.graph,
+    dependencies: '{{EXPO_ATLAS_DEPENDENCIES}}',
+  }).replace('"{{EXPO_ATLAS_DEPENDENCIES}}"', `[${dependencyData.join(',')}]`);
+
+  const line = entryData.replace('"{{EXPO_ATLAS_GRAPH}}"', graphData);
+
+  await writeQueue.then(() => fs.promises.appendFile(getStatsPath(projectRoot), `${line}\n`));
 }
 
 /**
