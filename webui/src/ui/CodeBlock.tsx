@@ -17,12 +17,16 @@ export function CodeBlockSection({ children }: PropsWithChildren) {
   );
 }
 
-export function CodeBlockHeader({ children }: { children: string }) {
+export function CodeBlockHeader({ children }: PropsWithChildren) {
   return (
-    <div className="flex bg-default min-h-[40px] pl-4 border-b border-default">
-      <h3 className="flex items-center text-md select-none font-medium truncate">{children}</h3>
+    <div className="flex justify-between items-center bg-default min-h-[40px] pl-4 border-b border-default">
+      {typeof children === 'string' ? <CodeBlockTitle>{children}</CodeBlockTitle> : children}
     </div>
   );
+}
+
+export function CodeBlockTitle({ children }: { children: string }) {
+  return <h3 className="text-md select-none font-medium truncate">{children}</h3>;
 }
 
 export function CodeBlockContent({

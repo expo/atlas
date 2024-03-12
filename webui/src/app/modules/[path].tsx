@@ -1,24 +1,30 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 
 import { StatsEntry, useStatsEntryContext } from '~/providers/stats';
+import { Button } from '~/ui/Button';
 import {
   CodeBlock,
   CodeBlockContent,
   CodeBlockHeader,
   CodeBlockSection,
+  CodeBlockTitle,
   guessLanguageFromPath,
 } from '~/ui/CodeBlock';
 import { PageHeader, PageTitle } from '~/ui/Page';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { formatFileSize } from '~/utils/formatString';
+import { formatCode } from '~/utils/prettier';
 import { type MetroStatsModule } from '~plugin/metro/convertGraphToStats';
 
 export default function ModulePage() {
   const { entryId, entry } = useStatsEntryContext();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entryId, absolutePath);
+
+  const [prettyModule, setPrettyModule] = useState<string | null>(null);
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -31,6 +37,16 @@ export default function ModulePage() {
         <h2 className="text-slate-50 font-bold text-lg">Module not found</h2>
       </div>
     );
+  }
+
+  function onPrettyOutput() {
+    if (module.data?.output.length) {
+      formatCode(module.data.output.map((output) => output.data.code).join()).then(setPrettyModule);
+    }
+  }
+
+  function resetPrettyOutput() {
+    setPrettyModule(null);
   }
 
   return (
@@ -71,9 +87,20 @@ export default function ModulePage() {
             </CodeBlockContent>
           </CodeBlockSection>
           <CodeBlockSection>
-            <CodeBlockHeader>Output</CodeBlockHeader>
+            <CodeBlockHeader>
+              <CodeBlockTitle>Output</CodeBlockTitle>
+              <Button
+                variant="quaternary"
+                className="m-0"
+                onClick={!prettyModule ? onPrettyOutput : resetPrettyOutput}
+              >
+                prettier
+              </Button>
+            </CodeBlockHeader>
             <CodeBlockContent>
-              {module.data.output.map((output) => output.data.code).join()}
+              {prettyModule
+                ? prettyModule
+                : module.data.output.map((output) => output.data.code).join()}
             </CodeBlockContent>
           </CodeBlockSection>
         </CodeBlock>
