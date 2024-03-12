@@ -2,8 +2,8 @@ import * as Select from '@radix-ui/react-select';
 import cn from 'classnames';
 // @ts-expect-error
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
-import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 // @ts-expect-error
+import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 
 import { useStatsEntryContext } from '~/providers/stats';
 import { Button } from '~/ui/Button';
@@ -42,12 +42,14 @@ export function StatsEntrySelect() {
           </Select.ScrollUpButton>
           <Select.Viewport className="SelectViewport">
             {entries?.data?.map((entry) => (
-              <Select.Item key={entry.id} value={String(entry.id)} asChild>
-                <Button variant="quaternary" size="sm" className="w-full">
-                  <Tag variant={entry.platform} className="mr-2" />
-                  <Select.ItemText>{entry.relativePath}</Select.ItemText>
-                </Button>
-              </Select.Item>
+              <div>
+                <Select.Item key={entry.id} value={String(entry.id)} asChild>
+                  <Button variant="quaternary" size="sm" className="w-full">
+                    <Tag variant={entry.platform} className="mr-2" />
+                    <Select.ItemText>{entry.relativePath}</Select.ItemText>
+                  </Button>
+                </Select.Item>
+              </div>
             ))}
           </Select.Viewport>
           <Select.ScrollDownButton className="SelectScrollButton">

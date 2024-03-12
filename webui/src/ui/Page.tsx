@@ -7,7 +7,7 @@ export function Page({ children }: PropsWithChildren) {
 
 export function PageNav({ children }: PropsWithChildren) {
   return (
-    <header className="h-15 flex items-center justify-between gap-2 border-b border-b-secondary bg-default px-4">
+    <header className="h-15 flex flex-shrink-0 items-center justify-between gap-2 border-b border-b-secondary bg-default px-4">
       <ExpoLogoBig title="Expo" className="w-[74px] text-default max-md-gutters:hidden" />
       <ExpoLogoSmall title="Expo" className="hidden text-default max-md-gutters:flex" />
       {children}

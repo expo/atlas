@@ -95,7 +95,7 @@ export function StatsModuleFilter() {
             <Button variant="quaternary" onClick={() => onDialogChange(false)}>
               Cancel
             </Button>
-            <Button variant="secondary" type="submit">
+            <Button variant="primary" type="submit">
               Apply filters
             </Button>
           </div>
