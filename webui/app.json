@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "expo-atlas-webui",
+    "slug": "expo-atlas-webui",
+    "userInterfaceStyle": "dark",
+    "web": {
+      "bundler": "metro",
+      "output": "server"
+    },
+    "experiments": {
+      "tsconfigPaths": true,
+      "typedRoutes": true
+    }
+  }
+}
