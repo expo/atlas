@@ -1,7 +1,7 @@
 {
   "name": "expo-atlas",
-  "version": "0.0.0",
-  "description": "Todo",
+  "version": "0.0.1",
+  "description": "Inspect bundle stats from Metro",
   "keywords": [
     "expo",
     "atlas",
