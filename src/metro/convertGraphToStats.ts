@@ -1,5 +1,6 @@
 import { type SerializerConfigT } from 'metro-config';
 import path from 'path';
+import { getNonBinaryContents } from '../utils/buffer';
 
 type CustomSerializerParameters = Parameters<NonNullable<SerializerConfigT['customSerializer']>>;
 type ConvertOptions = {
@@ -66,9 +67,6 @@ function convertModule(
   module: ConvertOptions['preModules'][0]
 ) {
   const nodeModuleName = getNodeModuleNameFromPath(module.path);
-  const isTextFile = ['.js', '.mjs', '.cjs', '.ts', '.jsx', '.tsx', '.json'].includes(
-    path.extname(module.path)
-  );
 
   return {
     nodeModuleName: nodeModuleName || '[unknown]',
@@ -86,7 +84,7 @@ function convertModule(
         absolutePath: dependencyPath,
       })),
 
-    source: isTextFile ? module.getSource().toString('utf-8') : '[binary file]',
+    source: getNonBinaryContents(module.getSource()) ?? '[binary file]',
     output: module.output.map((output) => ({
       type: output.type,
       data: { code: output.data.code }, // Avoid adding source maps, this is too big for json

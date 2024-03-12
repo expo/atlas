@@ -57,6 +57,7 @@ export async function createStatsFile(projectRoot: string) {
   await fs.promises.writeFile(filePath, JSON.stringify(getStatsMetdata()) + '\n');
 }
 
+/** Simple promise to avoid mixing appended data */
 let writeQueue: Promise<any> = Promise.resolve();
 
 /**
@@ -64,24 +65,21 @@ let writeQueue: Promise<any> = Promise.resolve();
  * This is appended on a new line, so we can load the stats selectively.
  */
 export async function addStatsEntry(projectRoot: string, stats: MetroStatsEntry) {
+  // NOTE(cedric): inline bfj to avoid loading it in the webui
   const bfj = require('bfj');
   const statsFile = getStatsPath(projectRoot);
-  const entry = JSON.stringify([
+  const entry = [
     stats.platform,
     stats.projectRoot,
     stats.entryPoint,
     stats.preModules,
     stats.options,
-    { ...stats.graph, dependencies: 'EXPO_ATLAS_GRAPH_PLACEHOLDER' }, // stats.graph,
-  ]);
-
-  const [_match, entryStart, entryEnd] =
-    entry.match(/(.*)"EXPO_ATLAS_GRAPH_PLACEHOLDER"(.*)/) ?? [];
+    stats.graph,
+  ];
 
   writeQueue = writeQueue.then(async () => {
-    await fs.promises.appendFile(statsFile, entryStart);
-    await bfj.write(statsFile, stats.graph.dependencies, { flags: 'a' });
-    await fs.promises.appendFile(statsFile, entryEnd + ' \n');
+    await bfj.write(statsFile, entry, { flags: 'a' });
+    await fs.promises.appendFile(statsFile, '\n');
   });
 }
 
