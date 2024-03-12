@@ -1,29 +1,48 @@
 # Expo Atlas
 
-Inspect the bundle stats from Metro
+Inspect the bundle stats from Metro.
 
-# API documentation
+## 🚀 How to use it
 
-- [Documentation for the main branch](https://github.com/expo/expo/blob/main/docs/pages/versions/unversioned/sdk/metro-bundle-plugin.md)
-- [Documentation for the latest stable release](https://docs.expo.dev/versions/latest/sdk/metro-bundle-plugin/)
+Install the `expo-atlas` package as (development) dependency to your project:
 
-# Installation in managed Expo projects
-
-For [managed](https://docs.expo.dev/archive/managed-vs-bare/) Expo projects, please follow the installation instructions in the [API documentation for the latest stable release](#api-documentation). If you follow the link and there is no documentation available then this library is not yet usable within managed projects &mdash; it is likely to be included in an upcoming Expo SDK release.
-
-# Installation in bare React Native projects
-
-For bare React Native projects, you must ensure that you have [installed and configured the `expo` package](https://docs.expo.dev/bare/installing-expo-modules/) before continuing.
-
-### Add the package to your npm dependencies
-
-```
-npm install expo-atlas
+```bash
+$ npx expo install expo-atlas
 ```
 
+Configure your Metro config to emit a `.expo/stats.json` file containing information about your bundles.
 
+```js metro.config.js
+const { getDefaultConfig } = require('expo/metro-config');
+const { withMetroBundleConfig } = require('expo-atlas/metro');
 
+const config = getDefaultConfig(__dirname);
 
-# Contributing
+// Add the `withMetroBundleConfig` from `expo-atlas/metro` as last change
+module.exports = withMetroBundleConfig(config);
+```
 
-Contributions are very welcome! Please refer to guidelines described in the [contributing guide]( https://github.com/expo/expo#contributing).
+After that, you can generate a new bundle and inspect these through the CLI
+
+```bash
+# Export bundles for all platforms,
+# or use `--platform android --platform ios` to enable specific exports
+$ npx expo export --platform all
+
+# Start inspecting
+$ npx expo-atlas
+```
+
+## 🧑‍🤝‍🧑 Sharing stats files
+
+You can also open a previously created `stats.json` file:
+
+```
+$ npx expo-atlas ./path/to/stats.json
+```
+
+<div align="center">
+  <br />
+  with&nbsp;❤️&nbsp;&nbsp;<strong>byCedric</strong>
+  <br />
+</div>
