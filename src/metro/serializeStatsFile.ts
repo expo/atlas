@@ -57,31 +57,32 @@ export async function createStatsFile(projectRoot: string) {
   await fs.promises.writeFile(filePath, JSON.stringify(getStatsMetdata()) + '\n');
 }
 
-const writeQueue = Promise.resolve();
+let writeQueue: Promise<any> = Promise.resolve();
 
 /**
  * Add a new stats entry to the stats file.
  * This is appended on a new line, so we can load the stats selectively.
  */
 export async function addStatsEntry(projectRoot: string, stats: MetroStatsEntry) {
-  const entryData = JSON.stringify([
+  const bfj = require('bfj');
+  const statsFile = getStatsPath(projectRoot);
+  const entry = JSON.stringify([
     stats.platform,
     stats.projectRoot,
     stats.entryPoint,
     stats.preModules,
-    '{{EXPO_ATLAS_GRAPH}}', // Huge object, is serialized in separate stringify calls
     stats.options,
+    { ...stats.graph, dependencies: 'EXPO_ATLAS_GRAPH_PLACEHOLDER' }, // stats.graph,
   ]);
 
-  const dependencyData = stats.graph.dependencies.map((dependency) => JSON.stringify(dependency));
-  const graphData = JSON.stringify({
-    ...stats.graph,
-    dependencies: '{{EXPO_ATLAS_DEPENDENCIES}}',
-  }).replace('"{{EXPO_ATLAS_DEPENDENCIES}}"', `[${dependencyData.join(',')}]`);
+  const [_match, entryStart, entryEnd] =
+    entry.match(/(.*)"EXPO_ATLAS_GRAPH_PLACEHOLDER"(.*)/) ?? [];
 
-  const line = entryData.replace('"{{EXPO_ATLAS_GRAPH}}"', graphData);
-
-  await writeQueue.then(() => fs.promises.appendFile(getStatsPath(projectRoot), `${line}\n`));
+  writeQueue = writeQueue.then(async () => {
+    await fs.promises.appendFile(statsFile, entryStart);
+    await bfj.write(statsFile, stats.graph.dependencies, { flags: 'a' });
+    await fs.promises.appendFile(statsFile, entryEnd + ' \n');
+  });
 }
 
 /**
@@ -131,7 +132,7 @@ export async function getStatsEntry(statsFile: string, id: number): Promise<Metr
     projectRoot: list[1],
     entryPoint: list[2],
     preModules: list[3],
-    graph: list[4],
-    options: list[5],
+    options: list[4],
+    graph: list[5],
   };
 }
