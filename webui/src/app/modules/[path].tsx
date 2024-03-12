@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { StatsEntry, useStatsEntryContext } from '~/providers/stats';
 import { Button } from '~/ui/Button';
@@ -25,6 +25,8 @@ export default function ModulePage() {
   const module = useModuleData(entryId, absolutePath);
 
   const [prettyModule, setPrettyModule] = useState<string | null>(null);
+
+  useEffect(() => setPrettyModule(null), [module.data]);
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -94,7 +96,7 @@ export default function ModulePage() {
                 className="m-0"
                 onClick={!prettyModule ? onPrettyOutput : resetPrettyOutput}
               >
-                prettier
+                {!prettyModule ? 'format' : 'reset format'}
               </Button>
             </CodeBlockHeader>
             <CodeBlockContent>

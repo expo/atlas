@@ -42,8 +42,8 @@ export function StatsEntrySelect() {
           </Select.ScrollUpButton>
           <Select.Viewport className="SelectViewport">
             {entries?.data?.map((entry) => (
-              <div>
-                <Select.Item key={entry.id} value={String(entry.id)} asChild>
+              <div key={entry.id}>
+                <Select.Item value={String(entry.id)} asChild>
                   <Button variant="quaternary" size="sm" className="w-full">
                     <Tag variant={entry.platform} className="mr-2" />
                     <Select.ItemText>{entry.relativePath}</Select.ItemText>

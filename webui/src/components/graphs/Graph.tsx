@@ -1,7 +1,7 @@
 import ReactECharts from 'echarts-for-react';
-import { ComponentProps, RefObject, useEffect, useRef, useState } from 'react';
+import { ComponentProps, RefObject, forwardRef, useEffect, useRef, useState } from 'react';
 
-export function Graph(props: ComponentProps<typeof ReactECharts>) {
+export const Graph = forwardRef<ReactECharts, ComponentProps<typeof ReactECharts>>((props, ref) => {
   const container = useRef<HTMLDivElement>(null);
   const containerHeight = useDynamicHeight(container);
 
@@ -12,10 +12,10 @@ export function Graph(props: ComponentProps<typeof ReactECharts>) {
 
   return (
     <div ref={container} className="flex-1">
-      <ReactECharts lazyUpdate {...props} opts={echartOptions} />
+      <ReactECharts lazyUpdate {...props} opts={echartOptions} ref={ref} />
     </div>
   );
-}
+});
 
 function useDynamicHeight<T extends HTMLElement>(ref: RefObject<T>, initialHeight = 300) {
   const [size, setSize] = useState({ height: initialHeight, width: 0 });
