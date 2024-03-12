@@ -20,11 +20,7 @@ async function resolveStatsFile(input: Input) {
     throw new Error(`Could not find stats file "${statsFile}".`);
   }
 
-  try {
-    await validateStatsFile(statsFile);
-  } catch (error) {
-    throw new Error(`Stats file is incompatible with this version.`, { cause: error });
-  }
+  await validateStatsFile(statsFile);
 
   return path.resolve(statsFile);
 }

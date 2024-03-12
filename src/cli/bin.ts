@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import arg from 'arg';
 import open from 'open';
+import path from 'path';
 
 import { resolveOptions } from './resolveOptions';
 import { createServer } from './server';
@@ -39,8 +40,6 @@ if (args['--help']) {
 process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
-run();
-
 async function run() {
   const options = await resolveOptions(args);
   const server = createServer(options);
@@ -54,3 +53,19 @@ async function run() {
     open(href);
   });
 }
+
+run().catch((error) => {
+  if (error.type !== 'AtlasError') {
+    throw error;
+  }
+
+  if (error.code === 'STATS_FILE_INCOMPATIBLE') {
+    const statsFile = path.relative(process.cwd(), error.statsFile);
+    console.error('Stats file is incompatible with this version, use this instead:');
+    console.error(`  npx expo-atlas@${error.incompatibleVersion} ${statsFile}`);
+  } else {
+    console.error(`${error.message} (${error.code})`);
+  }
+
+  process.exit(1);
+});

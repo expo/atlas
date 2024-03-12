@@ -4,6 +4,7 @@ import path from 'path';
 import { type MetroStatsEntry } from './convertGraphToStats';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
+import { AtlasValidationError } from '../utils/errors';
 import { mapLines, readFirstLine, readLine } from '../utils/file';
 
 export type StatsMetadata = { name: string; version: string };
@@ -21,7 +22,7 @@ export function getStatsMetdata(): StatsMetadata {
 /** Validate if the stats file is compatible with this library version */
 export async function validateStatsFile(statsFile: string, metadata = getStatsMetdata()) {
   if (!fs.existsSync(statsFile)) {
-    throw new Error(`Stats file "${statsFile}" not found.`);
+    throw new AtlasValidationError('STATS_FILE_NOT_FOUND', statsFile);
   }
 
   if (env.EXPO_NO_STATS_VALIDATION) {
@@ -32,7 +33,7 @@ export async function validateStatsFile(statsFile: string, metadata = getStatsMe
   const data = line ? JSON.parse(line) : {};
 
   if (data.name !== metadata.name || data.version !== metadata.version) {
-    throw new Error(`Stats file "${statsFile}" is incompatible with this version of the plugin.`);
+    throw new AtlasValidationError('STATS_FILE_INCOMPATIBLE', statsFile, data.version);
   }
 }
 
