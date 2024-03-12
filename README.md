@@ -2,6 +2,9 @@
 
 Inspect the bundle stats from Metro.
 
+> [!Warning]
+> This project is highly experimental and will likely not work for your project.
+
 ## 🚀 How to use it
 
 Install the `expo-atlas` package as (development) dependency to your project:
