@@ -1,19 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
+import { type PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
 
-import { listStatsEntries } from '~plugin/metro/serializeStatsFile';
-
-export type StatsEntry = Awaited<ReturnType<typeof listStatsEntries>>[0];
+import { PartialStatsEntry } from '~plugin';
 
 type StatsEntryContext = {
-  entryId: number;
-  setEntryId: (id: number) => void;
+  entryId: string;
+  setEntryId: (id: string) => void;
   entries?: ReturnType<typeof useStatsEntriesData>;
-  entry?: StatsEntry;
+  entry?: PartialStatsEntry;
 };
 
 export const statsEntryContext = createContext<StatsEntryContext>({
-  entryId: 2,
+  entryId: '2',
   setEntryId: () => {},
   entries: undefined,
   entry: undefined,
@@ -23,7 +21,7 @@ export const useStatsEntryContext = () => useContext(statsEntryContext);
 
 export function StatsEntryProvider({ children }: PropsWithChildren) {
   const entries = useStatsEntriesData();
-  const [entryId, setEntryId] = useState(2);
+  const [entryId, setEntryId] = useState('2');
   const entry = useMemo(
     () => entries.data?.find((entry) => entry.id === entryId),
     [entries, entryId]
@@ -38,7 +36,7 @@ export function StatsEntryProvider({ children }: PropsWithChildren) {
 
 /** Load all available stats entries from API */
 function useStatsEntriesData() {
-  return useQuery<StatsEntry[]>({
+  return useQuery<PartialStatsEntry[]>({
     queryKey: ['stats-entries'],
     queryFn: () => fetch('/api/stats').then((res) => res.json()),
   });

@@ -1,32 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
 
-import { StatsEntry, useStatsEntryContext } from '~/providers/stats';
-import { Button } from '~/ui/Button';
-import {
-  CodeBlock,
-  CodeBlockContent,
-  CodeBlockHeader,
-  CodeBlockSection,
-  CodeBlockTitle,
-  guessLanguageFromPath,
-} from '~/ui/CodeBlock';
+import { useStatsEntryContext } from '~/providers/stats';
+import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { PageHeader, PageTitle } from '~/ui/Page';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { formatFileSize } from '~/utils/formatString';
-import { formatCode } from '~/utils/prettier';
-import { type MetroStatsModule } from '~plugin/metro/convertGraphToStats';
+import { PartialStatsEntry, StatsModule } from '~plugin';
 
 export default function ModulePage() {
   const { entryId, entry } = useStatsEntryContext();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const module = useModuleData(entryId, absolutePath);
+  const module = useModuleData(entryId, absolutePath!);
 
-  const [prettyModule, setPrettyModule] = useState<string | null>(null);
-
-  useEffect(() => setPrettyModule(null), [module.data]);
+  const outputCode = module.data?.output?.map((output) => output.data.code).join('\n');
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -41,39 +29,29 @@ export default function ModulePage() {
     );
   }
 
-  function onPrettyOutput() {
-    if (module.data?.output.length) {
-      formatCode(module.data.output.map((output) => output.data.code).join()).then(setPrettyModule);
-    }
-  }
-
-  function resetPrettyOutput() {
-    setPrettyModule(null);
-  }
-
   return (
     <div className="flex flex-1 flex-col overflow-auto">
       <PageHeader>
         <PageTitle>
-          <h1 className="text-slate-50 font-bold text-lg mr-4" title={module.data.absolutePath}>
-            {module.data.relativePath}
+          <h1 className="text-slate-50 font-bold text-lg mr-4" title={module.data.path}>
+            {module.data.path}
           </h1>
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
       </PageHeader>
 
       <div className="mx-8">
-        {!!module.data.inverseDependencies.length && (
+        {!!module.data.importedBy?.length && (
           <div className="my-4">
             <p className="text-md">Imported from:</p>
             <ul style={{ listStyle: 'initial' }} className="mb-6">
-              {module.data.inverseDependencies.map(({ absolutePath, relativePath }) => (
+              {module.data.importedBy.map((path) => (
                 <li key={absolutePath} className="ml-4">
                   <Link
                     className="text-link hover:underline"
                     href={{ pathname: '/modules/[path]', params: { path: absolutePath } }}
                   >
-                    {relativePath}
+                    {path}
                   </Link>
                 </li>
               ))}
@@ -82,29 +60,15 @@ export default function ModulePage() {
         )}
 
         <CodeBlock>
-          <CodeBlockSection>
-            <CodeBlockHeader>Source</CodeBlockHeader>
-            <CodeBlockContent language={guessLanguageFromPath(module.data.relativePath)}>
-              {module.data.source}
-            </CodeBlockContent>
-          </CodeBlockSection>
-          <CodeBlockSection>
-            <CodeBlockHeader>
-              <CodeBlockTitle>Output</CodeBlockTitle>
-              <Button
-                variant="quaternary"
-                className="m-0"
-                onClick={!prettyModule ? onPrettyOutput : resetPrettyOutput}
-              >
-                {!prettyModule ? 'format' : 'reset format'}
-              </Button>
-            </CodeBlockHeader>
-            <CodeBlockContent>
-              {prettyModule
-                ? prettyModule
-                : module.data.output.map((output) => output.data.code).join()}
-            </CodeBlockContent>
-          </CodeBlockSection>
+          <CodeBlockSectionWithPrettier
+            title="Source"
+            language={guessLanguageFromPath(module.data?.path)}
+          >
+            {module.data.source || '[no data available]'}
+          </CodeBlockSectionWithPrettier>
+          <CodeBlockSectionWithPrettier title="Output">
+            {outputCode || '[no data available]'}
+          </CodeBlockSectionWithPrettier>
         </CodeBlock>
       </div>
     </div>
@@ -115,8 +79,8 @@ function ModuleSummary({
   module,
   platform,
 }: {
-  module: MetroStatsModule;
-  platform?: StatsEntry['platform'];
+  module: StatsModule;
+  platform?: PartialStatsEntry['platform'];
 }) {
   return (
     <div className="font-sm text-secondary">
@@ -126,9 +90,9 @@ function ModuleSummary({
           <span className="text-tertiary mx-2 select-none">-</span>
         </>
       )}
-      {module.isNodeModule && (
+      {!!module.package && (
         <>
-          <span>{module.nodeModuleName}</span>
+          <span>{module.package}</span>
           <span className="text-tertiary mx-2 select-none">-</span>
         </>
       )}
@@ -139,18 +103,17 @@ function ModuleSummary({
   );
 }
 
-function getModuleType(module: MetroStatsModule) {
-  const type = module.relativePath.includes('?ctx=') ? 'require.context' : 'file';
-
-  return module.isNodeModule ? `package ${type}` : type;
+function getModuleType(module: StatsModule) {
+  const type = module.path.includes('?ctx=') ? 'require.context' : 'file';
+  return module.package ? `package ${type}` : type;
 }
 
 /** Load the module data from API, by path reference only */
-function useModuleData(entry: number, path: string) {
-  return useQuery<MetroStatsModule>({
-    queryKey: [`module`, entry, path],
+function useModuleData(entryId: string, path: string) {
+  return useQuery<StatsModule>({
+    queryKey: [`module`, entryId, path],
     queryFn: async ({ queryKey }) => {
-      const [_key, entry, path] = queryKey as [string, number, string];
+      const [_key, entry, path] = queryKey as [string, string, string];
       const response = await fetch(`/api/stats/${entry}/modules`, {
         method: 'POST',
         body: JSON.stringify({ path }),

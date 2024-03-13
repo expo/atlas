@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 
 import { Graph } from './Graph';
 
-import { type PartialModule } from '~/app/api/stats/[entry]/modules/index+api';
+import type { ModuleMetadata } from '~/app/api/stats/[entry]/modules/index+api';
 import { formatFileSize } from '~/utils/formatString';
 
 type TreemapGraphProps = {
-  modules: PartialModule[];
+  modules: ModuleMetadata[];
   onModuleClick: (absolutePath: string) => void;
 };
 
@@ -19,7 +19,7 @@ const ICON_STRINGS = {
 
 export function TreemapGraph(props: TreemapGraphProps) {
   const { data, maxDepth, maxNodeModules } = useMemo(
-    () => createModuleTree(props.modules.filter((module) => module.absolutePath.startsWith('/'))),
+    () => createModuleTree(props.modules.filter((module) => module.path.startsWith('/'))),
     [props.modules]
   );
 
@@ -255,7 +255,7 @@ type TreemapItem = {
   isNodeModuleRoot?: boolean;
 };
 
-function createModuleTree(paths: PartialModule[]): {
+function createModuleTree(paths: ModuleMetadata[]): {
   data: TreemapItem[];
   maxDepth: number;
   maxNodeModules: number;
@@ -285,7 +285,7 @@ function createModuleTree(paths: PartialModule[]): {
   let maxDepth = 0;
 
   paths.forEach((pathObj) => {
-    const parts = pathObj.absolutePath.split('/').filter(Boolean);
+    const parts = pathObj.path.split('/').filter(Boolean);
     let current = root;
 
     maxDepth = Math.max(maxDepth, parts.length);
@@ -311,10 +311,10 @@ function createModuleTree(paths: PartialModule[]): {
       }
 
       if (isLast) {
-        next.path = pathObj.absolutePath;
-        next.moduleHref = pathObj.absolutePath;
-        next.value = [pathObj.size, indexForNodeModule(pathObj.nodeModuleName)];
-        next.nodeModuleName = pathObj.nodeModuleName;
+        next.path = pathObj.path;
+        next.moduleHref = pathObj.path;
+        next.value = [pathObj.size, indexForNodeModule(pathObj.package ?? '[unknown]')];
+        next.nodeModuleName = pathObj.package ?? '[unknown]';
       } else {
         next.value[0] += pathObj.size;
       }

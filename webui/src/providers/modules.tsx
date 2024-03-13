@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useReducer } from 'react';
+import { type PropsWithChildren, createContext, useContext, useReducer } from 'react';
 
 export type ModuleFilters = {
   /** The types of modules to show */

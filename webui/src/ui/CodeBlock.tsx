@@ -1,5 +1,8 @@
 import { Highlight, type PrismTheme } from 'prism-react-renderer';
-import { type PropsWithChildren } from 'react';
+import { type ComponentProps, type PropsWithChildren, useState } from 'react';
+
+import { Button } from '~/ui/Button';
+import { formatCode } from '~/utils/prettier';
 
 export function CodeBlock({ children }: PropsWithChildren) {
   return (
@@ -51,6 +54,45 @@ export function CodeBlockContent({
         </pre>
       )}
     </Highlight>
+  );
+}
+
+export function CodeBlockSectionWithPrettier({
+  title,
+  ...props
+}: ComponentProps<typeof CodeBlockContent> & { title: string }) {
+  const [isLoading, setLoading] = useState(false);
+  const [prettyCode, setPrettyCode] = useState<string | null>(null);
+
+  function onTogglePrettCode() {
+    if (prettyCode) {
+      setPrettyCode(null);
+      setLoading(false);
+    }
+
+    if (!prettyCode && !isLoading) {
+      setLoading(true);
+      formatCode(props.children)
+        .then(setPrettyCode)
+        .finally(() => setLoading(false));
+    }
+  }
+
+  return (
+    <CodeBlockSection>
+      <CodeBlockHeader>
+        <CodeBlockTitle>{title}</CodeBlockTitle>
+        <Button
+          variant="quaternary"
+          className="m-0"
+          onClick={onTogglePrettCode}
+          disabled={isLoading}
+        >
+          {prettyCode ? 'Revert Prettify' : 'Prettify'}
+        </Button>
+      </CodeBlockHeader>
+      <CodeBlockContent {...props} children={prettyCode || props.children} />
+    </CodeBlockSection>
   );
 }
 

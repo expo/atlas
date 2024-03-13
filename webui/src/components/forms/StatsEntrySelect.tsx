@@ -13,7 +13,7 @@ export function StatsEntrySelect() {
   const { entryId, setEntryId, entry, entries } = useStatsEntryContext();
 
   function onEntryChange(value: string) {
-    setEntryId(Number(value));
+    setEntryId(value);
   }
 
   return (
@@ -46,7 +46,9 @@ export function StatsEntrySelect() {
                 <Select.Item value={String(entry.id)} asChild>
                   <Button variant="quaternary" size="sm" className="w-full">
                     <Tag variant={entry.platform} className="mr-2" />
-                    <Select.ItemText>{entry.relativePath}</Select.ItemText>
+                    <Select.ItemText>
+                      {entry.entryPoint.replace(entry.projectRoot, '')}
+                    </Select.ItemText>
                   </Button>
                 </Select.Item>
               </div>
