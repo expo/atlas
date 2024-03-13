@@ -1,8 +1,7 @@
-export let useMetroBundlePlugin: typeof import('./useMetroBundlePlugin').useMetroBundlePlugin;
+export type * from './data/types';
 
-// @ts-ignore process.env.NODE_ENV is defined by metro transform plugins
-if (process.env.NODE_ENV !== 'production') {
-  useMetroBundlePlugin = require('./useMetroBundlePlugin').useMetroBundlePlugin;
-} else {
-  useMetroBundlePlugin = () => {};
-}
+export { MetroGraphSource } from './data/MetroGraphSource';
+export { StatsFileSource } from './data/StatsFileSource';
+
+export { AtlasError, AtlasValidationError } from './utils/errors';
+export { createStatsFile, validateStatsFile, getStatsMetdata, getStatsPath } from './utils/stats';

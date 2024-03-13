@@ -17,12 +17,12 @@ Configure your Metro config to emit a `.expo/stats.json` file containing informa
 
 ```js metro.config.js
 const { getDefaultConfig } = require('expo/metro-config');
-const { withMetroBundleConfig } = require('expo-atlas/metro');
+const { withExpoAtlas } = require('expo-atlas/metro');
 
 const config = getDefaultConfig(__dirname);
 
-// Add the `withMetroBundleConfig` from `expo-atlas/metro` as last change
-module.exports = withMetroBundleConfig(config);
+// Add the `withExpoAtlas` from `expo-atlas/metro` as last change
+module.exports = withExpoAtlas(config);
 ```
 
 After that, you can generate a new bundle and inspect these through the CLI
