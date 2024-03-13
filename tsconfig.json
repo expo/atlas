@@ -9,5 +9,5 @@
     "composite": true
   },
   "include": ["./src", "./package.json"],
-  "exclude": ["**/__mocks__/*", "**/__tests__/*"]
+  // "exclude": ["**/__mocks__/*", "**/__tests__/*"]
 }
