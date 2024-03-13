@@ -1,1 +1,1 @@
-module.exports = require('./build/src/metro/withMetroBundleConfig');
+module.exports = require('./build/src/withExpoAtlas');

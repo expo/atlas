@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import path from 'path';
 
 import { type Options } from './resolveOptions';
+import { StatsFileSource } from '../data/StatsFileSource';
 import { env } from '../utils/env';
 
 const WEBUI_ROOT = path.resolve(__dirname, '../../../webui');
@@ -12,8 +13,9 @@ const CLIENT_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/client');
 const SERVER_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/server');
 
 export function createServer(options: Options) {
+  // Instantiate the global variable for the server
+  global['EXPO_ATLAS_SOURCE'] = new StatsFileSource(options.statsFile);
   process.env.NODE_ENV = 'production';
-  process.env.EXPO_METRO_BUNDLE_STATS_FILE = options.statsFile;
 
   const app = express();
 
