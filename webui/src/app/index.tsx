@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
-import { type PartialModule } from '~/app/api/stats/[entry]/modules/index+api';
+import type { EntryGraphData } from '~/app/api/stats/[entry]/modules/index+api';
 import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
 import { TreemapGraph } from '~/components/graphs/TreemapGraph';
 import {
@@ -46,7 +46,7 @@ export default function GraphScreen() {
   );
 }
 
-function BundleSummary({ data }: { data: ModulesAPIResponse }) {
+function BundleSummary({ data }: { data: EntryGraphData }) {
   return (
     <div className="font-sm text-secondary inline-block">
       <Tag variant={data.metadata.platform} />
@@ -67,25 +67,13 @@ function BundleSummary({ data }: { data: ModulesAPIResponse }) {
   );
 }
 
-type ModulesAPIResponse = {
-  metadata: {
-    platform: 'android' | 'ios' | 'web';
-    size: number;
-    modulesCount: number;
-  };
-  data: {
-    size: number;
-    modulesCount: number;
-    modules: PartialModule[];
-  };
-};
 
 /** Load the bundle graph data from API, with default or custom filters */
-function useBundleGraphData(entry: number, filters?: ModuleFilters) {
-  return useQuery<ModulesAPIResponse>({
-    queryKey: [`bundle-graph`, entry, filters],
+function useBundleGraphData(entryId: string, filters?: ModuleFilters) {
+  return useQuery<EntryGraphData>({
+    queryKey: [`bundle-graph`, entryId, filters],
     queryFn: ({ queryKey }) => {
-      const [_key, entry, filters] = queryKey as [string, number, ModuleFilters | undefined];
+      const [_key, entry, filters] = queryKey as [string, string, ModuleFilters | undefined];
       const url = filters
         ? `/api/stats/${entry}/modules?${filtersToUrlParams(filters)}`
         : `/api/stats/${entry}/modules`;

@@ -25,8 +25,15 @@ export function StatsModuleFilter() {
     event.preventDefault();
     event.stopPropagation();
 
+    // copy form data
+    setFilters({
+      // @ts-expect-error
+      exclude: event.currentTarget.elements.filterExclude.value ?? undefined,
+      // @ts-expect-error
+      include: event.currentTarget.elements.filterInclude.value ?? undefined,
+    });
+
     setDialogOpen(false);
-    setFilters(formData);
   }
 
   function onDialogChange(isOpen: boolean) {
@@ -55,6 +62,7 @@ export function StatsModuleFilter() {
             <Checkbox
               id="filter-node_modules"
               checked={formData.types.includes('node_modules')}
+              name=""
               onCheckedChange={(isChecked) => {
                 setFormData(
                   isChecked ? { types: ['project', 'node_modules'] } : { types: ['project'] }
@@ -69,6 +77,7 @@ export function StatsModuleFilter() {
             </Label>
             <Input
               id="filter-include"
+              name="filterInclude"
               type="text"
               className="mt-2"
               placeholder="e.g. app/**/*.{ts}"
@@ -83,6 +92,7 @@ export function StatsModuleFilter() {
             </Label>
             <Input
               id="filter-exclude"
+              name="filterExclude"
               type="text"
               className="mt-2"
               placeholder="e.g. react-native/**"
