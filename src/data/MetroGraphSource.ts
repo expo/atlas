@@ -51,7 +51,10 @@ export class MetroGraphSource implements StatsSource {
 export function convertGraph(options: ConvertGraphToStatsOptions): StatsEntry {
   const serializeOptions = convertSerializeOptions(options.options);
   const transformOptions = convertTransformOptions(options.graph.transformOptions);
-  const platform = transformOptions?.platform ?? 'unknown';
+  const platform =
+    transformOptions?.customTransformOptions?.environment === 'node'
+      ? 'server'
+      : transformOptions?.platform ?? 'unknown';
 
   return {
     id: `${options.entryPoint}+${platform}`,

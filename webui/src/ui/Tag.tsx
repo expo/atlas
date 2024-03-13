@@ -11,6 +11,7 @@ const tagVariants = cva(
         android: 'bg-palette-green4 text-palette-green12 border-palette-green5',
         ios: 'bg-palette-blue4 text-palette-blue12 border-palette-blue5',
         web: 'bg-palette-orange4 text-palette-orange12 border-palette-orange5',
+        server: 'bg-palette-orange4 text-palette-orange12 border-palette-orange5',
       },
       size: {
         xs: 'h-6 px-2 text-3xs/4',
@@ -35,6 +36,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
     if (variant === 'android') children = 'Android';
     if (variant === 'ios') children = 'iOS';
     if (variant === 'web') children = 'Web';
+    if (variant === 'server') children = 'Server';
 
     return (
       <span className={cn(tagVariants({ variant, size }), className)} ref={ref} {...props}>
