@@ -1,8 +1,6 @@
-import picomatch from 'picomatch';
-
 import { filtersFromUrlParams } from '~/providers/modules';
 import { getSource } from '~/utils/atlas';
-import { type StatsEntry, type StatsModule } from '~plugin';
+import { fuzzyFilterModules, type StatsEntry, type StatsModule } from '~plugin';
 
 /** The partial module data, when listing all available modules from a stats entry */
 export type ModuleMetadata = Omit<StatsModule, 'source' | 'output'> & {
@@ -56,35 +54,18 @@ export async function GET(request: Request, params: Record<'entry', string>) {
  *   - `exclude=<glob>` to only exclude specific glob patterns
  */
 function filterModules(request: Request, stats: StatsEntry): ModuleMetadata[] {
-  const filters = filtersFromUrlParams(new URL(request.url).searchParams);
-  let filteredModules = Array.from(stats.modules.values()) ?? [];
+  const { types, ...patterns } = filtersFromUrlParams(new URL(request.url).searchParams);
+  let modules = Array.from(stats.modules.values());
 
-  if (!filters.types.includes('node_modules')) {
-    filteredModules = filteredModules.filter((module) => module.package === undefined);
+  if (!types.includes('node_modules')) {
+    modules = modules.filter((module) => !module.package);
   }
 
-  if (filters.include || filters.exclude) {
-    const matcher = picomatch(prefixPattern(filters.include || null) ?? '**', {
-      cwd: stats.projectRoot,
-      nocase: true,
-      ignore: prefixPattern(filters.exclude || null),
-    });
-
-    filteredModules = filteredModules.filter((module) => matcher(module.path));
-  }
-
-  return filteredModules.map((module) => ({
+  return fuzzyFilterModules(modules, patterns).map((module) => ({
     ...module,
     source: undefined,
     output: undefined,
   }));
-}
-
-/** Prefix the patterns with `**\/` to make the globs search on the ending patterns */
-function prefixPattern(pattern: string | null) {
-  if (pattern === null) return undefined;
-  if (['!', '*', '/'].includes(pattern[0])) return pattern;
-  return `**/${pattern}`;
 }
 
 /**

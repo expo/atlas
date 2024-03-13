@@ -5,3 +5,4 @@ export { StatsFileSource } from './data/StatsFileSource';
 
 export { AtlasError, AtlasValidationError } from './utils/errors';
 export { createStatsFile, validateStatsFile, getStatsMetdata, getStatsPath } from './utils/stats';
+export { fuzzyFilterModules } from './utils/search';

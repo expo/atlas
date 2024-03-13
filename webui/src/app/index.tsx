@@ -57,7 +57,7 @@ function BundleSummary({ data }: { data: EntryGraphData }) {
       {data.metadata.modulesCount !== data.data.modulesCount && (
         <div className="text-tertiary italic inline">
           <span className="mx-2 select-none">—</span>
-          <span className="mr-2 select-none italic ">filtered:</span>
+          <span className="mr-2 select-none italic ">visible:</span>
           <span>{data.data.modulesCount} modules</span>
           <span className="mx-2 select-none">-</span>
           <span>{formatFileSize(data.data.size)}</span>
@@ -66,7 +66,6 @@ function BundleSummary({ data }: { data: EntryGraphData }) {
     </div>
   );
 }
-
 
 /** Load the bundle graph data from API, with default or custom filters */
 function useBundleGraphData(entryId: string, filters?: ModuleFilters) {
