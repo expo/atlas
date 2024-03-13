@@ -7,8 +7,8 @@ import { getStatsPath, validateStatsFile } from '../utils/stats';
 export type Options = Awaited<ReturnType<typeof resolveOptions>>;
 
 export async function resolveOptions(input: Input) {
-  const [statsFile, port] = await Promise.all([resolveStatsFile(input), resolvePort(input)]);
-
+  const statsFile = await resolveStatsFile(input);
+  const port = await resolvePort(input);
   return { statsFile, port };
 }
 

@@ -1,7 +1,7 @@
 {
   "sideEffects": false,
   "name": "expo-atlas",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Inspect bundle stats from Metro",
   "keywords": [
     "expo",

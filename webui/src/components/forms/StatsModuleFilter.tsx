@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, type KeyboardEvent, useState } from 'react';
 
 import { useModuleFilterContext, useModuleFilterReducer } from '~/providers/modules';
 import { Button } from '~/ui/Button';
@@ -25,15 +25,19 @@ export function StatsModuleFilter() {
     event.preventDefault();
     event.stopPropagation();
 
-    // copy form data
-    setFilters({
-      // @ts-expect-error
-      exclude: event.currentTarget.elements.filterExclude.value ?? undefined,
-      // @ts-expect-error
-      include: event.currentTarget.elements.filterInclude.value ?? undefined,
-    });
-
     setDialogOpen(false);
+    setFilters(formData);
+  }
+
+  function onInputEnter(
+    event: KeyboardEvent<HTMLInputElement>,
+    data: (data: typeof formData) => typeof formData
+  ) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      setDialogOpen(false);
+      setFilters(data(formData));
+    }
   }
 
   function onDialogChange(isOpen: boolean) {
@@ -83,6 +87,9 @@ export function StatsModuleFilter() {
               placeholder="e.g. app/**/*.{ts}"
               value={formData.include}
               onChange={(event) => setFormData({ include: event.currentTarget.value })}
+              onKeyDown={(event) =>
+                onInputEnter(event, (data) => ({ ...data, include: event.currentTarget.value }))
+              }
             />
           </fieldset>
 
@@ -98,6 +105,9 @@ export function StatsModuleFilter() {
               placeholder="e.g. react-native/**"
               value={formData.exclude}
               onChange={(event) => setFormData({ exclude: event.currentTarget.value })}
+              onKeyDown={(event) =>
+                onInputEnter(event, (data) => ({ ...data, exclude: event.currentTarget.value }))
+              }
             />
           </fieldset>
 

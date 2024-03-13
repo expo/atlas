@@ -28,8 +28,7 @@ export async function validateStatsFile(statsFile: string, metadata = getStatsMe
     return;
   }
 
-  const line = await parseNDJsonAtLine(statsFile, 0);
-  const data = line ? JSON.parse(line) : {};
+  const data = await parseNDJsonAtLine(statsFile, 1);
 
   if (data.name !== metadata.name || data.version !== metadata.version) {
     throw new AtlasValidationError('STATS_FILE_INCOMPATIBLE', statsFile, data.version);
