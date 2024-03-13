@@ -2,20 +2,6 @@ import events from 'events';
 import fs from 'fs';
 import readline from 'readline';
 
-// @ts-expect-error
-Symbol.dispose ??= Symbol('Symbol.dispose');
-// @ts-expect-error
-Symbol.asyncDispose ??= Symbol('Symbol.asyncDispose');
-
-/** Create a self-disposing stream using explicit resource management */
-function disposableStream<T extends fs.ReadStream | fs.WriteStream>(stream: T): T & Disposable {
-  const disposableStream = stream as T & Disposable;
-  disposableStream[Symbol.dispose] = () => {
-    if (!stream.closed) stream.close();
-  };
-  return disposableStream;
-}
-
 /**
  * Efficiently map through all lines within the Newline-Delimited JSON (ndjson) file, using streams.
  * This won't parse the actual JSON but returns the partial string instead.
@@ -25,7 +11,7 @@ export async function mapNDJson(
   filePath: string,
   callback: (line: number, contents: string) => any
 ) {
-  using stream = disposableStream(fs.createReadStream(filePath));
+  const stream = fs.createReadStream(filePath);
   const reader = readline.createInterface({ input: stream });
   let lineNumber = 1;
 
@@ -38,6 +24,7 @@ export async function mapNDJson(
   });
 
   await events.once(reader, 'close');
+  stream.close();
 }
 
 /**
@@ -45,32 +32,31 @@ export async function mapNDJson(
  * Note, line numbers starts at `1`.
  */
 export async function parseNDJsonAtLine<T = any>(filePath: string, line: number): Promise<T> {
-  // Note(cedric): keep this dependency inlined to avoid loading it in the WebUI
-  const bfj = require('bfj');
-  let lineCursor = 0;
-
-  using stream = disposableStream(fs.createReadStream(filePath));
+  const stream = fs.createReadStream(filePath);
   const reader = readline.createInterface({ input: stream });
 
-  await new Promise((resolve, reject) => {
-    stream.once('error', reject);
-    reader.once('error', reject);
+  let lineContents;
+  let lineNumber = 1;
 
-    reader.on('line', () => {
-      if (++lineCursor === line) {
-        reader.close();
-        resolve(undefined);
-      }
-    });
-
-    reader.once('close', () => {
-      if (lineCursor !== line) {
-        reject(new Error(`Line "${line}" not found in file "${filePath}"`));
-      }
-    });
+  reader.on('error', (error) => {
+    throw error;
   });
 
-  return await bfj.parse(stream, { ndjson: true });
+  reader.on('line', (contents) => {
+    if (lineNumber++ === line) {
+      lineContents = contents;
+      reader.close();
+    }
+  });
+
+  await events.once(reader, 'close');
+  stream.close();
+
+  if (!lineContents) {
+    throw new Error(`Line ${line} not found in file: ${filePath}`);
+  }
+
+  return JSON.parse(lineContents);
 }
 
 /** Efficiently append a new line to a Newline-Delimited JSON (ndjson) file, using streams. */

@@ -56,7 +56,7 @@ export async function readStatsEntry(statsPath: string, id: number): Promise<Sta
     projectRoot: statsEntry[1],
     entryPoint: statsEntry[2],
     runtimeModules: statsEntry[3],
-    modules: new Map(statsEntry[4]),
+    modules: new Map(statsEntry[4].map((module) => [module.path, module])),
     transformOptions: statsEntry[5],
     serializeOptions: statsEntry[6],
   };
@@ -75,7 +75,7 @@ export function writeStatsEntry(statsPath: string, stats: StatsEntry) {
     stats.projectRoot,
     stats.entryPoint,
     stats.runtimeModules,
-    stats.modules,
+    Array.from(stats.modules.values()),
     stats.transformOptions,
     stats.serializeOptions,
   ];

@@ -47,7 +47,7 @@ export function StatsEntrySelect() {
                   <Button variant="quaternary" size="sm" className="w-full">
                     <Tag variant={entry.platform} className="mr-2" />
                     <Select.ItemText>
-                      {entry.entryPoint.replace(entry.projectRoot, '')}
+                      {entry.entryPoint.replace(entry.projectRoot + '/', '')}
                     </Select.ItemText>
                   </Button>
                 </Select.Item>
