@@ -131,7 +131,7 @@ function getModuleSourceContent(
     return '[binary file]';
   }
 
-  if (module.path.includes('?ctx')) {
+  if (module.path.includes('?ctx=')) {
     return module.getSource().toString();
   }
 
