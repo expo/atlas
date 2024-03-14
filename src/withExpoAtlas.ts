@@ -34,6 +34,10 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   }
 
   const statsFile = options?.statsFile ?? getStatsPath(projectRoot);
+  const extensions = {
+    source: config.resolver?.sourceExts,
+    asset: config.resolver?.assetExts,
+  };
 
   // Note(cedric): we don't have to await this, Metro would never bundle before this is finisheds
   createStatsFile(statsFile);
@@ -43,7 +47,7 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
     // Note(cedric): we don't have to await this, it has a built-in write queue
     writeStatsEntry(
       statsFile,
-      convertGraph({ projectRoot, entryPoint, preModules, graph, options })
+      convertGraph({ projectRoot, entryPoint, preModules, graph, options, extensions })
     );
 
     return originalSerializer(entryPoint, preModules, graph, options);
