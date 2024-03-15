@@ -114,16 +114,12 @@ function useModuleData(entryId: string, path: string) {
     queryKey: [`module`, entryId, path],
     queryFn: async ({ queryKey }) => {
       const [_key, entry, path] = queryKey as [string, string, string];
-      const response = await fetch(`/api/stats/${entry}/modules`, {
+      return fetch(`/api/stats/${entry}/modules`, {
         method: 'POST',
         body: JSON.stringify({ path }),
-      });
-
-      if (response.ok) {
-        return await response.json();
-      }
-
-      throw new Error(`Failed to load module data: ${response.status}`);
+      })
+        .then((res) => (res.ok ? res : Promise.reject(res)))
+        .then((res) => res.json());
     },
   });
 }
