@@ -30,12 +30,8 @@
   },
   "scripts": {
     "lint": "eslint . --ext js,ts,tsx",
-    "build": "CI=true expo-module build",
-    "build:all": "expo-module prepare && cd webui && npx expo export -p web --output-dir ../dist",
-    "watch": "expo-module build",
-    "clean": "expo-module clean",
-    "web:dev": "cd webui && npx expo start -w",
-    "web:export": "cd webui && npx expo export -p web --output-dir ../dist"
+    "build": "expo-module build",
+    "clean": "expo-module clean"
   },
   "license": "MIT",
   "dependencies": {
@@ -73,7 +69,8 @@
     "ignorePatterns": [
       "build",
       "dist",
-      "node_modules"
+      "node_modules",
+      "webui/expo-env.d.ts"
     ],
     "rules": {
       "@typescript-eslint/no-unused-vars": [
