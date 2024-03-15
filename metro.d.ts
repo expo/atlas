@@ -1,1 +1,1 @@
-export * from './build/src/withExpoAtlas';
+export * from './build/src/metro';

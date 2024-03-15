@@ -13,10 +13,11 @@
   "types": "build/src/index.d.ts",
   "files": [
     "build",
-    "dist",
     "expo-module.config.json",
     "metro.js",
     "metro.d.ts",
+    "middleware.js",
+    "middleware.d.js",
     "webui/dist"
   ],
   "homepage": "https://github.com/byCedric/expo-atlas",
@@ -42,13 +43,14 @@
     "arg": "^5.0.2",
     "bfj": "^8.0.0",
     "compression": "^1.7.4",
-    "expo-router": "~3.4.7",
+    "connect": "^3.7.0",
     "express": "^4.18.2",
     "freeport-async": "^2.0.0",
     "fuse.js": "^7.0.0",
     "getenv": "^1.0.0",
     "morgan": "^1.10.0",
-    "open": "^8.4.2"
+    "open": "^8.4.2",
+    "serve-static": "^1.15.0"
   },
   "devDependencies": {
     "@types/chai": "^4",
