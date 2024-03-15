@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
 
-import { PartialStatsEntry } from '~plugin';
+import { type PartialStatsEntry } from '~plugin';
 
 type StatsEntryContext = {
   entryId: string;

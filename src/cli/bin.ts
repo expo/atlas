@@ -45,12 +45,15 @@ async function run() {
   const server = createServer(options);
 
   server.listen(options.port, () => {
-    const href = `http://localhost:${options.port}`;
+    const href = `http://localhost:${options.port}/_expo/atlas`;
 
     console.log(`Metro bundle inspector is ready on ${href}`);
     console.log('Loaded stats file:');
     console.log(`  ${options.statsFile}`);
-    open(href);
+
+    open(href).catch((error) => {
+      console.error('Could not automatically open browser:', error.message);
+    });
   });
 }
 

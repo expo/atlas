@@ -1,3 +1,5 @@
+import './utils/global';
+
 export type * from './data/types';
 
 export { MetroGraphSource } from './data/MetroGraphSource';

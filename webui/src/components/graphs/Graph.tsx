@@ -1,5 +1,12 @@
 import ReactECharts from 'echarts-for-react';
-import { ComponentProps, RefObject, forwardRef, useEffect, useRef, useState } from 'react';
+import {
+  type ComponentProps,
+  type RefObject,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 export const Graph = forwardRef<ReactECharts, ComponentProps<typeof ReactECharts>>((props, ref) => {
   const container = useRef<HTMLDivElement>(null);

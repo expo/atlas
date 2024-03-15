@@ -9,7 +9,8 @@
     },
     "experiments": {
       "tsconfigPaths": true,
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/_expo/atlas"
     },
     "plugins": [
       "expo-router"

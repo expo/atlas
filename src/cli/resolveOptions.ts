@@ -1,7 +1,7 @@
+import freeport from 'freeport-async';
 import path from 'path';
 
 import { type Input } from './bin';
-import { getFreePort } from '../utils/port';
 import { getStatsPath, validateStatsFile } from '../utils/stats';
 
 export type Options = Awaited<ReturnType<typeof resolveOptions>>;
@@ -19,5 +19,10 @@ async function resolveStatsFile(input: Input) {
 }
 
 async function resolvePort(input: Pick<Input, '--port'>) {
-  return input['--port'] ?? (await getFreePort(3000));
+  if (input['--port']) return input['--port'];
+
+  const port = await freeport(3000, { hostnames: [null, 'localhost'] });
+  if (port) return port;
+
+  throw new Error(`Could not find a free port starting from 3000`);
 }

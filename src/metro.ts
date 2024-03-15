@@ -4,25 +4,25 @@ import { convertGraph } from './data/MetroGraphSource';
 import { writeStatsEntry } from './data/StatsFileSource';
 import { createStatsFile, getStatsPath } from './utils/stats';
 
-export type ExpoAtlasOptions = Partial<{
+type ExpoAtlasOptions = Partial<{
   /** The output of the stats file, defaults to `.expo/stats.json` */
   statsFile: string;
 }>;
 
 /**
- * Enable Expo Atlas to gather statistics from Metro when exporting bundles.
- * This function should be the last mutation of your Metro config.
+ * Initialize Expo Atlas to gather statistics from Metro when exporting bundles.
+ * This function adds the required Metro config, and should be the last config mutation.
  *
  * @example ```js
  *   // Learn more https://docs.expo.dev/guides/customizing-metro
- *   const { getDefaultConfig } = require('expo/metro-config');
- *   const { withExpoAtlas } = require('expo-atlas/metro');
+ *   const { getDefaultConfig } = require('expo/metro-config')
+ *   const { withExpoAtlas } = require('expo-atlas/metro')
  *
- *   const config = getDefaultConfig(__dirname);
+ *   const config = getDefaultConfig(__dirname)
  *
  *   // Make more changes
  *
- *   module.exports = withExpoAtlas(config);
+ *   module.exports = withExpoAtlas(config)
  * ```
  */
 export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {}) {

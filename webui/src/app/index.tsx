@@ -77,7 +77,9 @@ function useBundleGraphData(entryId: string, filters?: ModuleFilters) {
         ? `/api/stats/${entry}/modules?${filtersToUrlParams(filters)}`
         : `/api/stats/${entry}/modules`;
 
-      return fetch(url).then((res) => res.json());
+      return fetch(url)
+        .then((res) => (res.ok ? res : Promise.reject(res)))
+        .then((res) => res.json());
     },
   });
 }
