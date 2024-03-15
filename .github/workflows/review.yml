@@ -1,0 +1,43 @@
+name: review
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup project
+        uses: ./.github/actions/setup-project
+
+      - name: 🚨 Lint core
+        run: bun run lint -- --max-warnings 0
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup project
+        uses: ./.github/actions/setup-project
+        with:
+          with-webui: true
+
+      - name: 👷 Build core
+        run: bun run build
+
+      - name: 👷 Build webui
+        run: bun run build
+        working-directory: webui

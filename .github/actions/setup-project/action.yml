@@ -1,0 +1,38 @@
+name: Setup project
+description: Prepare the project for any CI action
+
+inputs:
+  bun-version:
+    description: Version of Bun to install
+    default: 1.x
+
+  node-version:
+    description: Version of Node to install
+    default: 20.x
+
+  with-webui:
+    description: If the setup should prepare the web UI
+    type: boolean
+
+runs:
+  using: composite
+  steps:
+    - name: 🏗 Setup Node
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: 🏗 Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: 📦 Install dependencies
+      run: bun install
+      shell: bash
+
+    - name: 📦 Install webui dependencies
+      if: ${{ inputs.with-webui == 'true' }}
+      run: bun install
+      working-directory: webui
+      shell: bash
