@@ -13,6 +13,7 @@
   "types": "build/src/index.d.ts",
   "files": [
     "build",
+    "!build/tsconfig.tsbuildinfo",
     "expo-module.config.json",
     "metro.js",
     "metro.d.ts",
