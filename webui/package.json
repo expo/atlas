@@ -1,13 +1,14 @@
 {
+  "private": true,
   "name": "metro-bundle-plugin-webui",
   "version": "0.0.1-private",
   "main": "src/index.ts",
   "scripts": {
-    "start": "EXPO_METRO_BUNDLE_STATS_FILE=\"/Users/cedric/Desktop/test-metro-bundle-inspect/.expo/stats.json\" expo start",
+    "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "EXPO_USE_METRO_WORKSPACE_ROOT=false expo export --platform web"
+    "build": "expo export --platform web"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.2",
@@ -24,7 +25,7 @@
     "echarts-for-react": "^3.0.2",
     "expo": "~50.0.6",
     "expo-linking": "~6.2.2",
-    "expo-router": "file:../../../expo/expo/packages/expo-router",
+    "expo-router": "./expo-router-a6329839072067d010b6233b0f57abf0ece80d69.tgz",
     "expo-status-bar": "~1.11.1",
     "lucide-react": "^0.336.0",
     "nativewind": "^4.0.36",
@@ -45,6 +46,5 @@
     "@types/picomatch": "^2.3.3",
     "@types/react": "~18.2.45",
     "typescript": "^5.3.0"
-  },
-  "private": true
+  }
 }
