@@ -41,6 +41,10 @@ jobs:
         with:
           with-webui: true
 
+      # Required for typechecking webui
+      - name: 👷 Build core
+        run: bun run build
+
       - name: 📋 Typecheck webui
         run: bun run typecheck
         working-directory: webui
