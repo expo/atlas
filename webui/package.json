@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web"
+    "build": "expo export --platform web",
+    "typecheck": "expo-module typecheck"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.2",

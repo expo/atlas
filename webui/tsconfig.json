@@ -6,7 +6,7 @@
       "~/*": [
         "./src/*"
       ],
-      "~plugin": ["../src"]
+      "~plugin/*": ["../src/*"]
     }
   },
   "references": [
