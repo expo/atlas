@@ -9,7 +9,7 @@ export type Options = Awaited<ReturnType<typeof resolveOptions>>;
 export async function resolveOptions(input: Input) {
   const statsFile = await resolveStatsFile(input);
   const port = await resolvePort(input);
-  return { statsFile, port };
+  return { statsFile, port, browserOpen: input['--no-open'] !== false };
 }
 
 async function resolveStatsFile(input: Input) {
