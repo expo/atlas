@@ -2,10 +2,9 @@
 
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import cn from 'classnames';
+// @ts-expect-error
 import CheckIcon from 'lucide-react/dist/esm/icons/check';
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react';
-
-// @ts-expect-error
 
 export const Checkbox = forwardRef<
   ElementRef<typeof CheckboxPrimitive.Root>,

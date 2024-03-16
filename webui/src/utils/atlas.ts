@@ -1,4 +1,4 @@
-import { type StatsSource } from '~plugin';
+import { type StatsSource } from '~core/data/types';
 
 declare global {
   var EXPO_ATLAS_SOURCE: StatsSource; // eslint-disable-line no-var
