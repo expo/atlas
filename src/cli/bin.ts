@@ -13,6 +13,7 @@ const args = arg({
   '--help': Boolean,
   '--port': Number,
   '--version': Boolean,
+  '--no-open': Boolean,
   // Aliases
   '-h': '--help',
   '-p': '--port',
@@ -31,6 +32,7 @@ if (args['--help']) {
 
     Options
       --port, -p      Port to listen on
+      --no-open       Do not open the browser automatically
       --help, -h      Displays this message
       --version, -v   Displays the current version
   `);
@@ -51,9 +53,11 @@ async function run() {
     console.log('Loaded stats file:');
     console.log(`  ${options.statsFile}`);
 
-    open(href).catch((error) => {
-      console.error('Could not automatically open browser:', error.message);
-    });
+    if (options.browserOpen) {
+      open(href).catch((error) => {
+        console.error('Could not automatically open browser:', error.message);
+      });
+    }
   });
 }
 
