@@ -30,9 +30,10 @@
     "url": "https://github.com/byCedric/expo-atlas"
   },
   "scripts": {
-    "lint": "eslint . --ext js,ts,tsx",
     "build": "expo-module build",
-    "clean": "expo-module clean"
+    "clean": "expo-module clean",
+    "lint": "eslint . --ext js,ts,tsx",
+    "typecheck": "expo-module typecheck"
   },
   "license": "MIT",
   "dependencies": {
