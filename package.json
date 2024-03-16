@@ -17,8 +17,6 @@
     "expo-module.config.json",
     "metro.js",
     "metro.d.ts",
-    "middleware.js",
-    "middleware.d.js",
     "webui/dist"
   ],
   "homepage": "https://github.com/byCedric/expo-atlas",
