@@ -8,8 +8,10 @@ import { env } from './env';
 import { type StatsSource } from '../data/types';
 
 const WEBUI_ROOT = path.resolve(__dirname, '../../../webui');
-const CLIENT_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/client');
-const SERVER_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/server');
+
+// TODO(cedric): drop these exports once we can use this as base for the standalone server
+export const CLIENT_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/client');
+export const SERVER_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/server');
 
 /**
  * Initialize Expo Atlas to gather statistics from Metro during development.

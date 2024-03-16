@@ -3,8 +3,8 @@ import arg from 'arg';
 import open from 'open';
 import path from 'path';
 
+import { createServer } from './createServer';
 import { resolveOptions } from './resolveOptions';
-import { createServer } from './server';
 
 export type Input = typeof args;
 
