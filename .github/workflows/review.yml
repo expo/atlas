@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  core:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
@@ -24,7 +24,13 @@ jobs:
       - name: 🚨 Lint core
         run: bun run lint -- --max-warnings 0
 
-  build:
+      - name: 📋 Typecheck core
+        run: bun run typecheck
+
+      - name: 👷 Build core
+        run: bun run build
+
+  webui:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
@@ -35,8 +41,13 @@ jobs:
         with:
           with-webui: true
 
+      # Required for typechecking webui
       - name: 👷 Build core
         run: bun run build
+
+      - name: 📋 Typecheck webui
+        run: bun run typecheck
+        working-directory: webui
 
       - name: 👷 Build webui
         run: bun run build

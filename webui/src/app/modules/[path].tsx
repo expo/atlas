@@ -7,7 +7,7 @@ import { PageHeader, PageTitle } from '~/ui/Page';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { formatFileSize } from '~/utils/formatString';
-import { PartialStatsEntry, StatsModule } from '~plugin';
+import { type PartialStatsEntry, type StatsModule } from '~core/data/types';
 
 export default function ModulePage() {
   const { entryId, entry } = useStatsEntryContext();

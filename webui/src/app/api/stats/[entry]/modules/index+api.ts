@@ -1,6 +1,7 @@
 import { filtersFromUrlParams } from '~/providers/modules';
 import { getSource } from '~/utils/atlas';
-import { fuzzyFilterModules, type StatsEntry, type StatsModule } from '~plugin';
+import { type StatsEntry, type StatsModule } from '~core/data/types';
+import { fuzzyFilterModules } from '~core/utils/search';
 
 /** The partial module data, when listing all available modules from a stats entry */
 export type ModuleMetadata = Omit<StatsModule, 'source' | 'output'> & {
