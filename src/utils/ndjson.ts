@@ -7,9 +7,9 @@ import readline from 'readline';
  * This won't parse the actual JSON but returns the partial string instead.
  * Note, line numbers starts at `1`.
  */
-export async function mapNDJson(
+export async function mapJsonLines(
   filePath: string,
-  callback: (line: number, contents: string) => any
+  callback: (contents: string, line: number) => any
 ) {
   const stream = fs.createReadStream(filePath);
   const reader = readline.createInterface({ input: stream });
@@ -20,7 +20,7 @@ export async function mapNDJson(
   });
 
   reader.on('line', (contents) => {
-    callback(lineNumber++, contents);
+    callback(contents, lineNumber++);
   });
 
   await events.once(reader, 'close');
@@ -31,7 +31,7 @@ export async function mapNDJson(
  * Efficiently parse a single line from a Newline-Delimited JSON (ndjson) file, using streams.
  * Note, line numbers starts at `1`.
  */
-export async function parseNDJsonAtLine<T = any>(filePath: string, line: number): Promise<T> {
+export async function parseJsonLine<T = any>(filePath: string, line: number): Promise<T> {
   const stream = fs.createReadStream(filePath);
   const reader = readline.createInterface({ input: stream });
 
@@ -60,7 +60,7 @@ export async function parseNDJsonAtLine<T = any>(filePath: string, line: number)
 }
 
 /** Efficiently append a new line to a Newline-Delimited JSON (ndjson) file, using streams. */
-export async function appendNDJsonToFile(filePath: string, data: unknown): Promise<void> {
+export async function appendJsonLine(filePath: string, data: unknown): Promise<void> {
   // Note(cedric): keep this dependency inlined to avoid loading it in the WebUI
   const bfj = require('bfj');
   await bfj.write(filePath, data, {

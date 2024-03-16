@@ -4,7 +4,7 @@ import path from 'path';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
 import { AtlasValidationError } from '../utils/errors';
-import { parseNDJsonAtLine } from '../utils/ndjson';
+import { parseJsonLine } from '../utils/ndjson';
 
 export type StatsMetadata = { name: string; version: string };
 
@@ -28,7 +28,7 @@ export async function validateStatsFile(statsFile: string, metadata = getStatsMe
     return;
   }
 
-  const data = await parseNDJsonAtLine(statsFile, 1);
+  const data = await parseJsonLine(statsFile, 1);
 
   if (data.name !== metadata.name || data.version !== metadata.version) {
     throw new AtlasValidationError('STATS_FILE_INCOMPATIBLE', statsFile, data.version);
