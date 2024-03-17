@@ -6,3 +6,14 @@ body {
   background-color: var(--expo-theme-background-screen);
   color: var(--expo-theme-text-default);
 }
+
+html, body, #root {
+  height: auto;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+}

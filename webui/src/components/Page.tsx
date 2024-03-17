@@ -22,17 +22,26 @@ const pageVariants = cva('', {
 type PageProps = HTMLAttributes<HTMLDivElement> & VariantProps<typeof pageVariants>;
 
 export const Page = forwardRef<HTMLDivElement, PageProps>(
-  ({ className, variant, children, ...props }, ref) => (
-    <div className={cn(pageVariants({ variant, className }))} ref={ref} {...props}>
-      <LayoutNavigation>
-        <StatsEntrySelect />
-      </LayoutNavigation>
-      {variant === 'viewport' ? (
-        <LayoutContent>{children}</LayoutContent>
-      ) : (
-        <div className="overflow-auto">{children}</div>
-      )}
-    </div>
-  )
+  ({ className, variant, children, ...props }, ref) => {
+    if (variant === 'viewport') {
+      return (
+        <div className={cn(pageVariants({ variant, className }))} ref={ref} {...props}>
+          <LayoutNavigation>
+            <StatsEntrySelect />
+          </LayoutNavigation>
+          <LayoutContent>{children}</LayoutContent>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <LayoutNavigation className="fixed top-0 left-0 right-0 z-10">
+          <StatsEntrySelect />
+        </LayoutNavigation>
+        <div className="pt-15">{children}</div>
+      </>
+    );
+  }
 );
 Page.displayName = 'Page';

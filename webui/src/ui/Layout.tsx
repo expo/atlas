@@ -2,9 +2,17 @@ import cn from 'classnames';
 import { Link } from 'expo-router';
 import { HTMLAttributes, PropsWithChildren } from 'react';
 
-export function LayoutNavigation({ children }: PropsWithChildren) {
+export function LayoutNavigation({
+  children,
+  className,
+}: PropsWithChildren & { className?: string }) {
   return (
-    <header className="h-15 flex flex-shrink-0 items-center justify-between gap-2 border-b border-b-secondary bg-default px-4">
+    <header
+      className={cn(
+        'h-15 flex flex-shrink-0 items-center justify-between gap-2 border-b border-b-secondary bg-default px-4',
+        className
+      )}
+    >
       <Link href="/" aria-label="Go back to graph">
         <ExpoLogoBig title="Expo" className="w-[74px] text-default max-md-gutters:hidden" />
         <ExpoLogoSmall title="Expo" className="hidden text-default max-md-gutters:flex" />
