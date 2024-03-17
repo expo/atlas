@@ -2,11 +2,9 @@ import { Slot } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 
-import { StatsEntrySelect } from '~/components/forms/StatsEntrySelect';
 import { ModuleFilterProvider } from '~/providers/modules';
 import { QueryProvider } from '~/providers/query';
 import { StatsEntryProvider } from '~/providers/stats';
-import { Page, PageContent, PageNav } from '~/ui/Page';
 
 // Import the Expo-required radix styles
 import '@radix-ui/colors/green.css';
@@ -39,14 +37,7 @@ export default function RootLayout() {
     <QueryProvider>
       <StatsEntryProvider>
         <ModuleFilterProvider>
-          <Page>
-            <PageNav>
-              <StatsEntrySelect />
-            </PageNav>
-            <PageContent>
-              <Slot />
-            </PageContent>
-          </Page>
+          <Slot />
         </ModuleFilterProvider>
       </StatsEntryProvider>
     </QueryProvider>

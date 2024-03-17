@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
+import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { useStatsEntryContext } from '~/providers/stats';
 import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
-import { PageHeader, PageTitle } from '~/ui/Page';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { formatFileSize } from '~/utils/formatString';
@@ -30,7 +30,7 @@ export default function ModulePage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-auto">
+    <Page>
       <PageHeader>
         <PageTitle>
           <h1 className="text-slate-50 font-bold text-lg mr-4" title={module.data.path}>
@@ -71,7 +71,7 @@ export default function ModulePage() {
           </CodeBlockSectionWithPrettier>
         </CodeBlock>
       </div>
-    </div>
+    </Page>
   );
 }
 
