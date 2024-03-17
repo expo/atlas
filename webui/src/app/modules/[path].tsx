@@ -46,10 +46,10 @@ export default function ModulePage() {
             <p className="text-md">Imported from:</p>
             <ul style={{ listStyle: 'initial' }} className="mb-6">
               {module.data.importedBy.map((path) => (
-                <li key={absolutePath} className="ml-4">
+                <li key={path} className="ml-4">
                   <Link
                     className="text-link hover:underline"
-                    href={{ pathname: '/modules/[path]', params: { path: absolutePath } }}
+                    href={{ pathname: '/modules/[path]', params: { path } }}
                   >
                     {path}
                   </Link>
