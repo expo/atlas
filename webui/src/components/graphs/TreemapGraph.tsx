@@ -1,4 +1,5 @@
 import * as echarts from 'echarts';
+import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 
 import { Graph } from './Graph';
@@ -7,8 +8,8 @@ import type { ModuleMetadata } from '~/app/api/stats/[entry]/modules/index+api';
 import { formatFileSize } from '~/utils/formatString';
 
 type TreemapGraphProps = {
+  name?: string;
   modules: ModuleMetadata[];
-  onModuleClick: (absolutePath: string) => void;
 };
 
 const ICON_STRINGS = {
@@ -18,6 +19,15 @@ const ICON_STRINGS = {
 };
 
 export function TreemapGraph(props: TreemapGraphProps) {
+  const router = useRouter();
+
+  function onInspectPath(type: 'folder' | 'module', absolutePath: string) {
+    router.push({
+      pathname: type === 'module' ? '/modules/[path]' : '/folders/[path]',
+      params: { path: absolutePath },
+    });
+  }
+
   const { data, maxDepth, maxNodeModules } = useMemo(
     () => createModuleTree(props.modules.filter((module) => module.path.startsWith('/'))),
     [props.modules]
@@ -49,10 +59,13 @@ export function TreemapGraph(props: TreemapGraphProps) {
     <Graph
       theme="dark"
       onEvents={{
-        click({ event, data }: any) {
+        click({ event, data }: { event: any; data: TreemapItem }) {
           const shouldFireClick = event.event.altKey || event.event.ctrlKey || event.event.metaKey;
-          if (data?.path && shouldFireClick) {
-            props.onModuleClick(data.path);
+          if (!shouldFireClick) return;
+          if (data?.moduleHref) {
+            onInspectPath('module', data.moduleHref);
+          } else if (data?.folderHref) {
+            onInspectPath('folder', data.folderHref);
           }
         },
       }}
@@ -115,15 +128,21 @@ export function TreemapGraph(props: TreemapGraphProps) {
               if (data.moduleHref) {
                 components.push(divider);
                 components.push(
-                  `<span style="padding:0 ${padding}px;color:#4B86E3"><b>Open File:</b> <kbd>⌘ + Click</kbd></span>`
+                  `<span style="padding:0 ${padding}px;color:#4B86E3"><b>Open Module:</b> <kbd>⌘ + Click</kbd></span>`
+                );
+              } else if (data.folderHref) {
+                components.push(divider);
+                components.push(
+                  `<span style="padding:0 ${padding}px;color:#4B86E3"><b>Open Folder:</b> <kbd>⌘ + Click</kbd></span>`
                 );
               }
             } else {
               // Full bundle
+              const typeName = !props.name ? 'Bundle' : props.name;
               components.push(
                 `<div style="padding:0 ${padding}px;display:flex;flex-direction:row;justify-content:space-between;">
                         <div style="display:flex;align-items:center;gap:6px">${ICON_STRINGS.pkg}
-                        <span style="padding-right:8px;">Bundle</span></div>
+                        <span style="padding-right:8px;">${typeName}</span></div>
                         <span>100%</span>
                     </div>`
               );
@@ -137,7 +156,7 @@ export function TreemapGraph(props: TreemapGraphProps) {
         series: [
           {
             // roam: 'move',
-            name: 'Bundle',
+            name: !props.name ? 'Bundle' : props.name,
             type: 'treemap',
             height: '85%',
             width: '95%',
@@ -245,6 +264,7 @@ type TreemapItem = {
   path: string;
   value: [number, number];
   moduleHref?: string;
+  folderHref?: string;
   tip: string;
   sizeString: string;
   ratio: number;
@@ -270,6 +290,7 @@ function createModuleTree(paths: ModuleMetadata[]): {
   }
 
   const root: TreemapItem = {
+    folderHref: '/',
     path: '/',
     children: [],
     name: '/',
@@ -292,10 +313,13 @@ function createModuleTree(paths: ModuleMetadata[]): {
 
     parts.forEach((part, index) => {
       const isLast = index === parts.length - 1;
+      const pathFull = '/' + parts.slice(0, index + 1).join('/');
+
       let next = current.children.find((g) => g.path === part);
 
       if (!next) {
         next = {
+          folderHref: pathFull,
           path: part,
           name: part,
           children: [],
