@@ -26,7 +26,7 @@
     "echarts-for-react": "^3.0.2",
     "expo": "~50.0.6",
     "expo-linking": "~6.2.2",
-    "expo-router": "./expo-router-a6329839072067d010b6233b0f57abf0ece80d69.tgz",
+    "expo-router": "^3.4.8",
     "expo-status-bar": "~1.11.1",
     "lucide-react": "^0.336.0",
     "nativewind": "^4.0.36",
@@ -47,10 +47,5 @@
     "@types/picomatch": "^2.3.3",
     "@types/react": "~18.2.45",
     "typescript": "^5.3.0"
-  },
-  "expo": {
-    "install": {
-      "exclude": ["expo-router"]
-    }
   }
 }
