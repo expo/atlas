@@ -9,6 +9,7 @@ const config = withNativeWind(getDefaultConfig(__dirname), {
 
 // Allow Metro to access the `~plugin/**` files
 config.watchFolders = [__dirname, path.resolve(__dirname, '..')];
+
 // Move the Metro cache to `node_modules/.cache`
 config.cacheStores = [
   new FileStore({ root: path.join(__dirname, 'node_modules', '.cache', 'metro') }),
