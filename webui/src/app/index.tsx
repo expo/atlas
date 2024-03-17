@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
 import type { EntryGraphData } from '~/app/api/stats/[entry]/modules/index+api';
+import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
 import { TreemapGraph } from '~/components/graphs/TreemapGraph';
 import {
@@ -10,7 +11,6 @@ import {
   filtersToUrlParams,
 } from '~/providers/modules';
 import { useStatsEntryContext } from '~/providers/stats';
-import { PageHeader, PageTitle } from '~/ui/Page';
 import { Tag } from '~/ui/Tag';
 import { formatFileSize } from '~/utils/formatString';
 
@@ -29,20 +29,22 @@ export default function GraphScreen() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <PageHeader>
-        <PageTitle>
-          <h1 className="text-lg font-bold mr-4">Bundle</h1>
-          {!!graph.data && <BundleSummary data={graph.data} />}
-        </PageTitle>
-        <StatsModuleFilter />
-      </PageHeader>
-      <TreemapGraph
-        key={`bundle-graph-${entryId}`}
-        modules={graph.data?.data?.modules ?? []}
-        onModuleClick={onInspectModule}
-      />
-    </div>
+    <Page variant="viewport">
+      <div className="flex flex-1 flex-col">
+        <PageHeader>
+          <PageTitle>
+            <h1 className="text-lg font-bold mr-4">Bundle</h1>
+            {!!graph.data && <BundleSummary data={graph.data} />}
+          </PageTitle>
+          <StatsModuleFilter />
+        </PageHeader>
+        <TreemapGraph
+          key={`bundle-graph-${entryId}`}
+          modules={graph.data?.data?.modules ?? []}
+          onModuleClick={onInspectModule}
+        />
+      </div>
+    </Page>
   );
 }
 
