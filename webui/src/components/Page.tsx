@@ -35,12 +35,12 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
     }
 
     return (
-      <>
+      <div className="mt-16">
         <LayoutNavigation className="fixed top-0 left-0 right-0 z-10">
           <StatsEntrySelect />
         </LayoutNavigation>
-        <div className="pt-15">{children}</div>
-      </>
+        {children}
+      </div>
     );
   }
 );

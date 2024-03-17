@@ -10,7 +10,7 @@ import { formatFileSize } from '~/utils/formatString';
 import { type PartialStatsEntry, type StatsModule } from '~core/data/types';
 
 export default function ModulePage() {
-  const { entryId, entry } = useStatsEntryContext();
+  const { entryId, entry, entryFilePath } = useStatsEntryContext();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entryId, absolutePath!);
 
@@ -34,13 +34,13 @@ export default function ModulePage() {
       <PageHeader>
         <PageTitle>
           <h1 className="text-slate-50 font-bold text-lg mr-4" title={module.data.path}>
-            {module.data.path}
+            {entryFilePath(module.data.path)}
           </h1>
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
       </PageHeader>
 
-      <div className="mx-8">
+      <div className="mx-8 mb-4">
         {!!module.data.importedBy?.length && (
           <div className="my-4">
             <p className="text-md">Imported from:</p>
@@ -51,7 +51,7 @@ export default function ModulePage() {
                     className="text-link hover:underline"
                     href={{ pathname: '/modules/[path]', params: { path } }}
                   >
-                    {path}
+                    {entryFilePath(path)}
                   </Link>
                 </li>
               ))}

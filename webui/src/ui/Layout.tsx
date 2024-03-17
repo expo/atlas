@@ -9,7 +9,7 @@ export function LayoutNavigation({
   return (
     <header
       className={cn(
-        'h-15 flex flex-shrink-0 items-center justify-between gap-2 border-b border-b-secondary bg-default px-4',
+        'h-16 flex flex-shrink-0 items-center justify-between gap-2 border-b border-b-secondary bg-default px-4',
         className
       )}
     >
