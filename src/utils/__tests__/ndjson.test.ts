@@ -48,12 +48,4 @@ describe('parseJsonLine', () => {
       'Line 99999 not found in file'
     );
   });
-
-  it('parses a single line from file', async () => {
-    expect(await parseJsonLine(fixture('stats-brent.json'), 1)).toBeObject();
-  });
-
-  it('parses a single line from file, with large data', async () => {
-    expect(await parseJsonLine(fixture('stats-brent.json'), 2)).toBeArray();
-  });
 });

@@ -2,8 +2,8 @@ import events from 'events';
 import fs from 'fs';
 import readline from 'readline';
 import stream from 'stream';
-import { stringer } from 'stream-json/Stringer';
 import { disassembler } from 'stream-json/Disassembler';
+import { stringer } from 'stream-json/Stringer';
 
 /**
  * Iterate through lines of a ndjson/jsonl file using streams.
