@@ -83,6 +83,8 @@ function fixture(name: string, { temporary = false }: { temporary?: boolean } = 
     ? path.join(__dirname, 'fixtures/jsonl', `${name}.temp.jsonl`)
     : path.join(__dirname, 'fixtures/jsonl', `${name}.jsonl`);
 
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+
   if (temporary) {
     fs.writeFileSync(file, '');
   }
