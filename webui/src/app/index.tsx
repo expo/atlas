@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
 
 import type { EntryGraphData } from '~/app/api/stats/[entry]/modules/index+api';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
@@ -19,14 +18,6 @@ export default function GraphScreen() {
   const { filters } = useModuleFilterContext();
 
   const graph = useBundleGraphData(entryId, filters);
-  const router = useRouter();
-
-  function onInspectModule(absolutePath: string) {
-    router.push({
-      pathname: '/modules/[path]',
-      params: { path: absolutePath },
-    });
-  }
 
   return (
     <Page variant="viewport">
@@ -38,11 +29,7 @@ export default function GraphScreen() {
           </PageTitle>
           <StatsModuleFilter />
         </PageHeader>
-        <TreemapGraph
-          key={`bundle-graph-${entryId}`}
-          modules={graph.data?.data?.modules ?? []}
-          onModuleClick={onInspectModule}
-        />
+        <TreemapGraph key={`bundle-graph-${entryId}`} modules={graph.data?.data?.modules ?? []} />
       </div>
     </Page>
   );

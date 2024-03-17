@@ -8,6 +8,7 @@ type StatsEntryContext = {
   setEntryId: (id: string) => void;
   entries?: ReturnType<typeof useStatsEntriesData>;
   entry?: PartialStatsEntry;
+  entryFilePath: (absolutePath: string) => string;
 };
 
 export const statsEntryContext = createContext<StatsEntryContext>({
@@ -15,6 +16,7 @@ export const statsEntryContext = createContext<StatsEntryContext>({
   setEntryId: () => {},
   entries: undefined,
   entry: undefined,
+  entryFilePath: (absolutePath) => absolutePath,
 });
 
 export const useStatsEntryContext = () => useContext(statsEntryContext);
@@ -27,8 +29,12 @@ export function StatsEntryProvider({ children }: PropsWithChildren) {
     [entries, entryId]
   );
 
+  function entryFilePath(absolutePath: string) {
+    return entry?.projectRoot ? absolutePath.replace(entry.projectRoot + '/', '') : absolutePath;
+  }
+
   return (
-    <statsEntryContext.Provider value={{ entryId, setEntryId, entries, entry }}>
+    <statsEntryContext.Provider value={{ entryId, setEntryId, entries, entry, entryFilePath }}>
       {children}
     </statsEntryContext.Provider>
   );
