@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { parseJsonLine } from './jsonl';
+import { appendJsonLine, parseJsonLine } from './jsonl';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
 import { AtlasValidationError } from '../utils/errors';
@@ -24,7 +24,7 @@ export async function validateStatsFile(statsFile: string, metadata = getStatsMe
     throw new AtlasValidationError('STATS_FILE_NOT_FOUND', statsFile);
   }
 
-  if (env.EXPO_NO_STATS_VALIDATION) {
+  if (env.EXPO_ATLAS_NO_STATS_VALIDATION) {
     return;
   }
 
@@ -42,14 +42,12 @@ export async function validateStatsFile(statsFile: string, metadata = getStatsMe
 export async function createStatsFile(filePath: string) {
   if (fs.existsSync(filePath)) {
     try {
-      await validateStatsFile(filePath);
+      return await validateStatsFile(filePath);
     } catch {
-      await fs.promises.writeFile(filePath, JSON.stringify(getStatsMetdata()) + '\n');
+      await fs.promises.writeFile(filePath, '');
     }
-
-    return;
   }
 
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.promises.writeFile(filePath, JSON.stringify(getStatsMetdata()) + '\n');
+  await appendJsonLine(filePath, getStatsMetdata());
 }

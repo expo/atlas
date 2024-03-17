@@ -33,7 +33,7 @@ export function createAtlasMiddleware(source: StatsSource) {
 
   const middleware = connect();
 
-  if (env.EXPO_DEBUG) {
+  if (env.EXPO_ATLAS_DEBUG) {
     middleware.use(morgan('tiny'));
   }
 

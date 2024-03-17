@@ -80,8 +80,8 @@ describe('appendJsonLine', () => {
  */
 function fixture(name: string, { temporary = false }: { temporary?: boolean } = {}) {
   const file = temporary
-    ? path.join(__dirname, 'fixtures', `${name}.temp.jsonl`)
-    : path.join(__dirname, 'fixtures', `${name}.jsonl`);
+    ? path.join(__dirname, 'fixtures/jsonl', `${name}.temp.jsonl`)
+    : path.join(__dirname, 'fixtures/jsonl', `${name}.jsonl`);
 
   if (temporary) {
     fs.writeFileSync(file, '');
