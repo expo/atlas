@@ -4,7 +4,7 @@ import path from 'path';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
 import { AtlasValidationError } from '../utils/errors';
-import { parseJsonLine } from '../utils/ndjson';
+import { parseJsonLine } from './jsonl';
 
 export type StatsMetadata = { name: string; version: string };
 

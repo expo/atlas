@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import type { PartialStatsEntry, StatsEntry, StatsSource } from './types';
-import { appendJsonLine, forEachJsonLines, parseJsonLine } from '../utils/ndjson';
+import { appendJsonLine, forEachJsonLines, parseJsonLine } from '../utils/jsonl';
 
 export class StatsFileSource implements StatsSource {
   constructor(public readonly statsPath: string) {
