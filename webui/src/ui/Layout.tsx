@@ -1,11 +1,13 @@
 import cn from 'classnames';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { HTMLAttributes, PropsWithChildren } from 'react';
 
 export function LayoutNavigation({
   children,
   className,
 }: PropsWithChildren & { className?: string }) {
+  const router = useRouter();
+
   return (
     <header
       className={cn(
@@ -13,10 +15,24 @@ export function LayoutNavigation({
         className
       )}
     >
-      <Link href="/" aria-label="Go back to graph">
-        <ExpoLogoBig title="Expo" className="w-[74px] text-default max-md-gutters:hidden" />
-        <ExpoLogoSmall title="Expo" className="hidden text-default max-md-gutters:flex" />
-      </Link>
+      <div className="flex flex-row">
+        <Link className="mr-4" href="/" aria-label="Go back to graph">
+          <ExpoLogoBig title="Expo" className="w-[74px] text-default max-md-gutters:hidden" />
+          <ExpoLogoSmall title="Expo" className="hidden text-default max-md-gutters:flex" />
+        </Link>
+        {router.canGoBack() ? (
+          <a
+            className="text-link hover:underline"
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              router.back();
+            }}
+          >
+            ← go back
+          </a>
+        ) : null}
+      </div>
       {children}
     </header>
   );
