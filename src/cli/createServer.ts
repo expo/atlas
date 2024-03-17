@@ -5,6 +5,7 @@ import morgan from 'morgan';
 
 import { type Options } from './resolveOptions';
 import { StatsFileSource } from '../data/StatsFileSource';
+import { env } from '../utils/env';
 import { CLIENT_BUILD_DIR, SERVER_BUILD_DIR } from '../utils/middleware';
 
 export function createServer(options: Options) {
@@ -17,7 +18,10 @@ export function createServer(options: Options) {
   app.disable('x-powered-by');
 
   app.use(compression());
-  app.use(morgan('tiny'));
+
+  if (env.EXPO_ATLAS_DEBUG) {
+    app.use(morgan('tiny'));
+  }
 
   // TODO(cedric): replace with middleware once we can
   app.use(

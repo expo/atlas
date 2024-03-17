@@ -47,7 +47,7 @@ async function run() {
   const server = createServer(options);
 
   server.listen(options.port, () => {
-    const href = `http://localhost:${options.port}/_expo/atlas`;
+    const href = `http://localhost:${options.port}`;
 
     console.log(`Metro bundle inspector is ready on ${href}`);
     console.log('Loaded stats file:');
