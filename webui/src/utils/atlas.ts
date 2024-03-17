@@ -2,7 +2,7 @@ import '~core/utils/global';
 
 /**
  * Get the Expo Atlas data source, from global property.
- * If we are in development mode, initialize a stats fixture from native component list.
+ * When running in development, the `metro.config.js` initializes a fixture source.
  */
 export function getSource() {
   if (!global.EXPO_ATLAS_SOURCE) {
