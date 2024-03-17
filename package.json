@@ -31,7 +31,6 @@
     "build": "expo-module build",
     "clean": "expo-module clean",
     "lint": "eslint . --ext js,ts,tsx",
-    "test": "bun --test",
     "typecheck": "expo-module typecheck"
   },
   "license": "MIT",
