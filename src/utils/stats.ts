@@ -10,7 +10,7 @@ export type StatsMetadata = { name: string; version: string };
 
 /** The default location of the metro stats file */
 export function getStatsPath(projectRoot: string) {
-  return path.join(projectRoot, '.expo/stats.json');
+  return path.join(projectRoot, '.expo/stats.jsonl');
 }
 
 /** The information to validate if a stats file is compatible with this library version */
