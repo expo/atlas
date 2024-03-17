@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import type { PartialStatsEntry, StatsEntry, StatsSource } from './types';
-import { appendJsonLine, mapJsonLines, parseJsonLine } from '../utils/ndjson';
+import { appendJsonLine, forEachJsonLines, parseJsonLine } from '../utils/ndjson';
 
 export class StatsFileSource implements StatsSource {
   constructor(public readonly statsPath: string) {
@@ -27,7 +27,7 @@ export async function listStatsEntries(statsPath: string) {
   const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)/;
   const entries: PartialStatsEntry[] = [];
 
-  await mapJsonLines(statsPath, (contents, line) => {
+  await forEachJsonLines(statsPath, (contents, line) => {
     // Skip the stats metadata line
     if (line === 1) return;
 

@@ -1,16 +1,16 @@
 import { describe, expect, it, mock } from 'bun:test';
 import path from 'path';
 
-import { mapJsonLines, parseJsonLine } from '../ndjson';
+import { forEachJsonLines, parseJsonLine } from '../ndjson';
 
 function fixture(...filePath: string[]) {
   return path.join(__dirname, 'fixtures', ...filePath);
 }
 
-describe('mapJsonLines', () => {
-  it('maps each line of file', async () => {
+describe('forEachJsonLines', () => {
+  it('iterates each line of file', async () => {
     const lines: string[] = [];
-    await mapJsonLines(fixture('ndjson.json'), (content) => {
+    await forEachJsonLines(fixture('ndjson.json'), (content) => {
       lines.push(content);
     });
 
@@ -22,15 +22,16 @@ describe('mapJsonLines', () => {
     ]);
   });
 
-  it('maps each line with line numbers starting from 1', async () => {
+  it('iterates each line with line numbers starting from 1', async () => {
     const onReadLine = mock();
-    await mapJsonLines(fixture('ndjson.json'), onReadLine);
+    await forEachJsonLines(fixture('ndjson.json'), onReadLine);
 
-    expect(onReadLine).not.toHaveBeenCalledWith(expect.any(String), 0);
-    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 1);
-    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 2);
-    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 3);
-    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 4);
+    // Callback is invoked with (content, line, reader) => ...
+    expect(onReadLine).not.toHaveBeenCalledWith(expect.any(String), 0, expect.any(Object));
+    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 1, expect.any(Object));
+    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 2, expect.any(Object));
+    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 3, expect.any(Object));
+    expect(onReadLine).toHaveBeenCalledWith(expect.any(String), 4, expect.any(Object));
   });
 });
 
@@ -46,5 +47,13 @@ describe('parseJsonLine', () => {
     await expect(parseJsonLine(fixture('ndjson.json'), 99999)).rejects.toThrow(
       'Line 99999 not found in file'
     );
+  });
+
+  it('parses a single line from file', async () => {
+    expect(await parseJsonLine(fixture('stats-brent.json'), 1)).toBeObject();
+  });
+
+  it('parses a single line from file, with large data', async () => {
+    expect(await parseJsonLine(fixture('stats-brent.json'), 2)).toBeArray();
   });
 });
