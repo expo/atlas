@@ -36,3 +36,13 @@ runs:
       run: bun install
       working-directory: webui
       shell: bash
+
+    - name: ♻️ Restore webui cache
+      if: ${{ inputs.with-webui == 'true' }}
+      uses: actions/cache@v4
+      with:
+        key: webui-metro-${{ runner.os }}-${{ github.sha }}
+        restore-keys: |
+          webui-metro-${{ runner.os }}
+        path: |
+          webui/node_modules/.cache/metro
