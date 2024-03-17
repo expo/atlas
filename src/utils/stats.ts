@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
+import { parseJsonLine } from './jsonl';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
 import { AtlasValidationError } from '../utils/errors';
-import { parseJsonLine } from './jsonl';
 
 export type StatsMetadata = { name: string; version: string };
 
