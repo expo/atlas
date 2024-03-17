@@ -4,6 +4,9 @@
 /build
 /webui/dist
 
+# test fixtures
+*.temp.jsonl
+
 # dependencies
 node_modules/
 npm-debug.log*
