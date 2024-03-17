@@ -1,18 +1,22 @@
 import events from 'events';
 import fs from 'fs';
 import readline from 'readline';
+import stream from 'stream';
+import { disassembler } from 'stream-json/Disassembler';
+import { stringer } from 'stream-json/Stringer';
 
 /**
- * Efficiently map through all lines within the Newline-Delimited JSON (ndjson) file, using streams.
- * This won't parse the actual JSON but returns the partial string instead.
- * Note, line numbers starts at `1`.
+ * Iterate through lines of a ndjson/jsonl file using streams.
+ * This won't parse the actual JSON but invokes the callback for each line.
+ *
+ * @note Line numbers starts at `1`
  */
-export async function mapNDJson(
+export async function forEachJsonLines(
   filePath: string,
-  callback: (line: number, contents: string) => any
+  callback: (lineContent: string, lineNumber: number, reader: readline.Interface) => any
 ) {
-  const stream = fs.createReadStream(filePath);
-  const reader = readline.createInterface({ input: stream });
+  const input = fs.createReadStream(filePath);
+  const reader = readline.createInterface({ input });
   let lineNumber = 1;
 
   reader.on('error', (error) => {
@@ -20,60 +24,42 @@ export async function mapNDJson(
   });
 
   reader.on('line', (contents) => {
-    callback(lineNumber++, contents);
+    callback(contents, lineNumber++, reader);
   });
 
   await events.once(reader, 'close');
-  stream.close();
 }
 
 /**
- * Efficiently parse a single line from a Newline-Delimited JSON (ndjson) file, using streams.
- * Note, line numbers starts at `1`.
+ * Parse a single line of a jsonl/ndjson file using streams.
+ * Once the line is found, iteration is stopped and the parsed JSON is returned.
+ *
+ * @note Line numbers starts at `1`
  */
-export async function parseNDJsonAtLine<T = any>(filePath: string, line: number): Promise<T> {
-  const stream = fs.createReadStream(filePath);
-  const reader = readline.createInterface({ input: stream });
+export async function parseJsonLine<T = any>(filePath: string, lineNumber: number): Promise<T> {
+  let lineContent = '';
 
-  let lineContents;
-  let lineNumber = 1;
-
-  reader.on('error', (error) => {
-    throw error;
-  });
-
-  reader.on('line', (contents) => {
-    if (lineNumber++ === line) {
-      lineContents = contents;
+  await forEachJsonLines(filePath, (content, line, reader) => {
+    if (line === lineNumber) {
+      lineContent = content;
       reader.close();
     }
   });
 
-  await events.once(reader, 'close');
-  stream.close();
-
-  if (!lineContents) {
-    throw new Error(`Line ${line} not found in file: ${filePath}`);
+  if (!lineContent) {
+    throw new Error(`Line ${lineNumber} not found in file: ${filePath}`);
   }
 
-  return JSON.parse(lineContents);
+  return JSON.parse(lineContent);
 }
 
-/** Efficiently append a new line to a Newline-Delimited JSON (ndjson) file, using streams. */
-export async function appendNDJsonToFile(filePath: string, data: unknown): Promise<void> {
-  // Note(cedric): keep this dependency inlined to avoid loading it in the WebUI
-  const bfj = require('bfj');
-  await bfj.write(filePath, data, {
-    // Force stream to append to file
-    flags: 'a',
-    // Ignore all complex data types, which shouldn't exist in the data
-    buffers: 'ignore',
-    circular: 'ignore',
-    iterables: 'ignore',
-    promises: 'ignore',
-    // Only enable maps, as the graph dependencies are stored as a map
-    maps: 'object',
-  });
+/** Append a single line of json data to a jsonl/ndjson file using streams. */
+export async function appendJsonLine(filePath: string, data: unknown): Promise<void> {
+  const input = stream.Readable.from([data] as any, { objectMode: true });
+  const output = fs.createWriteStream(filePath, { flags: 'a' });
 
+  input.pipe(disassembler()).pipe(stringer()).pipe(output);
+
+  await events.once(output, 'finish');
   await fs.promises.appendFile(filePath, '\n', 'utf-8');
 }

@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import type { PartialStatsEntry, StatsEntry, StatsSource } from './types';
-import { appendNDJsonToFile, mapNDJson, parseNDJsonAtLine } from '../utils/ndjson';
+import { appendJsonLine, forEachJsonLines, parseJsonLine } from '../utils/ndjson';
 
 export class StatsFileSource implements StatsSource {
   constructor(public readonly statsPath: string) {
@@ -27,14 +27,14 @@ export async function listStatsEntries(statsPath: string) {
   const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)/;
   const entries: PartialStatsEntry[] = [];
 
-  await mapNDJson(statsPath, (index, line) => {
+  await forEachJsonLines(statsPath, (contents, line) => {
     // Skip the stats metadata line
-    if (index === 1) return;
+    if (line === 1) return;
 
-    const [_, platform, projectRoot, entryPoint] = line.match(bundlePattern) ?? [];
+    const [_, platform, projectRoot, entryPoint] = contents.match(bundlePattern) ?? [];
     if (platform && projectRoot && entryPoint) {
       entries.push({
-        id: String(index),
+        id: String(line),
         platform: platform as any,
         projectRoot,
         entryPoint,
@@ -49,7 +49,7 @@ export async function listStatsEntries(statsPath: string) {
  * Get the stats entry by id or line number, and parse the data.
  */
 export async function readStatsEntry(statsPath: string, id: number): Promise<StatsEntry> {
-  const statsEntry = await parseNDJsonAtLine<any[]>(statsPath, id);
+  const statsEntry = await parseJsonLine<any[]>(statsPath, id);
   return {
     id: String(id),
     platform: statsEntry[0],
@@ -80,5 +80,5 @@ export function writeStatsEntry(statsPath: string, stats: StatsEntry) {
     stats.serializeOptions,
   ];
 
-  return (writeStatsQueue = writeStatsQueue.then(() => appendNDJsonToFile(statsPath, entry)));
+  return (writeStatsQueue = writeStatsQueue.then(() => appendJsonLine(statsPath, entry)));
 }
