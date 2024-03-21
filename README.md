@@ -13,7 +13,7 @@ Install the `expo-atlas` package as (development) dependency to your project:
 $ npx expo install expo-atlas
 ```
 
-Configure your Metro config to emit a `.expo/stats.jsonl` file containing information about your bundles.
+Configure your Metro config to emit an Atlas file containing information about your bundles.
 
 ```js metro.config.js
 const { getDefaultConfig } = require('expo/metro-config');
@@ -36,12 +36,12 @@ $ npx expo export --platform all
 $ npx expo-atlas
 ```
 
-## 🧑‍🤝‍🧑 Sharing stats files
+## 🧑‍🤝‍🧑 Sharing the Atlas file
 
-You can also open a previously created `stats.jsonl` file:
+You can also open a previously created `atlas.jsonl` file:
 
 ```
-$ npx expo-atlas ./path/to/stats.jsonl
+$ npx expo-atlas ./path/to/atlas.jsonl
 ```
 
 <div align="center">
