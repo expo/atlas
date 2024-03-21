@@ -7,8 +7,8 @@ import { AtlasValidationError } from '../errors';
 import { getStatsPath, getStatsMetdata, createStatsFile, validateStatsFile } from '../stats';
 
 describe('getStatsPath', () => {
-  it('returns default path `<project>/.expo/stats.jsonl`', () => {
-    expect(getStatsPath('<project>')).toBe('<project>/.expo/stats.jsonl');
+  it('returns default path `<project>/.expo/atlas.jsonl`', () => {
+    expect(getStatsPath('<project>')).toBe('<project>/.expo/atlas.jsonl');
   });
 });
 
