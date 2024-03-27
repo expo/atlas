@@ -1,10 +1,9 @@
 import { Slot } from 'expo-router';
-import { useColorScheme } from 'nativewind';
-import { useEffect } from 'react';
 
 import { ModuleFilterProvider } from '~/providers/modules';
 import { QueryProvider } from '~/providers/query';
 import { StatsEntryProvider } from '~/providers/stats';
+import { ThemeProvider } from '~/providers/theme';
 
 // Import the Expo-required radix styles
 import '@radix-ui/colors/green.css';
@@ -31,28 +30,15 @@ import '~/styles-expo.css';
 import '~/styles.css';
 
 export default function RootLayout() {
-  useWorkaroundForThemeClass();
-
   return (
     <QueryProvider>
-      <StatsEntryProvider>
-        <ModuleFilterProvider>
-          <Slot />
-        </ModuleFilterProvider>
-      </StatsEntryProvider>
+      <ThemeProvider>
+        <StatsEntryProvider>
+          <ModuleFilterProvider>
+            <Slot />
+          </ModuleFilterProvider>
+        </StatsEntryProvider>
+      </ThemeProvider>
     </QueryProvider>
   );
-}
-
-function useWorkaroundForThemeClass() {
-  const { colorScheme } = useColorScheme();
-
-  useEffect(() => {
-    if (document.body) {
-      document.body.classList.remove('light-theme', 'dark-theme');
-      if (colorScheme) {
-        document.body.className = `${colorScheme}-theme`;
-      }
-    }
-  }, [colorScheme]);
 }
