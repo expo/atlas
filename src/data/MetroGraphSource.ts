@@ -62,7 +62,7 @@ export function convertGraph(options: ConvertGraphToStatsOptions): StatsEntry {
       : transformOptions?.platform ?? 'unknown';
 
   return {
-    id: `${options.entryPoint}+${platform}`,
+    id: Buffer.from(`${options.entryPoint}+${platform}`).toString('base64'), // FIX: only use URL allowed characters
     platform,
     projectRoot: options.projectRoot,
     entryPoint: options.entryPoint,
