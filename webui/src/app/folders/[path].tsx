@@ -8,6 +8,7 @@ import { TreemapGraph } from '~/components/graphs/TreemapGraph';
 import { useStatsEntryContext } from '~/providers/stats';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
+import { fetchApi } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
 import { type PartialStatsEntry } from '~core/data/types';
 
@@ -88,7 +89,7 @@ function useFolderData(entryId: string, path: string) {
     queryKey: [`module`, entryId, path],
     queryFn: async ({ queryKey }) => {
       const [_key, entry, path] = queryKey as [string, string, string];
-      return fetch(`/api/stats/${entry}/folders`, {
+      return fetchApi(`/api/stats/${entry}/folders`, {
         method: 'POST',
         body: JSON.stringify({ path }),
       })

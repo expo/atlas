@@ -11,6 +11,7 @@ import {
 } from '~/providers/modules';
 import { useStatsEntryContext } from '~/providers/stats';
 import { Tag } from '~/ui/Tag';
+import { fetchApi } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
 
 export default function GraphScreen() {
@@ -66,7 +67,7 @@ function useBundleGraphData(entryId: string, filters?: ModuleFilters) {
         ? `/api/stats/${entry}/modules?${filtersToUrlParams(filters)}`
         : `/api/stats/${entry}/modules`;
 
-      return fetch(url)
+      return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))
         .then((res) => res.json());
     },

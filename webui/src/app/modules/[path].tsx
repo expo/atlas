@@ -6,6 +6,7 @@ import { useStatsEntryContext } from '~/providers/stats';
 import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
+import { fetchApi } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
 import { type PartialStatsEntry, type StatsModule } from '~core/data/types';
 
@@ -114,7 +115,7 @@ function useModuleData(entryId: string, path: string) {
     queryKey: [`module`, entryId, path],
     queryFn: async ({ queryKey }) => {
       const [_key, entry, path] = queryKey as [string, string, string];
-      return fetch(`/api/stats/${entry}/modules`, {
+      return fetchApi(`/api/stats/${entry}/modules`, {
         method: 'POST',
         body: JSON.stringify({ path }),
       })
