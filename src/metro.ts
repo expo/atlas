@@ -2,6 +2,7 @@ import { type MetroConfig } from 'metro-config';
 
 import { convertGraph } from './data/MetroGraphSource';
 import { writeStatsEntry } from './data/StatsFileSource';
+import { attachMetroSerializer } from './utils/metro';
 import { createStatsFile, getStatsPath } from './utils/stats';
 
 type ExpoAtlasOptions = Partial<{
@@ -27,7 +28,6 @@ type ExpoAtlasOptions = Partial<{
  */
 export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {}) {
   const projectRoot = config.projectRoot;
-  const originalSerializer = config.serializer?.customSerializer ?? (() => {});
 
   if (!projectRoot) {
     throw new Error('No "projectRoot" configured in Metro config.');
@@ -42,16 +42,13 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   // Note(cedric): we don't have to await this, Metro would never bundle before this is finisheds
   createStatsFile(statsFile);
 
-  // @ts-expect-error
-  config.serializer.customSerializer = (entryPoint, preModules, graph, options) => {
+  attachMetroSerializer(config, (entryPoint, preModules, graph, options) => {
     // Note(cedric): we don't have to await this, it has a built-in write queue
     writeStatsEntry(
       statsFile,
       convertGraph({ projectRoot, entryPoint, preModules, graph, options, extensions })
     );
-
-    return originalSerializer(entryPoint, preModules, graph, options);
-  };
+  });
 
   return config;
 }
