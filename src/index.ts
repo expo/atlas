@@ -8,3 +8,4 @@ export { AtlasError, AtlasValidationError } from './utils/errors';
 export { createAtlasMiddleware } from './utils/middleware';
 export { fuzzyFilterModules } from './utils/search';
 export { createStatsFile, validateStatsFile, getStatsMetdata, getStatsPath } from './utils/stats';
+export { attachMetroSerializer } from './utils/metro';
