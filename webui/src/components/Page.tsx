@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import cn from 'classnames';
-import { forwardRef, type HTMLAttributes } from 'react';
+import { forwardRef, PropsWithChildren, type HTMLAttributes } from 'react';
 
 import { StatsEntrySelect } from '~/components/forms/StatsEntrySelect';
 import { LayoutContent, LayoutNavigation } from '~/ui/Layout';
@@ -45,3 +45,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
   }
 );
 Page.displayName = 'Page';
+
+export function PageCentered({ children }: PropsWithChildren) {
+  return <div className="flex flex-1 flex-col items-center justify-center">{children}</div>
+}
