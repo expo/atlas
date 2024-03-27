@@ -15,6 +15,8 @@
     "build",
     "!build/tsconfig.tsbuildinfo",
     "expo-module.config.json",
+    "cli.js",
+    "cli.d.ts",
     "metro.js",
     "metro.d.ts",
     "webui/dist"
