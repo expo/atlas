@@ -16,8 +16,6 @@ export function StatsEntrySelect() {
     setEntryId(value);
   }
 
-  console.log('platform', entry?.platform);
-
   return (
     <Select.Root value={String(entryId)} onValueChange={onEntryChange}>
       <Select.Trigger asChild>
@@ -34,9 +32,9 @@ export function StatsEntrySelect() {
           side="bottom"
           collisionPadding={{ left: 16, right: 16 }}
           className={cn(
-            'flex min-w-[220px] flex-col gap-0.5 rounded-md border border-default bg-default p-1 shadow-md'
-            // 'will-change-[opacity,transform]',
-            // 'data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade'
+            'flex min-w-[220px] flex-col gap-0.5 rounded-md border border-default bg-default p-1 shadow-md',
+            'transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=open]:duration-300',
+            'data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-1/3 data-[state=open]:fade-in data-[state=open]:slide-in-from-top-1/3'
           )}
         >
           <Select.ScrollUpButton className="SelectScrollButton">
