@@ -16,6 +16,8 @@ export function StatsEntrySelect() {
     setEntryId(value);
   }
 
+  console.log('platform', entry?.platform);
+
   return (
     <Select.Root value={String(entryId)} onValueChange={onEntryChange}>
       <Select.Trigger asChild>
