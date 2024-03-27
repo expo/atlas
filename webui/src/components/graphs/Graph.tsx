@@ -24,8 +24,17 @@ export const Graph = forwardRef<ReactECharts, ComponentProps<typeof ReactECharts
   );
 });
 
-function useDynamicHeight<T extends HTMLElement>(ref: RefObject<T>, initialHeight = 300) {
+let lastKnownHeight = 300;
+
+function useDynamicHeight<T extends HTMLElement>(
+  ref: RefObject<T>,
+  initialHeight = lastKnownHeight
+) {
   const [size, setSize] = useState({ height: initialHeight, width: 0 });
+
+  useEffect(() => {
+    lastKnownHeight = size.height;
+  }, [size.height]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
