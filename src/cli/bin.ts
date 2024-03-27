@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import arg from 'arg';
+import chalk from 'chalk';
 import open from 'open';
 import path from 'path';
 
@@ -26,16 +27,16 @@ if (args['--version']) {
 }
 
 if (args['--help']) {
-  console.log(`
-    Usage
-      $ expo-atlas [statsFile]
-
-    Options
-      --port, -p      Port to listen on
-      --no-open       Do not open the browser automatically
-      --help, -h      Displays this message
-      --version, -v   Displays the current version
-  `);
+  printLines([
+    chalk.bold('Usage'),
+    `  ${chalk.dim('$')} expo-atlas ${chalk.dim('[statsFile]')}`,
+    '',
+    chalk.bold('Options'),
+    `  --port${chalk.dim(', -p')}      Port to listen on`,
+    `  --no-open       Do not open the browser automatically`,
+    `  --help${chalk.dim(', -h')}      Displays this message`,
+    `  --version${chalk.dim(', -v')}   Displays the current version`,
+  ]);
   process.exit(0);
 }
 
@@ -49,9 +50,10 @@ async function run() {
   server.listen(options.port, () => {
     const href = `http://localhost:${options.port}`;
 
-    console.log(`Metro bundle inspector is ready on ${href}`);
-    console.log('Loaded stats file:');
-    console.log(`  ${options.statsFile}`);
+    printLines([
+      `Expo Atlas is ready on: ${chalk.underline(href)}`,
+      `  ${chalk.dim(`Using: ${options.statsFile}`)}`,
+    ]);
 
     if (options.browserOpen) {
       open(href).catch((error) => {
@@ -59,6 +61,10 @@ async function run() {
       });
     }
   });
+}
+
+function printLines(lines: string[]) {
+  console.log(`  ${lines.join('\n  ')}`);
 }
 
 run().catch((error) => {
