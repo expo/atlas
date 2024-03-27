@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
 
+import { fetchApi } from '~/utils/api';
 import { type PartialStatsEntry } from '~core/data/types';
 
 type StatsEntryContext = {
@@ -44,6 +45,6 @@ export function StatsEntryProvider({ children }: PropsWithChildren) {
 function useStatsEntriesData() {
   return useQuery<PartialStatsEntry[]>({
     queryKey: ['stats-entries'],
-    queryFn: () => fetch('/api/stats').then((res) => res.json()),
+    queryFn: () => fetchApi('/api/stats').then((res) => res.json()),
   });
 }

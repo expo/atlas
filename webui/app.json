@@ -8,6 +8,7 @@
       "output": "server"
     },
     "experiments": {
+      "baseUrl": "/_expo/atlas",
       "tsconfigPaths": true,
       "typedRoutes": true
     },
