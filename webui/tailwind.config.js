@@ -5,4 +5,5 @@ module.exports = {
   ...expoTheme,
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
+  plugins: [require('tailwindcss-animate')],
 };
