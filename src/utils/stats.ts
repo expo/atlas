@@ -40,14 +40,7 @@ export async function validateStatsFile(statsFile: string, metadata = getStatsMe
  * This metdata is used by the API to determine version compatibility.
  */
 export async function createStatsFile(filePath: string) {
-  if (fs.existsSync(filePath)) {
-    try {
-      return await validateStatsFile(filePath);
-    } catch {
-      await fs.promises.writeFile(filePath, '');
-    }
-  }
-
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+  await fs.promises.rm(filePath, { force: true });
   await appendJsonLine(filePath, getStatsMetdata());
 }
