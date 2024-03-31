@@ -1,21 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 
-import { type FolderGraphData } from '../api/stats/[entry]/folders/index+api';
-
+import { type FolderGraphData } from '~/app/api/stats/[entry]/folders/index+api';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { TreemapGraph } from '~/components/graphs/TreemapGraph';
-import { useStatsEntryContext } from '~/providers/stats';
+import { useStatsEntry } from '~/providers/stats';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
+import { relativeEntryPath } from '~/utils/stats';
 import { type PartialStatsEntry } from '~core/data/types';
 
 export default function FolderPage() {
-  const { entryId, entry, entryFilePath } = useStatsEntryContext();
+  const { entry } = useStatsEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const folder = useFolderData(entryId, absolutePath!);
+  const folder = useFolderData(entry.id, absolutePath!);
 
   if (folder.isLoading) {
     return <FolderPageSkeleton />;
@@ -39,15 +39,15 @@ export default function FolderPage() {
               className="text-slate-50 font-bold text-lg mr-4"
               title={folder.data.metadata.folderPath}
             >
-              {entryFilePath(folder.data.metadata.folderPath)}/
+              {relativeEntryPath(entry, folder.data.metadata.folderPath)}/
             </h1>
             <FolderSummary platform={entry?.platform} folder={folder.data.metadata} />
           </PageTitle>
         </PageHeader>
 
         <TreemapGraph
-          key={`folder-graph-${entryId}`}
-          name={`.../${entryFilePath(folder.data.metadata.folderName)}`}
+          key={`folder-graph-${entry.id}`}
+          name={`.../${relativeEntryPath(entry, folder.data.metadata.folderName)}`}
           modules={folder.data?.data?.modules ?? []}
         />
       </div>

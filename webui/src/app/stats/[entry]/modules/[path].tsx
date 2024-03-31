@@ -2,18 +2,19 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { useStatsEntryContext } from '~/providers/stats';
+import { useStatsEntry } from '~/providers/stats';
 import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
+import { relativeEntryPath } from '~/utils/stats';
 import { type PartialStatsEntry, type StatsModule } from '~core/data/types';
 
 export default function ModulePage() {
-  const { entryId, entry, entryFilePath } = useStatsEntryContext();
+  const { entry } = useStatsEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const module = useModuleData(entryId, absolutePath!);
+  const module = useModuleData(entry.id, absolutePath!);
 
   const outputCode = module.data?.output?.map((output) => output.data.code).join('\n');
 
@@ -35,7 +36,7 @@ export default function ModulePage() {
       <PageHeader>
         <PageTitle>
           <h1 className="text-slate-50 font-bold text-lg mr-4" title={module.data.path}>
-            {entryFilePath(module.data.path)}
+            {relativeEntryPath(entry, module.data.path)}
           </h1>
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
@@ -50,9 +51,12 @@ export default function ModulePage() {
                 <li key={path} className="ml-4">
                   <Link
                     className="text-link hover:underline"
-                    href={{ pathname: '/modules/[path]', params: { path } }}
+                    href={{
+                      pathname: '/stats/[entry]/modules/[path]',
+                      params: { entry: entry.id, path },
+                    }}
                   >
-                    {entryFilePath(path)}
+                    {relativeEntryPath(entry, path)}
                   </Link>
                 </li>
               ))}
