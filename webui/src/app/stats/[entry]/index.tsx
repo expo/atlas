@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import type { EntryGraphData } from '~/app/api/stats/[entry]/modules/index+api';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
-import { TreemapGraph } from '~/components/graphs/TreemapGraph';
 import {
   type ModuleFilters,
-  useModuleFilterContext,
-  filtersToUrlParams,
-} from '~/providers/modules';
+  StatsModuleFilter,
+  statsModuleFiltersToUrlParams,
+  useStatsModuleFilters,
+} from '~/components/forms/StatsModuleFilter';
+import { TreemapGraph } from '~/components/graphs/TreemapGraph';
 import { useStatsEntry } from '~/providers/stats';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
@@ -16,7 +16,7 @@ import { formatFileSize } from '~/utils/formatString';
 
 export default function StatsScreen() {
   const { entry } = useStatsEntry();
-  const { filters } = useModuleFilterContext();
+  const filters = useStatsModuleFilters();
 
   const graph = useBundleGraphData(entry.id, filters);
 
@@ -58,13 +58,13 @@ function BundleSummary({ data }: { data: EntryGraphData }) {
 }
 
 /** Load the bundle graph data from API, with default or custom filters */
-function useBundleGraphData(entryId: string, filters?: ModuleFilters) {
+function useBundleGraphData(entryId: string, filters: ModuleFilters) {
   return useQuery<EntryGraphData>({
     queryKey: [`bundle-graph`, entryId, filters],
     queryFn: ({ queryKey }) => {
       const [_key, entry, filters] = queryKey as [string, string, ModuleFilters | undefined];
       const url = filters
-        ? `/api/stats/${entry}/modules?${filtersToUrlParams(filters)}`
+        ? `/api/stats/${entry}/modules?${statsModuleFiltersToUrlParams(filters)}`
         : `/api/stats/${entry}/modules`;
 
       return fetchApi(url)
