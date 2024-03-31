@@ -22,7 +22,7 @@ export function globFilterModules(
     return items;
   }
 
-  const matcher = picomatch(options.include ? splitPattern(options.include) : '**', {
+  const matcher = picomatch(splitPattern(options.include || '**'), {
     cwd: '',
     dot: true,
     nocase: true,
@@ -38,5 +38,6 @@ export function globFilterModules(
  * This splits on any combination of `,` and whitespaces.
  */
 function splitPattern(pattern: string) {
-  return pattern.split(/\s*,\s*/);
+  const split = pattern.split(/\s*,\s*/).filter(Boolean);
+  return split.length ? split : undefined;
 }
