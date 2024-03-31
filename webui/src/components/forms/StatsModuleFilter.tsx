@@ -67,7 +67,7 @@ export function StatsModuleFilter() {
 
   const onExcludeChange = useCallback(
     debounce((value: string) => {
-      router.setParams({ include: value || undefined });
+      router.setParams({ exclude: value || undefined });
     }, 300),
     []
   );
