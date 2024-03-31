@@ -1,7 +1,7 @@
 import { statsModuleFiltersFromUrlParams } from '~/components/forms/StatsModuleFilter';
 import { getSource } from '~/utils/atlas';
+import { globFilterModules } from '~/utils/search';
 import { type StatsEntry, type StatsModule } from '~core/data/types';
-import { fuzzyFilterModules } from '~core/utils/search';
 
 /** The partial module data, when listing all available modules from a stats entry */
 export type ModuleMetadata = Omit<StatsModule, 'source' | 'output'> & {
@@ -62,7 +62,7 @@ function filterModules(request: Request, stats: StatsEntry): ModuleMetadata[] {
     modules = modules.filter((module) => !module.package);
   }
 
-  return fuzzyFilterModules(modules, filters).map((module) => ({
+  return globFilterModules(modules, stats.projectRoot, filters).map((module) => ({
     ...module,
     source: undefined,
     output: undefined,
