@@ -1,6 +1,6 @@
-import { type FormEvent, type KeyboardEvent, useState } from 'react';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
+import { type FormEvent, type KeyboardEvent, useState, useCallback } from 'react';
 
-import { useModuleFilterContext, useModuleFilterReducer } from '~/providers/modules';
 import { Button } from '~/ui/Button';
 import { Checkbox } from '~/ui/Checkbox';
 import { Input } from '~/ui/Input';
@@ -13,40 +13,67 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~/ui/Sheet';
+import { debounce } from '~/utils/debounce';
+
+export type ModuleFilters = typeof DEFAULT_FILTERS;
+
+const DEFAULT_FILTERS = {
+  modules: 'project,node_modules',
+  include: '',
+  exclude: '',
+};
+
+export function useStatsModuleFilters(): ModuleFilters {
+  const filters = useGlobalSearchParams<Partial<ModuleFilters>>();
+  return {
+    modules: filters.modules || DEFAULT_FILTERS.modules,
+    include: filters.include || DEFAULT_FILTERS.include,
+    exclude: filters.exclude || DEFAULT_FILTERS.exclude,
+  };
+}
 
 export function StatsModuleFilter() {
-  const { filters, setFilters } = useModuleFilterContext();
-  // NOTE(cedric): keep a duplicate data store to avoid spamming the API with every change
-  const [formData, setFormData] = useModuleFilterReducer(filters);
+  const router = useRouter();
+  const filters = useStatsModuleFilters();
+
   // NOTE(cedric): we want to programmatically close the dialog when the form is submitted, so make it controlled
   const [dialogOpen, setDialogOpen] = useState(false);
 
   function onFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     event.stopPropagation();
-
     setDialogOpen(false);
-    setFilters(formData);
   }
 
-  function onInputEnter(
-    event: KeyboardEvent<HTMLInputElement>,
-    data: (data: typeof formData) => typeof formData
-  ) {
+  function onInputEnter(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Enter') {
       event.preventDefault();
       setDialogOpen(false);
-      setFilters(data(formData));
     }
   }
 
-  function onDialogChange(isOpen: boolean) {
-    setDialogOpen(isOpen);
-    if (!isOpen) setFormData(filters);
-  }
+  const onModuleChange = useCallback((includeNodeModules: boolean) => {
+    router.setParams({
+      modules: includeNodeModules ? undefined : 'project',
+    });
+  }, []);
+
+  const onIncludeChange = useCallback(
+    debounce((value: string) => {
+      router.setParams({ include: value || undefined });
+    }, 300),
+    []
+  );
+
+  const onExcludeChange = useCallback(
+    debounce((value: string) => {
+      router.setParams({ include: value || undefined });
+    }, 300),
+    []
+  );
 
   return (
-    <Sheet open={dialogOpen} onOpenChange={onDialogChange}>
+    <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger asChild>
         <Button variant="secondary">Filter</Button>
       </SheetTrigger>
@@ -65,13 +92,9 @@ export function StatsModuleFilter() {
             </Label>
             <Checkbox
               id="filter-node_modules"
-              checked={formData.types.includes('node_modules')}
-              name=""
-              onCheckedChange={(isChecked) => {
-                setFormData(
-                  isChecked ? { types: ['project', 'node_modules'] } : { types: ['project'] }
-                );
-              }}
+              defaultChecked={filters.modules.includes('node_modules')}
+              name="filterNodeModules"
+              onCheckedChange={onModuleChange}
             />
           </fieldset>
 
@@ -85,11 +108,9 @@ export function StatsModuleFilter() {
               type="text"
               className="mt-2"
               placeholder="e.g. app/**/*.{ts}"
-              value={formData.include}
-              onChange={(event) => setFormData({ include: event.currentTarget.value })}
-              onKeyDown={(event) =>
-                onInputEnter(event, (data) => ({ ...data, include: event.currentTarget.value }))
-              }
+              defaultValue={filters.include}
+              onChange={(event) => onIncludeChange(event.currentTarget.value)}
+              onKeyDown={onInputEnter}
             />
           </fieldset>
 
@@ -103,24 +124,30 @@ export function StatsModuleFilter() {
               type="text"
               className="mt-2"
               placeholder="e.g. react-native/**"
-              value={formData.exclude}
-              onChange={(event) => setFormData({ exclude: event.currentTarget.value })}
-              onKeyDown={(event) =>
-                onInputEnter(event, (data) => ({ ...data, exclude: event.currentTarget.value }))
-              }
+              defaultValue={filters.exclude}
+              onChange={(event) => onExcludeChange(event.currentTarget.value)}
+              onKeyDown={onInputEnter}
             />
           </fieldset>
-
-          <div className="mt-[25px] flex justify-between">
-            <Button variant="quaternary" onClick={() => onDialogChange(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit">
-              Apply filters
-            </Button>
-          </div>
         </form>
       </SheetContent>
     </Sheet>
   );
+}
+
+export function statsModuleFiltersToUrlParams(filters: ModuleFilters) {
+  const params = new URLSearchParams({ modules: filters.modules });
+
+  if (filters.include) params.set('include', filters.include);
+  if (filters.exclude) params.set('exclude', filters.exclude);
+
+  return params.toString();
+}
+
+export function statsModuleFiltersFromUrlParams(params: URLSearchParams): ModuleFilters {
+  return {
+    modules: params.get('modules') || DEFAULT_FILTERS.modules,
+    include: params.get('include') || DEFAULT_FILTERS.include,
+    exclude: params.get('exclude') || DEFAULT_FILTERS.exclude,
+  };
 }

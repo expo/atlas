@@ -1,4 +1,4 @@
-import { filtersFromUrlParams } from '~/providers/modules';
+import { statsModuleFiltersFromUrlParams } from '~/components/forms/StatsModuleFilter';
 import { getSource } from '~/utils/atlas';
 import { type StatsEntry, type StatsModule } from '~core/data/types';
 import { fuzzyFilterModules } from '~core/utils/search';
@@ -55,14 +55,14 @@ export async function GET(request: Request, params: Record<'entry', string>) {
  *   - `exclude=<glob>` to only exclude specific glob patterns
  */
 function filterModules(request: Request, stats: StatsEntry): ModuleMetadata[] {
-  const { types, ...patterns } = filtersFromUrlParams(new URL(request.url).searchParams);
+  const filters = statsModuleFiltersFromUrlParams(new URL(request.url).searchParams);
   let modules = Array.from(stats.modules.values());
 
-  if (!types.includes('node_modules')) {
+  if (!filters.modules.includes('node_modules')) {
     modules = modules.filter((module) => !module.package);
   }
 
-  return fuzzyFilterModules(modules, patterns).map((module) => ({
+  return fuzzyFilterModules(modules, filters).map((module) => ({
     ...module,
     source: undefined,
     output: undefined,
