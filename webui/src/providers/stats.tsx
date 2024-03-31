@@ -1,40 +1,39 @@
 import { useQuery } from '@tanstack/react-query';
-import { type PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import { type PropsWithChildren, createContext, useContext, useMemo } from 'react';
 
 import { Spinner } from '~/ui/Spinner';
 import { fetchApi } from '~/utils/api';
 import { type PartialStatsEntry } from '~core/data/types';
 
 type StatsEntryContext = {
-  entryId: string;
-  setEntryId: (id: string) => void;
-  entries?: ReturnType<typeof useStatsEntriesData>;
-  entry?: PartialStatsEntry;
-  entryFilePath: (absolutePath: string) => string;
+  entries: NonNullable<ReturnType<typeof useStatsEntriesData>['data']>;
 };
 
 export const statsEntryContext = createContext<StatsEntryContext>({
-  entryId: '2',
-  setEntryId: () => {},
-  entries: undefined,
-  entry: undefined,
-  entryFilePath: (absolutePath) => absolutePath,
+  entries: [],
 });
 
-export const useStatsEntryContext = () => useContext(statsEntryContext);
+export const useStatsEntry = () => {
+  const { entries } = useContext(statsEntryContext);
+  const { entry: entryId } = useLocalSearchParams<{ entry?: string }>();
+  const entry = useMemo(
+    () => entries.find((entry) => entry.id === entryId) || entries[0],
+    [entries, entryId]
+  );
+
+  return { entry, entries };
+};
 
 export function StatsEntryProvider({ children }: PropsWithChildren) {
   const entries = useStatsEntriesData();
-  const [entryId, setEntryId] = useState<string>();
-  const entryIdOrFirstEntry = entryId ?? entries.data?.[0]?.id;
 
-  const entry = useMemo(
-    () => entries.data?.find((entry) => entry.id === entryIdOrFirstEntry),
-    [entries, entryIdOrFirstEntry]
-  );
-
-  function entryFilePath(absolutePath: string) {
-    return entry?.projectRoot ? absolutePath.replace(entry.projectRoot + '/', '') : absolutePath;
+  if (entries.data?.length) {
+    return (
+      <statsEntryContext.Provider value={{ entries: entries.data || [] }}>
+        {children}
+      </statsEntryContext.Provider>
+    );
   }
 
   // TODO: add better UX for loading
@@ -57,21 +56,11 @@ export function StatsEntryProvider({ children }: PropsWithChildren) {
   }
 
   // TODO: add better UX for error state
-  if (!entryIdOrFirstEntry) {
-    return (
-      <div className="flex flex-1 justify-center items-center">
-        <h2 className="text-lg font-bold m-4">Unable to load stats.</h2>
-        <p>Make sure you configured Expo Atlas properly.</p>
-      </div>
-    );
-  }
-
   return (
-    <statsEntryContext.Provider
-      value={{ entryId: entryIdOrFirstEntry, setEntryId, entries, entry, entryFilePath }}
-    >
-      {children}
-    </statsEntryContext.Provider>
+    <div className="flex flex-1 justify-center items-center">
+      <h2 className="text-lg font-bold m-4">No stats source.</h2>
+      <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
+    </div>
   );
 }
 

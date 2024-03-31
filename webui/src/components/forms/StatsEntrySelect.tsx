@@ -1,26 +1,25 @@
 import * as Select from '@radix-ui/react-select';
 import cn from 'classnames';
+import { useRouter } from 'expo-router';
 // @ts-expect-error
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 // @ts-expect-error
 import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 
-import { useStatsEntryContext } from '~/providers/stats';
+import { useStatsEntry } from '~/providers/stats';
 import { Button } from '~/ui/Button';
 import { Tag } from '~/ui/Tag';
+import { relativeEntryPath } from '~/utils/stats';
 
 export function StatsEntrySelect() {
-  const { entryId, setEntryId, entry, entries } = useStatsEntryContext();
-
-  function onEntryChange(value: string) {
-    setEntryId(value);
-  }
+  const router = useRouter();
+  const { entry, entries } = useStatsEntry();
 
   return (
-    <Select.Root value={String(entryId)} onValueChange={onEntryChange}>
+    <Select.Root value={entry.id} onValueChange={(entry) => router.setParams({ entry })}>
       <Select.Trigger asChild>
         <Button variant="quaternary" size="sm">
-          {!!entry && <Tag variant={entry?.platform} size="xs" className="mr-2" />}
+          <Tag variant={entry.platform} size="xs" className="mr-2" />
           <Select.Value placeholder="Select bundle to inspect" />
           <Select.Icon className="text-icon-default">
             <ChevronDownIcon size={16} className="m-1 mr-0 align-middle" />
@@ -41,14 +40,12 @@ export function StatsEntrySelect() {
             <ChevronUpIcon />
           </Select.ScrollUpButton>
           <Select.Viewport className="SelectViewport">
-            {entries?.data?.map((entry) => (
-              <div key={entry.id}>
-                <Select.Item value={String(entry.id)} asChild>
+            {entries.map((item) => (
+              <div key={item.id}>
+                <Select.Item value={item.id} asChild>
                   <Button variant="quaternary" size="sm" className="w-full">
-                    <Tag variant={entry.platform} className="mr-2" />
-                    <Select.ItemText>
-                      {entry.entryPoint.replace(entry.projectRoot + '/', '')}
-                    </Select.ItemText>
+                    <Tag variant={item.platform} className="mr-2" />
+                    <Select.ItemText>{relativeEntryPath(entry, item.entryPoint)}</Select.ItemText>
                   </Button>
                 </Select.Item>
               </div>
