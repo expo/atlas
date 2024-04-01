@@ -1,5 +1,5 @@
-/** Pattern to match the last `node_modules/<name>` occurance in a string */
-const NODE_MODULES_NAME_PATTERN = /(?:.*\/)?node_modules\/([^/]+)/i;
+/** Pattern to match the last `node_modules/@<org>/<name>` or `node_modules/<name>` occurrence in a string */
+const NODE_MODULES_NAME_PATTERN = /(?:.*\/)?node_modules\/((?:@[^/]+\/[^/]+)|[^/]+)/i;
 /** A simple map to return previously resolved package names from paths */
 const packageNameCache = new Map<string, string>();
 
