@@ -22,7 +22,7 @@ export function globFilterModules(
     return items;
   }
 
-  const matcher = picomatch(splitPattern(options.include || '**'), {
+  const matcher = picomatch(splitPattern(options.include) || '**', {
     cwd: '',
     dot: true,
     nocase: true,
@@ -37,7 +37,8 @@ export function globFilterModules(
  * Split the comma separated string into an array of separate patterns.
  * This splits on any combination of `,` and whitespaces.
  */
-function splitPattern(pattern: string) {
+function splitPattern(pattern = '') {
+  if (!pattern) return undefined;
   const split = pattern.split(/\s*,\s*/).filter(Boolean);
   return split.length ? split : undefined;
 }
