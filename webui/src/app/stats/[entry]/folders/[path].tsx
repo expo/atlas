@@ -20,7 +20,7 @@ export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const { entry } = useStatsEntry();
   const { filters, filtersEnabled } = useStatsModuleFilters();
-  const modules = useModuleGraphDataInFolder(entry.id, absolutePath, filters);
+  const modules = useModuleGraphDataInFolder(entry.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
@@ -29,7 +29,7 @@ export default function FolderPage() {
         <PageHeader>
           <PageTitle>
             <h1 className="text-slate-50 font-bold text-lg mr-4" title={absolutePath}>
-              {relativeEntryPath(entry, absolutePath)}/
+              {relativeEntryPath(entry, absolutePath!)}/
             </h1>
             {!!modules.data && <FolderSummary data={modules.data} />}
           </PageTitle>
