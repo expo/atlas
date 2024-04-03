@@ -23,18 +23,27 @@ const DEFAULT_FILTERS = {
   exclude: '',
 };
 
-export function useStatsModuleFilters(): ModuleFilters {
+export function useStatsModuleFilters(): { filters: ModuleFilters; filtersEnabled: boolean } {
   const filters = useGlobalSearchParams<Partial<ModuleFilters>>();
   return {
-    modules: filters.modules || DEFAULT_FILTERS.modules,
-    include: filters.include || DEFAULT_FILTERS.include,
-    exclude: filters.exclude || DEFAULT_FILTERS.exclude,
+    filtersEnabled: !!filters.modules || !!filters.include || !!filters.exclude,
+    filters: {
+      modules: filters.modules || DEFAULT_FILTERS.modules,
+      include: filters.include || DEFAULT_FILTERS.include,
+      exclude: filters.exclude || DEFAULT_FILTERS.exclude,
+    },
   };
 }
 
-export function StatsModuleFilter() {
+type StatsModuleFilterProps = {
+  disableNodeModules?: boolean;
+};
+
+export function StatsModuleFilter(props: StatsModuleFilterProps) {
   const router = useRouter();
-  const filters = useStatsModuleFilters();
+  const { filters, filtersEnabled } = useStatsModuleFilters();
+
+  console.log({ filters, filtersEnabled });
 
   // NOTE(cedric): we want to programmatically close the dialog when the form is submitted, so make it controlled
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -72,6 +81,15 @@ export function StatsModuleFilter() {
     []
   );
 
+  const onClearFilters = useCallback(() => {
+    setDialogOpen(false);
+    router.setParams({
+      modules: undefined,
+      include: undefined,
+      exclude: undefined,
+    });
+  }, []);
+
   return (
     <Sheet open={dialogOpen} onOpenChange={setDialogOpen}>
       <SheetTrigger asChild>
@@ -86,7 +104,7 @@ export function StatsModuleFilter() {
         </SheetHeader>
 
         <form onSubmit={onFormSubmit} className="border-default border-t my-4">
-          <fieldset className="flex my-4 mt-8">
+          <fieldset className={`flex my-4 mt-8 ${props.disableNodeModules ? 'opacity-25' : ''}`}>
             <Label className="flex-1 whitespace-nowrap" htmlFor="filter-node_modules">
               Show <span className="font-bold">node_modules</span>
             </Label>
@@ -95,6 +113,7 @@ export function StatsModuleFilter() {
               defaultChecked={filters.modules.includes('node_modules')}
               name="filterNodeModules"
               onCheckedChange={onModuleChange}
+              disabled={props.disableNodeModules}
             />
           </fieldset>
 
@@ -129,6 +148,21 @@ export function StatsModuleFilter() {
               onKeyDown={onInputEnter}
             />
           </fieldset>
+
+          <div className="mt-[25px] flex justify-between">
+            <Button variant="quaternary" type="submit" onClick={() => setDialogOpen(false)}>
+              Close filters
+            </Button>
+
+            <Button
+              variant="secondary"
+              type="submit"
+              onClick={onClearFilters}
+              disabled={!filtersEnabled}
+            >
+              Clear filters
+            </Button>
+          </div>
         </form>
       </SheetContent>
     </Sheet>
