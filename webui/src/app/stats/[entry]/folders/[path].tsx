@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 
 import type { ModuleGraphResponse } from '~/app/api/stats/[entry]/modules/graph+api';
+import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import {
   ModuleFilters,
@@ -9,7 +10,6 @@ import {
   statsModuleFiltersToUrlParams,
   useStatsModuleFilters,
 } from '~/components/forms/StatsModuleFilter';
-import { BundleGraph } from '~/components/graphs/BundleGraph';
 import { useStatsEntry } from '~/providers/stats';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';

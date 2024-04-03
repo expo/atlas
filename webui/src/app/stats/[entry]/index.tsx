@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import type { ModuleGraphResponse } from '~/app/api/stats/[entry]/modules/graph+api';
+import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import {
   type ModuleFilters,
@@ -8,7 +9,6 @@ import {
   statsModuleFiltersToUrlParams,
   useStatsModuleFilters,
 } from '~/components/forms/StatsModuleFilter';
-import { BundleGraph } from '~/components/graphs/BundleGraph';
 import { useStatsEntry } from '~/providers/stats';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
