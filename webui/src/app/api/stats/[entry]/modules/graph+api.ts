@@ -1,8 +1,21 @@
 import { statsModuleFiltersFromUrlParams } from '~/components/forms/StatsModuleFilter';
 import { getSource } from '~/utils/atlas';
 import { globFilterModules } from '~/utils/search';
-import { createModuleTree, finalizeModuleTree } from '~/utils/treemap';
+import { type TreemapNode, createModuleTree, finalizeModuleTree } from '~/utils/treemap';
 import type { StatsEntry, StatsModule } from '~core/data/types';
+
+export type ModuleGraphResponse = {
+  data: TreemapNode;
+  entry: {
+    platform: 'android' | 'ios' | 'web';
+    moduleSize: number;
+    moduleFiles: number;
+  };
+  filtered: {
+    moduleSize: number;
+    moduleFiles: number;
+  };
+};
 
 export async function GET(request: Request, params: Record<'entry', string>) {
   let entry: StatsEntry;
@@ -13,39 +26,49 @@ export async function GET(request: Request, params: Record<'entry', string>) {
     return Response.json({ error: error.message }, { status: 406 });
   }
 
-  let tree = createModuleTree(filterModules(request, entry));
+  const allModules = Array.from(entry.modules.values());
+  const modules = modulesMatchingFilters(request, entry, allModules);
+  const tree = createModuleTree(modules);
 
-  const url = new URL(request.url);
-  const filterPath = url.searchParams.get('path');
+  const response: ModuleGraphResponse = {
+    data: finalizeModuleTree(tree),
+    entry: {
+      platform: entry.platform as any,
+      moduleSize: allModules.reduce((size, module) => size + module.size, 0),
+      moduleFiles: entry.modules.size,
+    },
+    filtered: {
+      moduleSize: modules.reduce((size, module) => size + module.size, 0),
+      moduleFiles: modules.length,
+    },
+  };
 
-  if (filterPath) {
-    for (const segment of filterPath.split('/')) {
-      const child = tree.children?.find((child) => child.name === segment);
-
-      if (!child) {
-        return Response.json({ error: `Path not found: ${filterPath}` }, { status: 404 });
-      }
-
-      tree = child;
-    }
-  }
-
-  return Response.json(finalizeModuleTree(tree));
+  return Response.json(response);
 }
 
 /**
- * Filter the node modules based on query parameters.
+ * Get and filter the modules from the stats entry based on query parameters.
  *   - `modules=project,node_modules` to show only project code and/or node_modules
  *   - `include=<glob>` to only include specific glob patterns
  *   - `exclude=<glob>` to only exclude specific glob patterns
+ *   - `path=<folder>` to only show modules in a specific folder
  */
-function filterModules(request: Request, stats: StatsEntry): StatsModule[] {
-  const filters = statsModuleFiltersFromUrlParams(new URL(request.url).searchParams);
-  let modules = Array.from(stats.modules.values());
+function modulesMatchingFilters(
+  request: Request,
+  entry: StatsEntry,
+  modules: StatsModule[]
+): StatsModule[] {
+  const searchParams = new URL(request.url).searchParams;
 
+  const folderRef = searchParams.get('path');
+  if (folderRef) {
+    modules = modules.filter((module) => module.path.startsWith(folderRef));
+  }
+
+  const filters = statsModuleFiltersFromUrlParams(searchParams);
   if (!filters.modules.includes('node_modules')) {
     modules = modules.filter((module) => !module.package);
   }
 
-  return globFilterModules(modules, stats.projectRoot, filters);
+  return globFilterModules(modules, entry.projectRoot, filters);
 }
