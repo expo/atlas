@@ -43,8 +43,6 @@ export function StatsModuleFilter(props: StatsModuleFilterProps) {
   const router = useRouter();
   const { filters, filtersEnabled } = useStatsModuleFilters();
 
-  console.log({ filters, filtersEnabled });
-
   // NOTE(cedric): we want to programmatically close the dialog when the form is submitted, so make it controlled
   const [dialogOpen, setDialogOpen] = useState(false);
 

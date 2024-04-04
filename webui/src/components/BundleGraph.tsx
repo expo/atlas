@@ -171,6 +171,8 @@ function getBundleGraphTooltip(
     const node = params.data as TreemapNode;
     // NOTE(cedric): root only has `value` and `name`, while all nodes should have `modulePath`
     const isRoot = node.modulePath === undefined;
+    // TODO(cedric): disable tooltip for root, the name is the absolute path and may be too large in some cases
+    if (isRoot) return '';
 
     const type = isRoot ? 'directory' : getNodeType(node);
     const size = isRoot ? graph.moduleSize : node.moduleSize;
@@ -195,7 +197,7 @@ function getBundleGraphTooltip(
             ? `<span class="mx-3 text-quaternary">Files: ${files}</span>`
             : `<span class="mx-3"><b>Files:</b> ${files}</span>`
         }
-        <code class="mx-3 mt-2 text-quaternary text-3xs text-wrap break-words">${path}</code>
+        <code class="mx-3 mt-2 text-quaternary text-3xs leading-5 text-wrap break-words">${path}</code>
         <hr class="border-t border-t-secondary my-2 mx-2" />
         <span class="text-quaternary mx-3 my-2 mt-0">
           Open — <kbd class="ml-1 text-xs">⌘ + Click</kbd>
