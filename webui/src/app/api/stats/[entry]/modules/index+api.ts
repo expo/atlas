@@ -4,21 +4,18 @@ import { globFilterModules } from '~/utils/search';
 import { type StatsEntry, type StatsModule } from '~core/data/types';
 
 /** The partial module data, when listing all available modules from a stats entry */
-export type ModuleMetadata = Omit<StatsModule, 'source' | 'output'> & {
-  source: undefined;
-  output: undefined;
-};
+export type PartialModule = Omit<StatsModule, 'source' | 'output'>;
 
-export type EntryGraphData = {
-  metadata: {
+export type ModuleListResponse = {
+  data: PartialModule[];
+  entry: {
     platform: 'android' | 'ios' | 'web';
-    size: number;
-    modulesCount: number;
+    moduleSize: number;
+    moduleFiles: number;
   };
-  data: {
-    size: number;
-    modulesCount: number;
-    modules: ModuleMetadata[];
+  filtered: {
+    moduleSize: number;
+    moduleFiles: number;
   };
 };
 
@@ -31,42 +28,50 @@ export async function GET(request: Request, params: Record<'entry', string>) {
     return Response.json({ error: error.message }, { status: 406 });
   }
 
-  const filteredModules = filterModules(request, entry);
-  const data: EntryGraphData = {
-    metadata: {
+  const allModules = Array.from(entry.modules.values());
+  const modules = modulesMatchingFilters(request, entry, allModules);
+
+  const response: ModuleListResponse = {
+    data: modules,
+    entry: {
       platform: entry.platform as any,
-      size: Array.from(entry.modules.values()).reduce((size, module) => size + module.size, 0),
-      modulesCount: entry.modules.size,
+      moduleSize: allModules.reduce((size, module) => size + module.size, 0),
+      moduleFiles: entry.modules.size,
     },
-    data: {
-      size: filteredModules.reduce((size, module) => size + module.size, 0),
-      modulesCount: filteredModules.length,
-      modules: filteredModules,
+    filtered: {
+      moduleSize: modules.reduce((size, module) => size + module.size, 0),
+      moduleFiles: modules.length,
     },
   };
 
-  return Response.json(data);
+  return Response.json(response);
 }
 
 /**
- * Filter the node modules based on query parameters.
+ * Get and filter the modules from the stats entry based on query parameters.
  *   - `modules=project,node_modules` to show only project code and/or node_modules
  *   - `include=<glob>` to only include specific glob patterns
  *   - `exclude=<glob>` to only exclude specific glob patterns
+ *   - `path=<folder>` to only show modules in a specific folder
  */
-function filterModules(request: Request, stats: StatsEntry): ModuleMetadata[] {
-  const filters = statsModuleFiltersFromUrlParams(new URL(request.url).searchParams);
-  let modules = Array.from(stats.modules.values());
+function modulesMatchingFilters(
+  request: Request,
+  entry: StatsEntry,
+  modules: StatsModule[]
+): StatsModule[] {
+  const searchParams = new URL(request.url).searchParams;
 
+  const folderRef = searchParams.get('path');
+  if (folderRef) {
+    modules = modules.filter((module) => module.path.startsWith(folderRef));
+  }
+
+  const filters = statsModuleFiltersFromUrlParams(searchParams);
   if (!filters.modules.includes('node_modules')) {
     modules = modules.filter((module) => !module.package);
   }
 
-  return globFilterModules(modules, stats.projectRoot, filters).map((module) => ({
-    ...module,
-    source: undefined,
-    output: undefined,
-  }));
+  return globFilterModules(modules, entry.projectRoot, filters);
 }
 
 /**

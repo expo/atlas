@@ -43,7 +43,7 @@ export function LayoutHeader({ children }: PropsWithChildren) {
 }
 
 export function LayoutTitle({ children }: PropsWithChildren) {
-  return <div className="flex flex-row items-center">{children}</div>;
+  return <div className="flex flex-row items-center min-h-10">{children}</div>;
 }
 
 export function LayoutContent({ children }: PropsWithChildren) {
