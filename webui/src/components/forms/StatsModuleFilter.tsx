@@ -1,4 +1,4 @@
-import { useGlobalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { type FormEvent, type KeyboardEvent, useState, useCallback } from 'react';
 
 import { Button } from '~/ui/Button';
@@ -14,26 +14,7 @@ import {
   SheetTrigger,
 } from '~/ui/Sheet';
 import { debounce } from '~/utils/debounce';
-
-export type ModuleFilters = typeof DEFAULT_FILTERS;
-
-const DEFAULT_FILTERS = {
-  modules: 'project,node_modules',
-  include: '',
-  exclude: '',
-};
-
-export function useStatsModuleFilters(): { filters: ModuleFilters; filtersEnabled: boolean } {
-  const filters = useGlobalSearchParams<Partial<ModuleFilters>>();
-  return {
-    filtersEnabled: !!filters.modules || !!filters.include || !!filters.exclude,
-    filters: {
-      modules: filters.modules || DEFAULT_FILTERS.modules,
-      include: filters.include || DEFAULT_FILTERS.include,
-      exclude: filters.exclude || DEFAULT_FILTERS.exclude,
-    },
-  };
-}
+import { useModuleFilters } from '~/utils/filters';
 
 type StatsModuleFilterProps = {
   disableNodeModules?: boolean;
@@ -41,7 +22,7 @@ type StatsModuleFilterProps = {
 
 export function StatsModuleFilter(props: StatsModuleFilterProps) {
   const router = useRouter();
-  const { filters, filtersEnabled } = useStatsModuleFilters();
+  const { filters, filtersEnabled } = useModuleFilters();
 
   // NOTE(cedric): we want to programmatically close the dialog when the form is submitted, so make it controlled
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -59,9 +40,9 @@ export function StatsModuleFilter(props: StatsModuleFilterProps) {
     }
   }
 
-  const onModuleChange = useCallback((includeNodeModules: boolean) => {
+  const onModuleChange = useCallback((withNodeModules: boolean) => {
     router.setParams({
-      modules: includeNodeModules ? undefined : 'project',
+      scope: withNodeModules ? undefined : 'project',
     });
   }, []);
 
@@ -82,7 +63,7 @@ export function StatsModuleFilter(props: StatsModuleFilterProps) {
   const onClearFilters = useCallback(() => {
     setDialogOpen(false);
     router.setParams({
-      modules: undefined,
+      scope: undefined,
       include: undefined,
       exclude: undefined,
     });
@@ -108,7 +89,7 @@ export function StatsModuleFilter(props: StatsModuleFilterProps) {
             </Label>
             <Checkbox
               id="filter-node_modules"
-              defaultChecked={filters.modules.includes('node_modules')}
+              defaultChecked={filters.scope !== 'project'}
               name="filterNodeModules"
               onCheckedChange={onModuleChange}
               disabled={props.disableNodeModules}
@@ -165,21 +146,4 @@ export function StatsModuleFilter(props: StatsModuleFilterProps) {
       </SheetContent>
     </Sheet>
   );
-}
-
-export function statsModuleFiltersToUrlParams(filters: ModuleFilters) {
-  const params = new URLSearchParams({ modules: filters.modules });
-
-  if (filters.include) params.set('include', filters.include);
-  if (filters.exclude) params.set('exclude', filters.exclude);
-
-  return params.toString();
-}
-
-export function statsModuleFiltersFromUrlParams(params: URLSearchParams): ModuleFilters {
-  return {
-    modules: params.get('modules') || DEFAULT_FILTERS.modules,
-    include: params.get('include') || DEFAULT_FILTERS.include,
-    exclude: params.get('exclude') || DEFAULT_FILTERS.exclude,
-  };
 }

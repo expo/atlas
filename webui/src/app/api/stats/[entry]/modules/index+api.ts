@@ -1,6 +1,5 @@
-import { statsModuleFiltersFromUrlParams } from '~/components/forms/StatsModuleFilter';
 import { getSource } from '~/utils/atlas';
-import { globFilterModules } from '~/utils/search';
+import { filterModules, moduleFiltersFromParams } from '~/utils/filters';
 import { type StatsEntry, type StatsModule } from '~core/data/types';
 
 /** The partial module data, when listing all available modules from a stats entry */
@@ -19,6 +18,7 @@ export type ModuleListResponse = {
   };
 };
 
+/** Get all modules as simple list */
 export async function GET(request: Request, params: Record<'entry', string>) {
   let entry: StatsEntry;
 
@@ -28,19 +28,28 @@ export async function GET(request: Request, params: Record<'entry', string>) {
     return Response.json({ error: error.message }, { status: 406 });
   }
 
+  const query = new URL(request.url).searchParams;
   const allModules = Array.from(entry.modules.values());
-  const modules = modulesMatchingFilters(request, entry, allModules);
+  const filteredModules = filterModules(allModules, {
+    projectRoot: entry.projectRoot,
+    filters: moduleFiltersFromParams(query),
+    rootPath: query.get('path') || undefined,
+  });
 
   const response: ModuleListResponse = {
-    data: modules,
+    data: filteredModules.map((module) => ({
+      ...module,
+      source: undefined,
+      output: undefined,
+    })),
     entry: {
       platform: entry.platform as any,
       moduleSize: allModules.reduce((size, module) => size + module.size, 0),
       moduleFiles: entry.modules.size,
     },
     filtered: {
-      moduleSize: modules.reduce((size, module) => size + module.size, 0),
-      moduleFiles: modules.length,
+      moduleSize: filteredModules.reduce((size, module) => size + module.size, 0),
+      moduleFiles: filteredModules.length,
     },
   };
 
@@ -48,34 +57,8 @@ export async function GET(request: Request, params: Record<'entry', string>) {
 }
 
 /**
- * Get and filter the modules from the stats entry based on query parameters.
- *   - `modules=project,node_modules` to show only project code and/or node_modules
- *   - `include=<glob>` to only include specific glob patterns
- *   - `exclude=<glob>` to only exclude specific glob patterns
- *   - `path=<folder>` to only show modules in a specific folder
- */
-function modulesMatchingFilters(
-  request: Request,
-  entry: StatsEntry,
-  modules: StatsModule[]
-): StatsModule[] {
-  const searchParams = new URL(request.url).searchParams;
-
-  const folderRef = searchParams.get('path');
-  if (folderRef) {
-    modules = modules.filter((module) => module.path.startsWith(folderRef));
-  }
-
-  const filters = statsModuleFiltersFromUrlParams(searchParams);
-  if (!filters.modules.includes('node_modules')) {
-    modules = modules.filter((module) => !module.package);
-  }
-
-  return globFilterModules(modules, entry.projectRoot, filters);
-}
-
-/**
  * Get the full module information through a post request.
+ * This requires a `path` property in the request body.
  */
 export async function POST(request: Request, params: Record<'entry', string>) {
   const moduleRef: string | undefined = (await request.json()).path;
