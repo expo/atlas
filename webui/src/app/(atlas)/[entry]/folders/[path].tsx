@@ -1,20 +1,20 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 
-import type { ModuleGraphResponse } from '~/app/api/stats/[entry]/modules/graph+api';
+import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
-import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
-import { useStatsEntry } from '~/providers/stats';
+import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
+import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
+import { useEntry } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
+import { relativeEntryPath } from '~/utils/entry';
 import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
-import { relativeEntryPath } from '~/utils/stats';
 
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const { entry } = useStatsEntry();
+  const { entry } = useEntry();
   const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphDataInFolder(entry.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
@@ -29,21 +29,23 @@ export default function FolderPage() {
             </h1>
             {!!modules.data && <FolderSummary data={modules.data} />}
           </PageTitle>
-          <StatsModuleFilter disableNodeModules />
+          <ModuleFiltersForm disableNodeModules />
         </PageHeader>
         {modules.isError ? (
-          <div className="flex flex-1 justify-center items-center text-secondary">
-            Could not load the graph, try reloading this page
-          </div>
+          <PageContent title="Failed to generate graph.">
+            Try restarting Expo Atlas. If this error keeps happening, open a bug report.
+          </PageContent>
         ) : treeHasData ? (
           <BundleGraph entry={entry} graph={modules.data!.data} />
         ) : (
           !modules.isPending && (
-            <div className="flex flex-1 justify-center items-center text-secondary">
-              {!filtersEnabled
-                ? 'No data available'
-                : 'No data available, try resetting the filters'}
-            </div>
+            <PageContent title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
+              <p>
+                {filtersEnabled
+                  ? 'Try adjusting or clearing the filters'
+                  : 'Try another bundle entry'}
+              </p>
+            </PageContent>
           )
         )}
       </div>
@@ -87,8 +89,8 @@ function useModuleGraphDataInFolder(entryId: string, path: string, filters: Modu
         ModuleFilters | undefined,
       ];
       const url = filters
-        ? `/api/stats/${entry}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
-        : `/api/stats/${entry}/modules/graph?path=${encodeURIComponent(path)}`;
+        ? `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
+        : `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}`;
 
       return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))

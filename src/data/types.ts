@@ -1,16 +1,16 @@
 import type { MixedOutput } from 'metro';
 
-export interface StatsSource {
-  /** List all available stats entries */
-  listEntries(): PartialStatsEntry[] | Promise<PartialStatsEntry[]>;
-  /** Load the full stats entry, by reference */
-  getEntry(ref: string): StatsEntry | Promise<StatsEntry>;
+export interface AtlasSource {
+  /** List all available entries */
+  listEntries(): PartialAtlasEntry[] | Promise<PartialAtlasEntry[]>;
+  /** Load the full entry, by reference */
+  getEntry(ref: string): AtlasEntry | Promise<AtlasEntry>;
 }
 
-export type PartialStatsEntry = Pick<StatsEntry, 'id' | 'platform' | 'projectRoot' | 'entryPoint'>;
+export type PartialAtlasEntry = Pick<AtlasEntry, 'id' | 'platform' | 'projectRoot' | 'entryPoint'>;
 
-export type StatsEntry = {
-  /** The unique reference or ID to this stats entry */
+export type AtlasEntry = {
+  /** The unique reference or ID to this entry */
   id: string;
   /** The platform for which the bundle was created */
   platform: 'android' | 'ios' | 'web';
@@ -19,16 +19,16 @@ export type StatsEntry = {
   /** The absolute path to the entry point used when creating the bundle */
   entryPoint: string;
   /** All known modules that are prepended for the runtime itself */
-  runtimeModules: StatsModule[];
+  runtimeModules: AtlasModule[];
   /** All known modules imported within the bundle, stored by absolute path */
-  modules: Map<string, StatsModule>;
+  modules: Map<string, AtlasModule>;
   /** The sarialization options used for this bundle */
   serializeOptions?: Record<string, any>;
   /** The transformation options used for this bundle */
   transformOptions?: Record<string, any>;
 };
 
-export type StatsModule = {
+export type AtlasModule = {
   /** The absoluate path of this module */
   path: string;
   /** The name of the package this module belongs to, if from an external package */

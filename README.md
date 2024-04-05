@@ -1,6 +1,6 @@
 # Expo Atlas
 
-Inspect the bundle stats from Metro.
+Inspect bundle contents, on module level, from Metro.
 
 > [!Warning]
 > This project is highly experimental and will likely not work for your project.

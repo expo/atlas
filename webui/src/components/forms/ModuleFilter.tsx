@@ -16,11 +16,11 @@ import {
 import { debounce } from '~/utils/debounce';
 import { useModuleFilters } from '~/utils/filters';
 
-type StatsModuleFilterProps = {
+type ModuleFiltersFormProps = {
   disableNodeModules?: boolean;
 };
 
-export function StatsModuleFilter(props: StatsModuleFilterProps) {
+export function ModuleFiltersForm(props: ModuleFiltersFormProps) {
   const router = useRouter();
   const { filters, filtersEnabled } = useModuleFilters();
 

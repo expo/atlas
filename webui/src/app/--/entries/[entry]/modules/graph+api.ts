@@ -1,7 +1,7 @@
 import { getSource } from '~/utils/atlas';
 import { filterModules, moduleFiltersFromParams } from '~/utils/filters';
 import { type TreemapNode, createModuleTree, finalizeModuleTree } from '~/utils/treemap';
-import type { StatsEntry } from '~core/data/types';
+import type { AtlasEntry } from '~core/data/types';
 
 export type ModuleGraphResponse = {
   data: TreemapNode;
@@ -17,7 +17,7 @@ export type ModuleGraphResponse = {
 };
 
 export async function GET(request: Request, params: Record<'entry', string>) {
-  let entry: StatsEntry;
+  let entry: AtlasEntry;
 
   try {
     entry = await getSource().getEntry(params.entry);
@@ -33,10 +33,8 @@ export async function GET(request: Request, params: Record<'entry', string>) {
     rootPath: query.get('path') || undefined,
   });
 
-  const tree = createModuleTree(filteredModules);
-
   const response: ModuleGraphResponse = {
-    data: finalizeModuleTree(tree),
+    data: finalizeModuleTree(createModuleTree(filteredModules)),
     entry: {
       platform: entry.platform as any,
       moduleSize: allModules.reduce((size, module) => size + module.size, 0),

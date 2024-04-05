@@ -4,7 +4,7 @@
  *
  * @see https://docs.expo.dev/versions/latest/config/app/#baseurl
  */
-const baseUrl = __DEV__ ? '' : '/_expo/atlas';
+const baseUrl = __DEV__ ? '/--' : '/_expo/atlas/--';
 
 /**
  * Fetch data from the API routes, adding the `baseUrl` to all requests.

@@ -2,7 +2,7 @@
   "sideEffects": false,
   "name": "expo-atlas",
   "version": "0.0.18-preview.2",
-  "description": "Inspect bundle stats from Metro",
+  "description": "Inspect bundle contents, on module level, from Metro",
   "keywords": [
     "expo",
     "atlas",

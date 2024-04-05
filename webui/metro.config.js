@@ -17,10 +17,10 @@ config.cacheStores = [
 
 // Initialize the Expo Atlas global data source in development
 if (process.env.NODE_ENV === 'development') {
-  const { StatsFileSource } = require('../build/src/data/StatsFileSource');
-  const statsFile = path.resolve(__dirname, './fixture/atlas-tabs-50.jsonl');
+  const { AtlasFileSource } = require('../build/src/data/AtlasFileSource');
+  const filePath = path.resolve(__dirname, './fixture/atlas-tabs-50.jsonl');
 
-  global.EXPO_ATLAS_SOURCE = new StatsFileSource(statsFile);
+  global.EXPO_ATLAS_SOURCE = new AtlasFileSource(filePath);
 }
 
 module.exports = config;

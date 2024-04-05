@@ -29,7 +29,7 @@ if (args['--version']) {
 if (args['--help']) {
   printLines([
     chalk.bold('Usage'),
-    `  ${chalk.dim('$')} expo-atlas ${chalk.dim('[statsFile]')}`,
+    `  ${chalk.dim('$')} expo-atlas ${chalk.dim('[atlas file]')}`,
     '',
     chalk.bold('Options'),
     `  --port${chalk.dim(', -p')}      Port to listen on`,
@@ -52,7 +52,7 @@ async function run() {
 
     printLines([
       `Expo Atlas is ready on: ${chalk.underline(href)}`,
-      `  ${chalk.dim(`Using: ${options.statsFile}`)}`,
+      `  ${chalk.dim(`Using: ${options.atlasFile}`)}`,
     ]);
 
     if (options.browserOpen) {
@@ -72,10 +72,10 @@ run().catch((error) => {
     throw error;
   }
 
-  if (error.code === 'STATS_FILE_INCOMPATIBLE') {
-    const statsFile = path.relative(process.cwd(), error.statsFile);
-    console.error('Stats file is incompatible with this version, use this instead:');
-    console.error(`  npx expo-atlas@${error.incompatibleVersion} ${statsFile}`);
+  if (error.code === 'ATLAS_FILE_INCOMPATIBLE') {
+    const atlasFile = path.relative(process.cwd(), error.filePath);
+    console.error('Atlas file is incompatible with this version, use this instead:');
+    console.error(`  npx expo-atlas@${error.incompatibleVersion} ${atlasFile}`);
   } else {
     console.error(`${error.message} (${error.code})`);
   }

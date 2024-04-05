@@ -2,7 +2,7 @@ import { useGlobalSearchParams } from 'expo-router';
 import path from 'path';
 import picomatch from 'picomatch';
 
-import { type StatsModule } from '~core/data/types';
+import { type AtlasModule } from '~core/data/types';
 
 export type ModuleFilters = {
   /** Only match the project code, or all code including (external) packages  */
@@ -63,7 +63,7 @@ export function useModuleFilters() {
 
 /** Filter the modules based on the filters, and an optional (root) path. */
 export function filterModules(
-  modules: StatsModule[],
+  modules: AtlasModule[],
   options: {
     projectRoot: string;
     filters: ModuleFilters;

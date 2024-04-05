@@ -1,14 +1,14 @@
 import type metro from 'metro';
 import path from 'path';
 
-import type { StatsEntry, StatsModule, StatsSource } from './types';
+import type { AtlasEntry, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';
 import { getPackageNameFromPath } from '../utils/package';
 
 type MetroGraph = metro.Graph | metro.ReadOnlyGraph;
 type MetroModule = metro.Module;
 
-type ConvertGraphToStatsOptions = {
+type ConvertGraphToAtlasOptions = {
   projectRoot: string;
   entryPoint: string;
   preModules: Readonly<MetroModule[]>;
@@ -20,9 +20,9 @@ type ConvertGraphToStatsOptions = {
   };
 };
 
-export class MetroGraphSource implements StatsSource {
-  /** All known stats entries, stored by ID */
-  protected entries: Map<StatsEntry['id'], StatsEntry> = new Map();
+export class MetroGraphSource implements AtlasSource {
+  /** All known entries, stored by ID */
+  protected entries: Map<AtlasEntry['id'], AtlasEntry> = new Map();
 
   listEntries() {
     return Array.from(this.entries.values()).map((entry) => ({
@@ -36,24 +36,24 @@ export class MetroGraphSource implements StatsSource {
   getEntry(id: string) {
     const entry = this.entries.get(id);
     if (!entry) {
-      throw new Error(`Stats entry "${id}" not found.`);
+      throw new Error(`Entry "${id}" not found.`);
     }
     return entry;
   }
 
   /**
    * Event handler when a new graph instance is ready to serialize.
-   * This converts all relevant data stored in the graph to stats objects.
+   * This converts all relevant data stored in the graph to objects.
    */
-  onSerializeGraph(options: ConvertGraphToStatsOptions) {
+  onSerializeGraph(options: ConvertGraphToAtlasOptions) {
     const entry = convertGraph(options);
     this.entries.set(entry.id, entry);
     return entry;
   }
 }
 
-/** Convert a Metro graph instance to a JSON-serializable stats entry */
-export function convertGraph(options: ConvertGraphToStatsOptions): StatsEntry {
+/** Convert a Metro graph instance to a JSON-serializable entry */
+export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasEntry {
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
   const platform =
@@ -75,9 +75,9 @@ export function convertGraph(options: ConvertGraphToStatsOptions): StatsEntry {
 
 /** Find and collect all dependnecies related to the entrypoint within the graph */
 export function collectEntryPointModules(
-  options: Pick<ConvertGraphToStatsOptions, 'graph' | 'entryPoint' | 'extensions'>
+  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'entryPoint' | 'extensions'>
 ) {
-  const modules = new Map<string, StatsModule>();
+  const modules = new Map<string, AtlasModule>();
 
   function discover(modulePath: string) {
     const module = options.graph.dependencies.get(modulePath);
@@ -92,11 +92,11 @@ export function collectEntryPointModules(
   return modules;
 }
 
-/** Convert a Metro module to a JSON-serializable stats module */
+/** Convert a Metro module to a JSON-serializable Atlas module */
 export function convertModule(
-  options: Pick<ConvertGraphToStatsOptions, 'graph' | 'extensions'>,
+  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'extensions'>,
   module: MetroModule
-): StatsModule {
+): AtlasModule {
   return {
     path: module.path,
     package: getPackageNameFromPath(module.path),
@@ -118,7 +118,7 @@ export function convertModule(
  * If a file is an asset, it returns `[binary file]` instead.
  */
 function getModuleSourceContent(
-  options: Pick<ConvertGraphToStatsOptions, 'extensions'>,
+  options: Pick<ConvertGraphToAtlasOptions, 'extensions'>,
   module: MetroModule
 ) {
   const fileExtension = path.extname(module.path).replace('.', '');
@@ -144,16 +144,16 @@ function getModuleSourceContent(
 
 /** Convert Metro transform options to a JSON-serializable object */
 export function convertTransformOptions(
-  options: Pick<ConvertGraphToStatsOptions, 'graph'>
-): StatsEntry['transformOptions'] {
+  options: Pick<ConvertGraphToAtlasOptions, 'graph'>
+): AtlasEntry['transformOptions'] {
   return options.graph.transformOptions ?? {};
 }
 
 /** Convert Metro serialize options to a JSON-serializable object */
 export function convertSerializeOptions(
-  options: Pick<ConvertGraphToStatsOptions, 'options'>
-): StatsEntry['serializeOptions'] {
-  const serializeOptions: StatsEntry['serializeOptions'] = { ...options.options };
+  options: Pick<ConvertGraphToAtlasOptions, 'options'>
+): AtlasEntry['serializeOptions'] {
+  const serializeOptions: AtlasEntry['serializeOptions'] = { ...options.options };
 
   // Delete all filters
   delete serializeOptions['processModuleFilter'];

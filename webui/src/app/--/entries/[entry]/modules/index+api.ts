@@ -1,9 +1,9 @@
 import { getSource } from '~/utils/atlas';
 import { filterModules, moduleFiltersFromParams } from '~/utils/filters';
-import { type StatsEntry, type StatsModule } from '~core/data/types';
+import { type AtlasEntry, type AtlasModule } from '~core/data/types';
 
-/** The partial module data, when listing all available modules from a stats entry */
-export type PartialModule = Omit<StatsModule, 'source' | 'output'>;
+/** The partial module data, when listing all available modules from an entry */
+export type PartialModule = Omit<AtlasModule, 'source' | 'output'>;
 
 export type ModuleListResponse = {
   data: PartialModule[];
@@ -20,7 +20,7 @@ export type ModuleListResponse = {
 
 /** Get all modules as simple list */
 export async function GET(request: Request, params: Record<'entry', string>) {
-  let entry: StatsEntry;
+  let entry: AtlasEntry;
 
   try {
     entry = await getSource().getEntry(params.entry);
@@ -69,7 +69,7 @@ export async function POST(request: Request, params: Record<'entry', string>) {
     );
   }
 
-  let entry: StatsEntry;
+  let entry: AtlasEntry;
 
   try {
     entry = await getSource().getEntry(params.entry);
