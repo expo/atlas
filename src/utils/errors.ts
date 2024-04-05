@@ -15,15 +15,15 @@ export class AtlasError extends Error {
 
 export class AtlasValidationError extends AtlasError {
   constructor(
-    code: 'STATS_FILE_NOT_FOUND' | 'STATS_FILE_INCOMPATIBLE',
-    public readonly statsFile: string,
+    code: 'ATLAS_FILE_NOT_FOUND' | 'ATLAS_FILE_INCOMPATIBLE',
+    public readonly filePath: string,
     public readonly incompatibleVersion?: string
   ) {
     super(
       code,
-      code === 'STATS_FILE_NOT_FOUND'
-        ? `Stats file not found: ${statsFile}`
-        : `Stats file is incompatible with this version.`
+      code === 'ATLAS_FILE_NOT_FOUND'
+        ? `Atlas file not found: ${filePath}`
+        : `Atlas file is incompatible with this version.`
     );
   }
 }

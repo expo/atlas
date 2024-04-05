@@ -8,9 +8,9 @@ import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { useEntry } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
+import { relativeEntryPath } from '~/utils/entry';
 import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
-import { relativeEntryPath } from '~/utils/entry';
 
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();

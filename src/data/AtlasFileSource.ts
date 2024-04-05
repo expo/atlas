@@ -11,31 +11,31 @@ import { appendJsonLine, forEachJsonLines, parseJsonLine } from '../utils/jsonl'
 export type AtlasMetadata = { name: string; version: string };
 
 export class AtlasFileSource implements AtlasSource {
-  constructor(public readonly statsPath: string) {
+  constructor(public readonly filePath: string) {
     //
   }
 
   listEntries() {
-    return listAtlasEntries(this.statsPath);
+    return listAtlasEntries(this.filePath);
   }
 
   getEntry(id: string) {
     const numeric = parseInt(id, 10);
     assert(!Number.isNaN(numeric) && numeric > 1, `Invalid entry ID: ${id}`);
-    return readAtlasEntry(this.statsPath, Number(id));
+    return readAtlasEntry(this.filePath, Number(id));
   }
 }
 
 /**
- * List all stats entries without parsing the data.
+ * List all entries without parsing the data.
  * This only reads the bundle name, and adds a line number as ID.
  */
-export async function listAtlasEntries(statsPath: string) {
+export async function listAtlasEntries(filePath: string) {
   const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)/;
   const entries: PartialAtlasEntry[] = [];
 
-  await forEachJsonLines(statsPath, (contents, line) => {
-    // Skip the stats metadata line
+  await forEachJsonLines(filePath, (contents, line) => {
+    // Skip the metadata line
     if (line === 1) return;
 
     const [_, platform, projectRoot, entryPoint] = contents.match(bundlePattern) ?? [];
@@ -53,72 +53,72 @@ export async function listAtlasEntries(statsPath: string) {
 }
 
 /**
- * Get the stats entry by id or line number, and parse the data.
+ * Get the entry by id or line number, and parse the data.
  */
-export async function readAtlasEntry(statsPath: string, id: number): Promise<AtlasEntry> {
-  const statsEntry = await parseJsonLine<any[]>(statsPath, id);
+export async function readAtlasEntry(filePath: string, id: number): Promise<AtlasEntry> {
+  const atlasEntry = await parseJsonLine<any[]>(filePath, id);
   return {
     id: String(id),
-    platform: statsEntry[0],
-    projectRoot: statsEntry[1],
-    entryPoint: statsEntry[2],
-    runtimeModules: statsEntry[3],
-    modules: new Map(statsEntry[4].map((module) => [module.path, module])),
-    transformOptions: statsEntry[5],
-    serializeOptions: statsEntry[6],
+    platform: atlasEntry[0],
+    projectRoot: atlasEntry[1],
+    entryPoint: atlasEntry[2],
+    runtimeModules: atlasEntry[3],
+    modules: new Map(atlasEntry[4].map((module) => [module.path, module])),
+    transformOptions: atlasEntry[5],
+    serializeOptions: atlasEntry[6],
   };
 }
 
 /** Simple promise to avoid mixing appended data */
-let writeStatsQueue: Promise<any> = Promise.resolve();
+let writeQueue: Promise<any> = Promise.resolve();
 
 /**
- * Add a new stats entry to the stats file.
- * This is appended on a new line, so we can load the stats selectively.
+ * Add a new entry to the file.
+ * This is appended on a new line, so we can load the selectively.
  */
-export function writeAtlasEntry(statsPath: string, stats: AtlasEntry) {
-  const entry = [
-    stats.platform,
-    stats.projectRoot,
-    stats.entryPoint,
-    stats.runtimeModules,
-    Array.from(stats.modules.values()),
-    stats.transformOptions,
-    stats.serializeOptions,
+export function writeAtlasEntry(filePath: string, entry: AtlasEntry) {
+  const line = [
+    entry.platform,
+    entry.projectRoot,
+    entry.entryPoint,
+    entry.runtimeModules,
+    Array.from(entry.modules.values()),
+    entry.transformOptions,
+    entry.serializeOptions,
   ];
 
-  return (writeStatsQueue = writeStatsQueue.then(() => appendJsonLine(statsPath, entry)));
+  return (writeQueue = writeQueue.then(() => appendJsonLine(filePath, line)));
 }
 
-/** The default location of the metro stats file */
+/** The default location of the metro file */
 export function getAtlasPath(projectRoot: string) {
   return path.join(projectRoot, '.expo/atlas.jsonl');
 }
 
-/** The information to validate if a stats file is compatible with this library version */
+/** The information to validate if a file is compatible with this library version */
 export function getAtlasMetdata(): AtlasMetadata {
   return { name, version };
 }
 
-/** Validate if the stats file is compatible with this library version */
-export async function validateAtlasFile(statsFile: string, metadata = getAtlasMetdata()) {
-  if (!fs.existsSync(statsFile)) {
-    throw new AtlasValidationError('STATS_FILE_NOT_FOUND', statsFile);
+/** Validate if the file is compatible with this library version */
+export async function validateAtlasFile(filePath: string, metadata = getAtlasMetdata()) {
+  if (!fs.existsSync(filePath)) {
+    throw new AtlasValidationError('ATLAS_FILE_NOT_FOUND', filePath);
   }
 
-  if (env.EXPO_ATLAS_NO_STATS_VALIDATION) {
+  if (env.EXPO_ATLAS_NO_VALIDATION) {
     return;
   }
 
-  const data = await parseJsonLine(statsFile, 1);
+  const data = await parseJsonLine(filePath, 1);
 
   if (data.name !== metadata.name || data.version !== metadata.version) {
-    throw new AtlasValidationError('STATS_FILE_INCOMPATIBLE', statsFile, data.version);
+    throw new AtlasValidationError('ATLAS_FILE_INCOMPATIBLE', filePath, data.version);
   }
 }
 
 /**
- * Create or overwrite the stats file with basic metadata.
+ * Create or overwrite the file with basic metadata.
  * This metdata is used by the API to determine version compatibility.
  */
 export async function createAtlasFile(filePath: string) {

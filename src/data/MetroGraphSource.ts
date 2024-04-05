@@ -21,7 +21,7 @@ type ConvertGraphToAtlasOptions = {
 };
 
 export class MetroGraphSource implements AtlasSource {
-  /** All known stats entries, stored by ID */
+  /** All known entries, stored by ID */
   protected entries: Map<AtlasEntry['id'], AtlasEntry> = new Map();
 
   listEntries() {
@@ -36,14 +36,14 @@ export class MetroGraphSource implements AtlasSource {
   getEntry(id: string) {
     const entry = this.entries.get(id);
     if (!entry) {
-      throw new Error(`Stats entry "${id}" not found.`);
+      throw new Error(`Entry "${id}" not found.`);
     }
     return entry;
   }
 
   /**
    * Event handler when a new graph instance is ready to serialize.
-   * This converts all relevant data stored in the graph to stats objects.
+   * This converts all relevant data stored in the graph to objects.
    */
   onSerializeGraph(options: ConvertGraphToAtlasOptions) {
     const entry = convertGraph(options);
@@ -52,7 +52,7 @@ export class MetroGraphSource implements AtlasSource {
   }
 }
 
-/** Convert a Metro graph instance to a JSON-serializable stats entry */
+/** Convert a Metro graph instance to a JSON-serializable entry */
 export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasEntry {
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
@@ -92,7 +92,7 @@ export function collectEntryPointModules(
   return modules;
 }
 
-/** Convert a Metro module to a JSON-serializable stats module */
+/** Convert a Metro module to a JSON-serializable Atlas module */
 export function convertModule(
   options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'extensions'>,
   module: MetroModule

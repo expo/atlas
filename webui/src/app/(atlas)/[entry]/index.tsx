@@ -11,7 +11,7 @@ import { fetchApi } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams, useModuleFilters } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
 
-export default function StatsPage() {
+export default function BundlePage() {
   const { entry } = useEntry();
   const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphData(entry.id, filters);

@@ -17,14 +17,14 @@ describe('getAtlasPath', () => {
   });
 });
 
-describe('getStatsMetadata', () => {
+describe('getAtlasMetdata', () => {
   it('returns package name and version', () => {
     expect(getAtlasMetdata()).toMatchObject({ name, version });
   });
 });
 
 describe('createAtlasFile', () => {
-  it('creates a stats file with the correct metadata', async () => {
+  it('creates a file with the correct metadata', async () => {
     const file = fixture('create-metadata', { temporary: true });
     await createAtlasFile(file);
     await expect(fs.promises.readFile(file, 'utf8')).resolves.toBe(
@@ -32,7 +32,7 @@ describe('createAtlasFile', () => {
     );
   });
 
-  it('overwrites invalid stats file', async () => {
+  it('overwrites invalid file', async () => {
     const file = fixture('create-invalid', { temporary: true });
     await fs.promises.writeFile(file, JSON.stringify({ name, version: '0.0.0' }) + '\n');
     await createAtlasFile(file);
@@ -41,7 +41,7 @@ describe('createAtlasFile', () => {
     );
   });
 
-  it('reuses valid stats file', async () => {
+  it('reuses valid file', async () => {
     const file = fixture('create-valid', { temporary: true });
     await fs.promises.writeFile(file, JSON.stringify({ name, version }) + '\n');
     await createAtlasFile(file);
@@ -52,26 +52,26 @@ describe('createAtlasFile', () => {
 });
 
 describe('validateAtlasFile', () => {
-  it('passes for valid stats file', async () => {
+  it('passes for valid file', async () => {
     const file = fixture('validate-valid', { temporary: true });
     await createAtlasFile(file);
     await expect(validateAtlasFile(file)).resolves.pass();
   });
 
-  it('fails for non-existing stats file', async () => {
+  it('fails for non-existing file', async () => {
     await expect(validateAtlasFile('./this-file-does-not-exists')).rejects.toThrow(
       AtlasValidationError
     );
   });
 
-  it('fails for invalid stats file', async () => {
+  it('fails for invalid file', async () => {
     const file = fixture('validate-invalid', { temporary: true });
     await fs.promises.writeFile(file, JSON.stringify({ name, version: '0.0.0' }) + '\n');
     await expect(validateAtlasFile(file)).rejects.toThrow(AtlasValidationError);
   });
 
-  it('skips validation when EXPO_ATLAS_NO_STATS_VALIDATION is true-ish', async () => {
-    using _env = env('EXPO_ATLAS_NO_STATS_VALIDATION', 'true');
+  it('skips validation when EXPO_ATLAS_NO_VALIDATION is true-ish', async () => {
+    using _env = env('EXPO_ATLAS_NO_VALIDATION', 'true');
     const file = fixture('validate-skip-invalid', { temporary: true });
     await fs.promises.writeFile(file, JSON.stringify({ name, version: '0.0.0' }) + '\n');
     await expect(validateAtlasFile(file)).resolves.pass();
@@ -85,8 +85,8 @@ describe('validateAtlasFile', () => {
  */
 function fixture(name: string, { temporary = false }: { temporary?: boolean } = {}) {
   const file = temporary
-    ? path.join(__dirname, 'fixtures/stats', `${name}.temp.jsonl`)
-    : path.join(__dirname, 'fixtures/stats', `${name}.jsonl`);
+    ? path.join(__dirname, 'fixtures/atlas', `${name}.temp.jsonl`)
+    : path.join(__dirname, 'fixtures/atlas', `${name}.jsonl`);
 
   fs.mkdirSync(path.dirname(file), { recursive: true });
 

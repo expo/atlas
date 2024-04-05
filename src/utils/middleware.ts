@@ -14,8 +14,8 @@ const SERVER_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/server');
 
 /**
  * Initialize Expo Atlas to gather statistics from Metro during development.
- * This function creates a connect middleware to serve the webui and the stats API.
- * It's designed to use any `StatsSource` implementation and passes it to the webui.
+ * This function creates a connect middleware to serve the webui and the Atlas API.
+ * It's designed to use any `AtlasSource` implementation and passes it to the webui.
  *
  * @example ```js
  *   import { createAtlasMiddleware, MetroGraphSource } from 'expo-atlas/middleware';

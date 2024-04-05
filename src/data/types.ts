@@ -1,16 +1,16 @@
 import type { MixedOutput } from 'metro';
 
 export interface AtlasSource {
-  /** List all available stats entries */
+  /** List all available entries */
   listEntries(): PartialAtlasEntry[] | Promise<PartialAtlasEntry[]>;
-  /** Load the full stats entry, by reference */
+  /** Load the full entry, by reference */
   getEntry(ref: string): AtlasEntry | Promise<AtlasEntry>;
 }
 
 export type PartialAtlasEntry = Pick<AtlasEntry, 'id' | 'platform' | 'projectRoot' | 'entryPoint'>;
 
 export type AtlasEntry = {
-  /** The unique reference or ID to this stats entry */
+  /** The unique reference or ID to this entry */
   id: string;
   /** The platform for which the bundle was created */
   platform: 'android' | 'ios' | 'web';

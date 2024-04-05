@@ -7,8 +7,8 @@ import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { formatFileSize } from '~/utils/formatString';
 import { relativeEntryPath } from '~/utils/entry';
+import { formatFileSize } from '~/utils/formatString';
 import { type PartialAtlasEntry, type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {

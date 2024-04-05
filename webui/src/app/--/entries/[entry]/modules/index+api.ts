@@ -2,7 +2,7 @@ import { getSource } from '~/utils/atlas';
 import { filterModules, moduleFiltersFromParams } from '~/utils/filters';
 import { type AtlasEntry, type AtlasModule } from '~core/data/types';
 
-/** The partial module data, when listing all available modules from a stats entry */
+/** The partial module data, when listing all available modules from an entry */
 export type PartialModule = Omit<AtlasModule, 'source' | 'output'>;
 
 export type ModuleListResponse = {

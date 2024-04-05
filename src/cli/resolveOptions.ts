@@ -2,20 +2,20 @@ import freeport from 'freeport-async';
 import path from 'path';
 
 import { type Input } from './bin';
-import { getAtlasPath, validateAtlasFile } from '../utils/stats';
+import { getAtlasPath, validateAtlasFile } from '../data/AtlasFileSource';
 
 export type Options = Awaited<ReturnType<typeof resolveOptions>>;
 
 export async function resolveOptions(input: Input) {
-  const statsFile = await resolveStatsFile(input);
+  const atlasFile = await resolveAtlasFile(input);
   const port = await resolvePort(input);
-  return { statsFile, port, browserOpen: input['--no-open'] !== true };
+  return { atlasFile, port, browserOpen: input['--no-open'] !== true };
 }
 
-async function resolveStatsFile(input: Input) {
-  const statsFile = input._[0] ?? getAtlasPath(process.cwd());
-  await validateAtlasFile(statsFile);
-  return path.resolve(statsFile);
+async function resolveAtlasFile(input: Input) {
+  const atlasFile = input._[0] ?? getAtlasPath(process.cwd());
+  await validateAtlasFile(atlasFile);
+  return path.resolve(atlasFile);
 }
 
 async function resolvePort(input: Pick<Input, '--port'>) {

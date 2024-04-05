@@ -63,7 +63,7 @@ export function EntryProvider({ children }: PropsWithChildren) {
   );
 }
 
-/** Load all available stats entries from API */
+/** Load all available entries from API */
 function useEntryData() {
   return useQuery<PartialAtlasEntry[]>({
     refetchOnWindowFocus: false,
