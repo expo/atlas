@@ -3,21 +3,17 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ModuleGraphResponse } from '~/app/api/stats/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import {
-  type ModuleFilters,
-  StatsModuleFilter,
-  statsModuleFiltersToUrlParams,
-  useStatsModuleFilters,
-} from '~/components/forms/StatsModuleFilter';
+import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
 import { useStatsEntry } from '~/providers/stats';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
+import { type ModuleFilters, moduleFiltersToParams, useModuleFilters } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
 
 export default function StatsPage() {
   const { entry } = useStatsEntry();
-  const { filters, filtersEnabled } = useStatsModuleFilters();
+  const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphData(entry.id, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
@@ -77,7 +73,7 @@ function useModuleGraphData(entryId: string, filters: ModuleFilters) {
     queryFn: ({ queryKey }) => {
       const [_key, entry, filters] = queryKey as [string, string, ModuleFilters | undefined];
       const url = filters
-        ? `/api/stats/${entry}/modules/graph?${statsModuleFiltersToUrlParams(filters)}`
+        ? `/api/stats/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
         : `/api/stats/${entry}/modules/graph`;
 
       return fetchApi(url)

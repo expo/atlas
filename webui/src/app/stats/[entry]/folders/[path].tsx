@@ -4,22 +4,18 @@ import { useLocalSearchParams } from 'expo-router';
 import type { ModuleGraphResponse } from '~/app/api/stats/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import {
-  ModuleFilters,
-  StatsModuleFilter,
-  statsModuleFiltersToUrlParams,
-  useStatsModuleFilters,
-} from '~/components/forms/StatsModuleFilter';
+import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
 import { useStatsEntry } from '~/providers/stats';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
+import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
 import { relativeEntryPath } from '~/utils/stats';
 
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const { entry } = useStatsEntry();
-  const { filters, filtersEnabled } = useStatsModuleFilters();
+  const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphDataInFolder(entry.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
@@ -91,7 +87,7 @@ function useModuleGraphDataInFolder(entryId: string, path: string, filters: Modu
         ModuleFilters | undefined,
       ];
       const url = filters
-        ? `/api/stats/${entry}/modules/graph?path=${encodeURIComponent(path)}&${statsModuleFiltersToUrlParams(filters)}`
+        ? `/api/stats/${entry}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
         : `/api/stats/${entry}/modules/graph?path=${encodeURIComponent(path)}`;
 
       return fetchApi(url)
