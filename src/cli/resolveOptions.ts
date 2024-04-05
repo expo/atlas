@@ -2,7 +2,7 @@ import freeport from 'freeport-async';
 import path from 'path';
 
 import { type Input } from './bin';
-import { getStatsPath, validateStatsFile } from '../utils/stats';
+import { getAtlasPath, validateAtlasFile } from '../utils/stats';
 
 export type Options = Awaited<ReturnType<typeof resolveOptions>>;
 
@@ -13,8 +13,8 @@ export async function resolveOptions(input: Input) {
 }
 
 async function resolveStatsFile(input: Input) {
-  const statsFile = input._[0] ?? getStatsPath(process.cwd());
-  await validateStatsFile(statsFile);
+  const statsFile = input._[0] ?? getAtlasPath(process.cwd());
+  await validateAtlasFile(statsFile);
   return path.resolve(statsFile);
 }
 

@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import cn from 'classnames';
-import { forwardRef, type HTMLAttributes } from 'react';
+import { forwardRef, type PropsWithChildren, type HTMLAttributes } from 'react';
 
-import { StatsEntrySelect } from '~/components/forms/StatsEntrySelect';
+import { StatsEntrySelect } from '~/components/forms/EntrySelect';
 import { LayoutContent, LayoutNavigation } from '~/ui/Layout';
 
 export { LayoutHeader as PageHeader, LayoutTitle as PageTitle } from '~/ui/Layout';
@@ -45,3 +45,16 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
   }
 );
 Page.displayName = 'Page';
+
+type PageContentProps = PropsWithChildren & {
+  title?: string;
+};
+
+export function PageContent({ title, children }: PageContentProps) {
+  return (
+    <div className="flex flex-1 justify-center items-center">
+      {!!title && <h2 className="text-lg font-bold m-4">{title}</h2>}
+      {children}
+    </div>
+  );
+}

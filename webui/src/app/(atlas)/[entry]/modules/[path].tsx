@@ -2,17 +2,17 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { useStatsEntry } from '~/providers/stats';
+import { useEntry } from '~/providers/entries';
 import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
-import { relativeEntryPath } from '~/utils/stats';
-import { type PartialStatsEntry, type StatsModule } from '~core/data/types';
+import { relativeEntryPath } from '~/utils/entry';
+import { type PartialAtlasEntry, type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {
-  const { entry } = useStatsEntry();
+  const { entry } = useEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entry.id, absolutePath!);
 
@@ -52,7 +52,7 @@ export default function ModulePage() {
                   <Link
                     className="text-link hover:underline"
                     href={{
-                      pathname: '/stats/[entry]/modules/[path]',
+                      pathname: '/(atlas)/[entry]/modules/[path]',
                       params: { entry: entry.id, path },
                     }}
                   >
@@ -84,8 +84,8 @@ function ModuleSummary({
   module,
   platform,
 }: {
-  module: StatsModule;
-  platform?: PartialStatsEntry['platform'];
+  module: AtlasModule;
+  platform?: PartialAtlasEntry['platform'];
 }) {
   return (
     <div className="font-sm text-secondary">
@@ -108,18 +108,19 @@ function ModuleSummary({
   );
 }
 
-function getModuleType(module: StatsModule) {
+function getModuleType(module: AtlasModule) {
   const type = module.path.includes('?ctx=') ? 'require.context' : 'file';
   return module.package ? `package ${type}` : type;
 }
 
 /** Load the module data from API, by path reference only */
 function useModuleData(entryId: string, path: string) {
-  return useQuery<StatsModule>({
+  return useQuery<AtlasModule>({
+    refetchOnWindowFocus: false,
     queryKey: [`module`, entryId, path],
     queryFn: async ({ queryKey }) => {
       const [_key, entry, path] = queryKey as [string, string, string];
-      return fetchApi(`/api/stats/${entry}/modules`, {
+      return fetchApi(`/entries/${entry}/modules`, {
         method: 'POST',
         body: JSON.stringify({ path }),
       })

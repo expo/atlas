@@ -6,14 +6,14 @@ import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 // @ts-expect-error
 import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 
-import { useStatsEntry } from '~/providers/stats';
+import { useEntry } from '~/providers/entries';
 import { Button } from '~/ui/Button';
 import { Tag } from '~/ui/Tag';
-import { relativeEntryPath } from '~/utils/stats';
+import { relativeEntryPath } from '~/utils/entry';
 
 export function StatsEntrySelect() {
   const router = useRouter();
-  const { entry, entries } = useStatsEntry();
+  const { entry, entries } = useEntry();
 
   return (
     <Select.Root value={entry.id} onValueChange={(entry) => router.setParams({ entry })}>

@@ -5,7 +5,7 @@ import path from 'path';
 import serveStaticHandler from 'serve-static';
 
 import { env } from './env';
-import { type StatsSource } from '../data/types';
+import { type AtlasSource } from '../data/types';
 
 const WEBUI_ROOT = path.resolve(__dirname, '../../../webui');
 
@@ -27,12 +27,12 @@ const SERVER_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/server');
  *   app.use('/_expo/atlas', middleware);
  * ```
  */
-export function createAtlasMiddleware(source: StatsSource) {
+export function createAtlasMiddleware(source: AtlasSource) {
   global.EXPO_ATLAS_SOURCE = source;
 
   const middleware = connect();
 
-  if (env.EXPO_ATLAS_DEBUG) {
+  if (env.EXPO_DEBUG) {
     middleware.use(morgan('tiny'));
   }
 

@@ -10,13 +10,13 @@ import { useMemo } from 'react';
 
 import { formatFileSize } from '~/utils/formatString';
 import type { TreemapNode } from '~/utils/treemap';
-import type { PartialStatsEntry } from '~core/data/types';
+import type { PartialAtlasEntry } from '~core/data/types';
 
 // Register used echarts components, to avoid loading unused code
 echarts.use([TooltipComponent, TreemapChart, CanvasRenderer]);
 
 type BundleGraphProps = {
-  entry: PartialStatsEntry;
+  entry: PartialAtlasEntry;
   graph: TreemapNode;
 };
 
@@ -51,8 +51,8 @@ export function BundleGraph(props: BundleGraphProps) {
           if (event.event.altKey || event.event.ctrlKey || event.event.metaKey) {
             router.push({
               pathname: data.children?.length
-                ? '/stats/[entry]/folders/[path]'
-                : '/stats/[entry]/modules/[path]',
+                ? '/(atlas)/[entry]/folders/[path]'
+                : '/(atlas)/[entry]/modules/[path]',
               params: {
                 entry: props.entry.id,
                 path: data.value === 100 ? data.name : data.modulePath,

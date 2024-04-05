@@ -2,13 +2,13 @@ import compression from 'compression';
 import express from 'express';
 
 import { type Options } from './resolveOptions';
-import { StatsFileSource } from '../data/StatsFileSource';
+import { AtlasFileSource } from '../data/AtlasFileSource';
 import { createAtlasMiddleware } from '../utils/middleware';
 
 export function createServer(options: Options) {
   process.env.NODE_ENV = 'production';
 
-  const source = new StatsFileSource(options.statsFile);
+  const source = new AtlasFileSource(options.statsFile);
   const middleware = createAtlasMiddleware(source);
   const baseUrl = '/_expo/atlas'; // Keep in sync with webui `app.json` `baseUrl`
 

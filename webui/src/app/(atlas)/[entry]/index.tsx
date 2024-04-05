@@ -1,10 +1,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import type { ModuleGraphResponse } from '~/app/api/stats/[entry]/modules/graph+api';
+import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
-import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { StatsModuleFilter } from '~/components/forms/StatsModuleFilter';
-import { useStatsEntry } from '~/providers/stats';
+import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
+import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
+import { useEntry } from '~/providers/entries';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
@@ -12,7 +12,7 @@ import { type ModuleFilters, moduleFiltersToParams, useModuleFilters } from '~/u
 import { formatFileSize } from '~/utils/formatString';
 
 export default function StatsPage() {
-  const { entry } = useStatsEntry();
+  const { entry } = useEntry();
   const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphData(entry.id, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
@@ -25,18 +25,26 @@ export default function StatsPage() {
             <h1 className="text-lg font-bold mr-4">Bundle</h1>
             {!!modules.data && <BundleSummary data={modules.data} />}
           </PageTitle>
-          <StatsModuleFilter />
+          <ModuleFiltersForm />
         </PageHeader>
-        {(modules.isPending && !modules.isPlaceholderData) || modules.isError ? (
-          <div className="flex flex-1 justify-center items-center text-secondary">
-            {modules.isError ? 'Could not load the graph, try reloading this page' : <Spinner />}
-          </div>
+        {modules.isPending && !modules.isPlaceholderData ? (
+          <PageContent>
+            <Spinner />
+          </PageContent>
+        ) : modules.isError ? (
+          <PageContent title="Failed to generate graph.">
+            <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
+          </PageContent>
         ) : treeHasData ? (
           <BundleGraph entry={entry} graph={modules.data!.data} />
         ) : (
-          <div className="flex flex-1 justify-center items-center text-secondary">
-            {!filtersEnabled ? 'No data available' : 'No data available, try resetting the filters'}
-          </div>
+          <PageContent title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
+            <p>
+              {filtersEnabled
+                ? 'Try adjusting or clearing the filters'
+                : 'Try another bundle entry'}
+            </p>
+          </PageContent>
         )}
       </div>
     </Page>
@@ -73,8 +81,8 @@ function useModuleGraphData(entryId: string, filters: ModuleFilters) {
     queryFn: ({ queryKey }) => {
       const [_key, entry, filters] = queryKey as [string, string, ModuleFilters | undefined];
       const url = filters
-        ? `/api/stats/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
-        : `/api/stats/${entry}/modules/graph`;
+        ? `/entries/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
+        : `/entries/${entry}/modules/graph`;
 
       return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))

@@ -1,4 +1,4 @@
-import type { StatsModule } from '~core/data/types';
+import type { AtlasModule } from '~core/data/types';
 
 export type TreemapNode = {
   /** The current path of the node */
@@ -52,7 +52,7 @@ export function finalizeModuleTree(node: TreemapNode): TreemapNode {
  * Create a nested treemap from the list of modules.
  * This will group the modules by `module.path` segments, and add metadata to each node.
  */
-export function createModuleTree(modules: StatsModule[]): TreemapNode {
+export function createModuleTree(modules: AtlasModule[]): TreemapNode {
   const totalSize = modules.reduce((total, module) => total + module.size, 0);
   const map: TreemapNode = {
     name: '/', // This is the root, so no prefix

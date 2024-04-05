@@ -1,7 +1,7 @@
 import { Slot } from 'expo-router';
 
+import { EntryProvider } from '~/providers/entries';
 import { QueryProvider } from '~/providers/query';
-import { StatsEntryProvider } from '~/providers/stats';
 import { ThemeProvider } from '~/providers/theme';
 
 // Import the Expo-required radix styles
@@ -32,9 +32,9 @@ export default function RootLayout() {
   return (
     <QueryProvider>
       <ThemeProvider>
-        <StatsEntryProvider>
+        <EntryProvider>
           <Slot />
-        </StatsEntryProvider>
+        </EntryProvider>
       </ThemeProvider>
     </QueryProvider>
   );
