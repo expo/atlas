@@ -4,7 +4,7 @@ import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
-import { useEntry } from '~/providers/entries';
+import { useEntry, useEntryDelta } from '~/providers/entries';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
@@ -17,6 +17,8 @@ export default function BundlePage() {
   const modules = useModuleGraphData(entry.id, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
+  useEntryDelta(entry.id);
+
   return (
     <Page variant="viewport">
       <div className="flex flex-1 flex-col">
@@ -27,6 +29,7 @@ export default function BundlePage() {
           </PageTitle>
           <ModuleFiltersForm />
         </PageHeader>
+
         {modules.isPending && !modules.isPlaceholderData ? (
           <PageContent>
             <Spinner />
@@ -77,9 +80,15 @@ function useModuleGraphData(entryId: string, filters: ModuleFilters) {
   return useQuery<ModuleGraphResponse>({
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
-    queryKey: [`bundle-graph`, entryId, filters],
+    queryKey: [`entry`, entryId, 'bundle-graph', filters],
     queryFn: ({ queryKey }) => {
-      const [_key, entry, filters] = queryKey as [string, string, ModuleFilters | undefined];
+      const [_key, entry, _graph, filters] = queryKey as [
+        string,
+        string,
+        string,
+        ModuleFilters | undefined,
+      ];
+
       const url = filters
         ? `/entries/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
         : `/entries/${entry}/modules/graph`;

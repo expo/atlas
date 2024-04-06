@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { useEntry } from '~/providers/entries';
+import { useEntry, useEntryDelta } from '~/providers/entries';
 import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
@@ -17,6 +17,8 @@ export default function ModulePage() {
   const module = useModuleData(entry.id, absolutePath!);
 
   const outputCode = module.data?.output?.map((output) => output.data.code).join('\n');
+
+  useEntryDelta(entry.id);
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -117,9 +119,9 @@ function getModuleType(module: AtlasModule) {
 function useModuleData(entryId: string, path: string) {
   return useQuery<AtlasModule>({
     refetchOnWindowFocus: false,
-    queryKey: [`module`, entryId, path],
+    queryKey: [`entries`, entryId, `module`, path],
     queryFn: async ({ queryKey }) => {
-      const [_key, entry, path] = queryKey as [string, string, string];
+      const [_key, entry, _module, path] = queryKey as [string, string, string, string];
       return fetchApi(`/entries/${entry}/modules`, {
         method: 'POST',
         body: JSON.stringify({ path }),

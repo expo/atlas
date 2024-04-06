@@ -5,7 +5,7 @@ import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
-import { useEntry } from '~/providers/entries';
+import { useEntry, useEntryDelta } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { relativeEntryPath } from '~/utils/entry';
@@ -18,6 +18,8 @@ export default function FolderPage() {
   const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphDataInFolder(entry.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
+
+  useEntryDelta(entry.id);
 
   return (
     <Page variant="viewport">
@@ -80,14 +82,16 @@ function useModuleGraphDataInFolder(entryId: string, path: string, filters: Modu
   return useQuery<ModuleGraphResponse>({
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
-    queryKey: [`module`, entryId, path, filters],
+    queryKey: [`entries`, entryId, `module`, path, filters],
     queryFn: async ({ queryKey }) => {
-      const [_key, entry, path, filters] = queryKey as [
+      const [_key, entry, _module, path, filters] = queryKey as [
+        string,
         string,
         string,
         string,
         ModuleFilters | undefined,
       ];
+
       const url = filters
         ? `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
         : `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}`;

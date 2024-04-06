@@ -1,9 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { type PropsWithChildren, createContext, useContext, useMemo } from 'react';
+import {
+  type PropsWithChildren,
+  createContext,
+  useContext,
+  useMemo,
+  useEffect,
+  useCallback,
+} from 'react';
 
+import { type EntryDeltaResponse } from '~/app/--/entries/[entry]/delta+api';
 import { PageContent } from '~/components/Page';
+import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
+import { ToastAction, useToast } from '~/ui/Toast';
 import { fetchApi } from '~/utils/api';
 import { type PartialAtlasEntry } from '~core/data/types';
 
@@ -24,6 +34,42 @@ export const useEntry = () => {
   );
 
   return { entry, entries };
+};
+
+export const useEntryDelta = (entryId: string) => {
+  const client = useQueryClient();
+  const toaster = useToast();
+
+  const deltaResponse = useEntryDeltaData(entryId);
+  const entryDelta = deltaResponse.data?.delta;
+
+  const refetchEntryData = useCallback(() => {
+    return fetchApi(`/entries/${entryId}/reload`)
+      .then((res) => (!res.ok ? Promise.reject(res) : res.text()))
+      .then(() => client.refetchQueries({ queryKey: ['entries', entryId], type: 'active' }));
+  }, [entryId]);
+
+  useEffect(() => {
+    if (!entryDelta) return;
+
+    toaster.toast({
+      id: `entry-delta-${entryId}`,
+      title: 'Bundle outdated',
+      description: 'The code was changed since last build.',
+      action: (
+        <ToastAction altText="Reload bundle">
+          <Button variant="secondary" size="xs" onClick={refetchEntryData}>
+            Reload bundle
+          </Button>
+        </ToastAction>
+      ),
+    });
+  }, [entryId, entryDelta, refetchEntryData]);
+
+  return {
+    entryDelta,
+    refetchData: refetchEntryData,
+  };
 };
 
 export function EntryProvider({ children }: PropsWithChildren) {
@@ -69,5 +115,17 @@ function useEntryData() {
     refetchOnWindowFocus: false,
     queryKey: ['entries'],
     queryFn: () => fetchApi('/entries').then((res) => res.json()),
+  });
+}
+
+/** Poll the server to check for possible changes in entries */
+function useEntryDeltaData(entryId: string) {
+  return useQuery<EntryDeltaResponse>({
+    refetchInterval: (query) => (query.state.data?.isEnabled === false ? false : 2000),
+    queryKey: ['entries', entryId, 'delta'],
+    queryFn: ({ queryKey }) => {
+      const [_key, entry] = queryKey as [string, string];
+      return fetchApi(`/entries/${entry}/delta`).then((res) => res.json());
+    },
   });
 }
