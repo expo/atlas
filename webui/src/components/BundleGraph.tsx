@@ -186,7 +186,7 @@ function getBundleGraphTooltip(
         <div class="flex flex-row justify-between items-center mx-3 my-2 mb-0">
           <div class="inline-flex items-center ${type === 'package' ? 'font-bold' : ''}">
             ${ICON_BY_NODE_TYPE[type]}
-            <span class="mx-2 text-wrap break-words ${isRoot ? 'leading-4' : ''}">${node.name}</span>
+            <span class="mx-2 text-wrap break-all ${isRoot ? 'leading-4' : ''}">${node.name}</span>
           </div>
           <span>${formatNodeValue(node)}</span>
         </div>
