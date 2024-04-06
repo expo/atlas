@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { useEntry, useEntryDelta } from '~/providers/entries';
+import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
@@ -15,10 +15,7 @@ export default function ModulePage() {
   const { entry } = useEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entry.id, absolutePath!);
-
   const outputCode = module.data?.output?.map((output) => output.data.code).join('\n');
-
-  useEntryDelta(entry.id);
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -43,7 +40,7 @@ export default function ModulePage() {
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
       </PageHeader>
-
+      <EntryDeltaToast entryId={entry.id} />
       <div className="mx-8 mb-4">
         {!!module.data.importedBy?.length && (
           <div className="my-4">

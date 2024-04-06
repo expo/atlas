@@ -5,7 +5,7 @@ import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
-import { useEntry, useEntryDelta } from '~/providers/entries';
+import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { relativeEntryPath } from '~/utils/entry';
@@ -19,8 +19,6 @@ export default function FolderPage() {
   const modules = useModuleGraphDataInFolder(entry.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
-  useEntryDelta(entry.id);
-
   return (
     <Page variant="viewport">
       <div className="flex flex-1 flex-col">
@@ -33,6 +31,7 @@ export default function FolderPage() {
           </PageTitle>
           <ModuleFiltersForm disableNodeModules />
         </PageHeader>
+        <EntryDeltaToast entryId={entry.id} />
         {modules.isError ? (
           <PageContent title="Failed to generate graph.">
             Try restarting Expo Atlas. If this error keeps happening, open a bug report.

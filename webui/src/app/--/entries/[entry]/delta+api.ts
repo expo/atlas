@@ -10,7 +10,7 @@ export async function GET(_request: Request, params: Record<'entry', string>) {
   try {
     const isEnabled = getSource().entryDeltaEnabled();
     const response: EntryDeltaResponse = {
-      isEnabled: false,
+      isEnabled,
       delta: !isEnabled ? null : await getSource().getEntryDelta(params.entry),
     };
 
