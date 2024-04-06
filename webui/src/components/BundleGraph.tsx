@@ -1,6 +1,6 @@
 import type { TreemapSeriesOption } from 'echarts';
 import { TreemapChart } from 'echarts/charts';
-import { TooltipComponent } from 'echarts/components';
+import { TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { CallbackDataParams, TooltipFormatterCallback } from 'echarts/types/dist/shared';
@@ -13,7 +13,7 @@ import type { TreemapNode } from '~/utils/treemap';
 import type { PartialAtlasEntry } from '~core/data/types';
 
 // Register used echarts components, to avoid loading unused code
-echarts.use([TooltipComponent, TreemapChart, CanvasRenderer]);
+echarts.use([TooltipComponent, TitleComponent, TreemapChart, CanvasRenderer]);
 
 type BundleGraphProps = {
   entry: PartialAtlasEntry;
