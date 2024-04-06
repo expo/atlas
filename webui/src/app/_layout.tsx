@@ -3,6 +3,7 @@ import { Slot } from 'expo-router';
 import { EntryProvider } from '~/providers/entries';
 import { QueryProvider } from '~/providers/query';
 import { ThemeProvider } from '~/providers/theme';
+import { ToastProvider } from '~/ui/Toast';
 
 // Import the Expo-required radix styles
 import '@radix-ui/colors/green.css';
@@ -33,6 +34,7 @@ export default function RootLayout() {
     <QueryProvider>
       <ThemeProvider>
         <EntryProvider>
+          <ToastProvider />
           <Slot />
         </EntryProvider>
       </ThemeProvider>
