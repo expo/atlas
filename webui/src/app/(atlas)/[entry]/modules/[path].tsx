@@ -40,7 +40,7 @@ export default function ModulePage() {
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
       </PageHeader>
-      <EntryDeltaToast entryId={entry.id} />
+      <EntryDeltaToast entryId={entry.id} modulePath={absolutePath} />
       <div className="mx-8 mb-4">
         {!!module.data.importedBy?.length && (
           <div className="my-4">

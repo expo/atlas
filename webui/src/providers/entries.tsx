@@ -13,7 +13,7 @@ import { type EntryDeltaResponse } from '~/app/--/entries/[entry]/delta+api';
 import { PageContent } from '~/components/Page';
 import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
-import { ToastAction, useToast } from '~/ui/Toast';
+import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
 import { fetchApi } from '~/utils/api';
 import { type PartialAtlasEntry } from '~core/data/types';
 
@@ -83,7 +83,7 @@ function useEntryData() {
 }
 
 /** A logic-component to show a toast notification when the entry is outdated. */
-export function EntryDeltaToast({ entryId }: { entryId: string }) {
+export function EntryDeltaToast({ entryId, modulePath }: { entryId: string; modulePath?: string }) {
   const client = useQueryClient();
   const toaster = useToast();
 
@@ -101,24 +101,50 @@ export function EntryDeltaToast({ entryId }: { entryId: string }) {
   useEffect(() => {
     if (!entryDelta) return;
 
-    // TODO: update message when current module path is deleted
-    // TODO: auto-update when current module path is modified
+    if (modulePath) {
+      if (entryDelta.deletedPaths.includes(modulePath)) {
+        toaster.toast(toastModuleDeleted(entryId));
+      } else if (entryDelta.modifiedPaths.includes(modulePath)) {
+        refetchEntryData().then(() => toaster.toast(toastModuleModified(entryId)));
+      }
+      return;
+    }
 
-    toaster.toast({
-      id: `entry-delta-${entryId}`,
-      title: 'Bundle outdated',
-      description: 'The code was changed since last build.',
-      action: (
-        <ToastAction altText="Reload bundle">
-          <Button variant="secondary" size="xs" onClick={refetchEntryData}>
-            Reload bundle
-          </Button>
-        </ToastAction>
-      ),
-    });
-  }, [entryId, entryDelta, refetchEntryData]);
+    toaster.toast(toastBundleUpdate(entryId, refetchEntryData));
+  }, [entryId, entryDelta, refetchEntryData, modulePath]);
 
   return null;
+}
+
+function toastModuleModified(entryId: string): ToasterToast {
+  return {
+    id: `entry-delta-${entryId}`,
+    title: 'Module modified',
+    description: 'This module is updated to reflect the latest changes.',
+  };
+}
+
+function toastModuleDeleted(entryId: string): ToasterToast {
+  return {
+    id: `entry-delta-${entryId}`,
+    title: 'Module deleted',
+    description: 'This file is deleted since latest build, and is no longer available.',
+  };
+}
+
+function toastBundleUpdate(entryId: string, refetchEntryData: () => any): ToasterToast {
+  return {
+    id: `entry-delta-${entryId}`,
+    title: 'Bundle outdated',
+    description: 'The code was changed since last build.',
+    action: (
+      <ToastAction altText="Reload bundle">
+        <Button variant="secondary" size="xs" onClick={refetchEntryData}>
+          Reload bundle
+        </Button>
+      </ToastAction>
+    ),
+  };
 }
 
 /** Poll the server to check for possible changes in entries */
