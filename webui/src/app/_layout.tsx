@@ -1,5 +1,6 @@
 import { Slot } from 'expo-router';
 
+import { CodeProvider } from '~/components/code/CodeProvider';
 import { EntryProvider } from '~/providers/entries';
 import { QueryProvider } from '~/providers/query';
 import { ThemeProvider } from '~/providers/theme';
@@ -33,10 +34,12 @@ export default function RootLayout() {
   return (
     <QueryProvider>
       <ThemeProvider>
-        <EntryProvider>
-          <ToastProvider />
-          <Slot />
-        </EntryProvider>
+        <CodeProvider>
+          <EntryProvider>
+            <ToastProvider />
+            <Slot />
+          </EntryProvider>
+        </CodeProvider>
       </ThemeProvider>
     </QueryProvider>
   );
