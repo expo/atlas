@@ -24,6 +24,14 @@ export class AtlasFileSource implements AtlasSource {
     assert(!Number.isNaN(numeric) && numeric > 1, `Invalid entry ID: ${id}`);
     return readAtlasEntry(this.filePath, Number(id));
   }
+
+  entryDeltaEnabled() {
+    return false; // File source does not implement the delta mechanism
+  }
+
+  getEntryDelta() {
+    return null; // File source does not implement the delta mechanism
+  }
 }
 
 /**

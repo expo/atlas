@@ -9,9 +9,14 @@ import { createAtlasMiddleware } from './utils/middleware';
  *
  * @example ```js
  *   const atlasFromProject = requireFrom(projectRoot, 'expo-atlas/cli');
+ *   const atlas = atlasFromProject?.createExpoAtlasMiddleware(config);
  *
- *   if (atlasFromProject) {
+ *   if (atlas) {
+ *     // Register the Atlas middleware, to serve the UI and API.
  *     middleware.use('/_expo/atlas', atlasFromProject.middleware);
+ *
+ *     // Register Metro to listen to changes
+ *     atlas.registerMetro(metro);
  *   }
  * ```
  */
@@ -20,6 +25,7 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
 
   const source = new MetroGraphSource();
   const middleware = createAtlasMiddleware(source);
+  const registerMetro = source.registerMetro.bind(source);
 
   const metroCustomSerializer = config.serializer?.customSerializer ?? (() => {});
   const metroExtensions = {
@@ -29,7 +35,7 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
 
   // @ts-expect-error Should still be writable at this stage
   config.serializer.customSerializer = (entryPoint, preModules, graph, options) => {
-    source.onSerializeGraph({
+    source.serializeGraph({
       projectRoot,
       entryPoint,
       preModules,
@@ -41,5 +47,5 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
     return metroCustomSerializer(entryPoint, preModules, graph, options);
   };
 
-  return { source, middleware };
+  return { source, middleware, registerMetro };
 }

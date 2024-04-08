@@ -6,7 +6,7 @@ import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StateInfo } from '~/components/StateInfo';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
-import { useEntry } from '~/providers/entries';
+import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { relativeEntryPath } from '~/utils/entry';
@@ -32,6 +32,7 @@ export default function FolderPage() {
           </PageTitle>
           <ModuleFiltersForm disableNodeModules />
         </PageHeader>
+        <EntryDeltaToast entryId={entry.id} />
         {modules.isError ? (
           <StateInfo title="Failed to generate graph.">
             Try restarting Expo Atlas. If this error keeps happening, open a bug report.
@@ -81,14 +82,16 @@ function useModuleGraphDataInFolder(entryId: string, path: string, filters: Modu
   return useQuery<ModuleGraphResponse>({
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
-    queryKey: [`module`, entryId, path, filters],
+    queryKey: [`entries`, entryId, `module`, path, filters],
     queryFn: async ({ queryKey }) => {
-      const [_key, entry, path, filters] = queryKey as [
+      const [_key, entry, _module, path, filters] = queryKey as [
+        string,
         string,
         string,
         string,
         ModuleFilters | undefined,
       ];
+
       const url = filters
         ? `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
         : `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}`;

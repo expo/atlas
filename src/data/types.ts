@@ -5,6 +5,10 @@ export interface AtlasSource {
   listEntries(): PartialAtlasEntry[] | Promise<PartialAtlasEntry[]>;
   /** Load the full entry, by reference */
   getEntry(ref: string): AtlasEntry | Promise<AtlasEntry>;
+  /** Load the entry changes since last bundle collection, if any */
+  getEntryDelta(ref: string): null | AtlasEntryDelta | Promise<null | AtlasEntryDelta>;
+  /** Determine if the source is watching for (live) changes. */
+  entryDeltaEnabled(): boolean;
 }
 
 export type PartialAtlasEntry = Pick<AtlasEntry, 'id' | 'platform' | 'projectRoot' | 'entryPoint'>;
@@ -26,6 +30,15 @@ export type AtlasEntry = {
   serializeOptions?: Record<string, any>;
   /** The transformation options used for this bundle */
   transformOptions?: Record<string, any>;
+};
+
+export type AtlasEntryDelta = {
+  /** When this delta or change was created */
+  createdAt: Date;
+  /** Both added and modified module paths */
+  modifiedPaths: string[];
+  /** Deleted module paths */
+  deletedPaths: string[];
 };
 
 export type AtlasModule = {
