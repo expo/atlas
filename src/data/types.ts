@@ -55,5 +55,11 @@ export type AtlasModule = {
   /** The original source code, as a buffer or string */
   source?: string;
   /** The transformed output source code */
-  output?: MixedOutput[];
+  output?: {
+    type: string;
+    data: {
+      code: string;
+      map?: string;
+    };
+  }[];
 };

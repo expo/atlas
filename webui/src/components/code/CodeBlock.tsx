@@ -1,10 +1,16 @@
-import { type PropsWithChildren } from 'react';
+import cn from 'classnames';
+import { ComponentProps, type PropsWithChildren } from 'react';
+import { ShikiTransformer } from 'shiki/bundle/web';
+import { MappingItem, SourceMapConsumer } from 'source-map';
 
 import { type CodeLanguages, type CodeThemes, useCodeHighlighter } from './CodeProvider';
 
-export function CodeBlock({ children }: PropsWithChildren) {
+export function CodeBlock({ className, ...props }: PropsWithChildren<ComponentProps<'div'>>) {
   return (
-    <div className="grid grid-cols-2 auto-rows-fr md:grid-cols-2 md:auto-rows-auto">{children}</div>
+    <div
+      className={cn('grid grid-cols-2 auto-rows-fr md:grid-cols-2 md:auto-rows-auto', className)}
+      {...props}
+    />
   );
 }
 
@@ -32,18 +38,57 @@ type CodeBlockContentProps = {
   code: string;
   language: CodeLanguages;
   theme?: CodeThemes;
+  sourcemap?: SourceMapConsumer;
+  sourceType?: 'code' | 'output';
 };
+
+function createSourcemapTransformer(props: CodeBlockContentProps): ShikiTransformer {
+  const mappings = new Map<number, MappingItem>();
+  const sourcemap = props.sourcemap;
+  const sourceType = props.sourceType || 'code';
+
+  sourcemap?.eachMapping((mapping) => {
+    console.log(
+      mapping,
+      sourcemap.originalPositionFor({
+        line: mapping.generatedLine,
+        column: mapping.generatedColumn,
+      })
+    );
+
+    if (mapping.generatedLine == null) return;
+    if (mappings.has(mapping.generatedLine)) return;
+
+    mappings.set(mapping.generatedLine, mapping);
+  });
+
+  return {
+    line(node, line) {
+      if (sourcemap) {
+        const mapping = mappings.get(line);
+        if (mapping && sourceType === 'output') {
+          node.properties['data-map-code'] = mapping.originalLine;
+        } else if (mapping && sourceType === 'code') {
+          node.properties['data-map-output'] = mapping.generatedLine;
+        }
+      }
+
+      node.properties[`data-line-${sourceType}`] = line;
+    },
+  };
+}
 
 export function CodeBlockContent(props: CodeBlockContentProps) {
   const highlighter = useCodeHighlighter();
   const html = highlighter?.codeToHtml(props.code, {
     lang: props.language,
     theme: 'expo-theme',
+    transformers: [createSourcemapTransformer(props)],
   });
 
   return (
     <div
-      className="overflow-x-auto h-full text-xs leading-6 py-2 text-red"
+      className="overflow-x-auto h-full text-xs py-2 text-red"
       dangerouslySetInnerHTML={{ __html: html || '' }}
     />
   );

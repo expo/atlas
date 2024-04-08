@@ -1,5 +1,6 @@
 import type metro from 'metro';
 import type DeltaBundler from 'metro/src/DeltaBundler';
+import { sourceMapObject } from 'metro/src/DeltaBundler/Serializers/sourceMapObject';
 import type MetroServer from 'metro/src/Server';
 import path from 'path';
 
@@ -182,7 +183,17 @@ export function convertModule(
     source: getModuleSourceContent(options, module),
     output: module.output.map((output) => ({
       type: output.type,
-      data: { code: output.data.code },
+      data: {
+        code: output.data.code,
+        map:
+          'map' in output.data
+            ? sourceMapObject([module], {
+                excludeSource: true,
+                processModuleFilter: () => true,
+                shouldAddToIgnoreList: () => false,
+              })
+            : undefined,
+      },
     })),
   };
 }

@@ -40,7 +40,8 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 // Initialize the Expo Atlas global data source in development
 if (process.env.NODE_ENV === 'development') {
   const { AtlasFileSource } = require('../build/src/data/AtlasFileSource');
-  const filePath = path.resolve(__dirname, './fixture/atlas-tabs-50.jsonl');
+  // const filePath = path.resolve(__dirname, './fixture/atlas-tabs-50.jsonl');
+  const filePath = path.resolve(__dirname, './fixture/atlas-tabs-50-sourcemaps.jsonl');
 
   global.EXPO_ATLAS_SOURCE = new AtlasFileSource(filePath);
 }

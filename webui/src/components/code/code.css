@@ -3,6 +3,11 @@
   counter-increment: step 0;
 }
 
+.shiki code .line {
+  line-height: 0rem;
+  padding: 0.5rem 0;
+}
+
 .shiki code .line::before {
   content: counter(step);
   counter-increment: step;
@@ -10,4 +15,17 @@
   width: 2.5rem;
   display: inline-block;
   text-align: right;
+  cursor: pointer;
+}
+
+.codeblock.has-focus .line {
+  transition: opacity 0.2s;
+}
+
+.codeblock.has-focus .line {
+  opacity: 0.5;
+}
+
+.codeblock.has-focus .line.focused {
+  opacity: 1;
 }

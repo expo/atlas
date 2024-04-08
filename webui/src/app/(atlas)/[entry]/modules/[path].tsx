@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
+import { MouseEvent, useEffect, useState } from 'react';
+import sourcemap, { SourceMapConsumer } from 'source-map';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { CodeBlock, guessLanguageFromPath } from '~/components/code/CodeBlock';
@@ -17,6 +19,24 @@ export default function ModulePage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entry.id, absolutePath!);
   const outputJs = module.data?.output?.find((output) => output.type.startsWith('js'));
+  const [outputSourcemap, setOutputSourcemap] = useState<SourceMapConsumer | null>(null);
+
+  useEffect(() => {
+    if (outputSourcemap) return () => outputSourcemap.destroy();
+  }, [outputSourcemap]);
+
+  useEffect(() => {
+    if (outputJs?.data.map) {
+      // @ts-expect-error
+      sourcemap.SourceMapConsumer.initialize({
+        'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.4/lib/mappings.wasm',
+      });
+
+      sourcemap.SourceMapConsumer.with(outputJs?.data.map, null, (instance) => {
+        setOutputSourcemap(instance);
+      });
+    }
+  }, [outputJs?.data.map]);
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -64,21 +84,62 @@ export default function ModulePage() {
           </div>
         )}
 
-        <CodeBlock>
+        <CodeBlock onMouseUpCapture={onMouseClick} className="codeblock">
           <CodeBlockSectionWithPrettier
             title="Source"
             language={guessLanguageFromPath(module.data?.path)}
             code={module.data.source || '[no data available]'}
+            sourceType="code"
           />
           <CodeBlockSectionWithPrettier
             title="Output"
             language="js"
             code={outputJs?.data.code || '[no data available]'}
+            sourcemap={outputSourcemap || undefined}
+            sourceType="output"
           />
         </CodeBlock>
       </div>
     </Page>
   );
+}
+
+function findLine(element: HTMLElement) {
+  if (element.classList.contains('line')) {
+    return element as HTMLSpanElement;
+  }
+
+  const parent = element.closest('.line');
+  if (parent) return parent as HTMLSpanElement;
+
+  return null;
+}
+
+function onMouseClick(event: MouseEvent<HTMLDivElement>) {
+  const elCode = findLine(event.target as HTMLSpanElement);
+  const elOutput = findLine(event.target as HTMLSpanElement);
+
+  const lineCode = elCode?.dataset.lineCode;
+  const mapCode = elOutput?.dataset.mapCode;
+
+  event.currentTarget.classList.add('has-focus');
+  window.document.querySelectorAll('.focused').forEach((el) => {
+    el.classList.remove('focused');
+  });
+
+  if (mapCode) {
+    elOutput.classList.add('focused');
+    window.document.querySelectorAll(`[data-line-code="${mapCode}"]`).forEach((el) => {
+      el.classList.add('focused');
+    });
+  } else if (lineCode) {
+    elCode.classList.add('focused');
+    window.document.querySelectorAll(`[data-map-code="${lineCode}"]`).forEach((el) => {
+      el.classList.add('focused');
+    });
+  } else {
+    event.currentTarget.classList.remove('has-focus');
+  }
 }
 
 function ModuleSummary({
