@@ -13,7 +13,7 @@ export type AtlasEntry = {
   /** The unique reference or ID to this entry */
   id: string;
   /** The platform for which the bundle was created */
-  platform: 'android' | 'ios' | 'web';
+  platform: 'android' | 'ios' | 'web' | 'server';
   /** The absolute path to the root of the project */
   projectRoot: string;
   /** The absolute path to the entry point used when creating the bundle */
