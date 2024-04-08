@@ -3,7 +3,8 @@ import { useLocalSearchParams } from 'expo-router';
 
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
-import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
+import { Page, PageHeader, PageTitle } from '~/components/Page';
+import { StateInfo } from '~/components/StateInfo';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { useEntry } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
@@ -32,20 +33,20 @@ export default function FolderPage() {
           <ModuleFiltersForm disableNodeModules />
         </PageHeader>
         {modules.isError ? (
-          <PageContent title="Failed to generate graph.">
+          <StateInfo title="Failed to generate graph.">
             Try restarting Expo Atlas. If this error keeps happening, open a bug report.
-          </PageContent>
+          </StateInfo>
         ) : treeHasData ? (
           <BundleGraph entry={entry} graph={modules.data!.data} />
         ) : (
           !modules.isPending && (
-            <PageContent title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
+            <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
               <p>
                 {filtersEnabled
                   ? 'Try adjusting or clearing the filters'
                   : 'Try another bundle entry'}
               </p>
-            </PageContent>
+            </StateInfo>
           )
         )}
       </div>
