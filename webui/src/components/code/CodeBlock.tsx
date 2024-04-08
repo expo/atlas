@@ -4,9 +4,7 @@ import { type CodeLanguages, type CodeThemes, useCodeHighlighter } from './CodeP
 
 export function CodeBlock({ children }: PropsWithChildren) {
   return (
-    <div className="grid grid-cols-2 auto-rows-fr md:grid-cols-2 md:auto-rows-auto max-h-[820px]">
-      {children}
-    </div>
+    <div className="grid grid-cols-2 auto-rows-fr md:grid-cols-2 md:auto-rows-auto">{children}</div>
   );
 }
 
