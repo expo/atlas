@@ -2,7 +2,8 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
-import { Page, PageContent, PageHeader, PageTitle } from '~/components/Page';
+import { Page, PageHeader, PageTitle } from '~/components/Page';
+import { StateInfo } from '~/components/StateInfo';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Spinner } from '~/ui/Spinner';
@@ -31,23 +32,23 @@ export default function BundlePage() {
         </PageHeader>
         <EntryDeltaToast entryId={entry.id} />
         {modules.isPending && !modules.isPlaceholderData ? (
-          <PageContent>
+          <StateInfo>
             <Spinner />
-          </PageContent>
+          </StateInfo>
         ) : modules.isError ? (
-          <PageContent title="Failed to generate graph.">
+          <StateInfo title="Failed to generate graph.">
             <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
-          </PageContent>
+          </StateInfo>
         ) : treeHasData ? (
           <BundleGraph entry={entry} graph={modules.data!.data} />
         ) : (
-          <PageContent title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
+          <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
             <p>
               {filtersEnabled
                 ? 'Try adjusting or clearing the filters'
                 : 'Try another bundle entry'}
             </p>
-          </PageContent>
+          </StateInfo>
         )}
       </div>
     </Page>

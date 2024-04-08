@@ -10,7 +10,7 @@ import {
 } from 'react';
 
 import { type EntryDeltaResponse } from '~/app/--/entries/[entry]/delta+api';
-import { PageContent } from '~/components/Page';
+import { StateInfo } from '~/components/StateInfo';
 import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
 import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
@@ -50,26 +50,26 @@ export function EntryProvider({ children }: PropsWithChildren) {
   // TODO: add better UX for loading
   if (entries.isFetching && !entries.data?.length) {
     return (
-      <PageContent>
+      <StateInfo>
         <Spinner />
-      </PageContent>
+      </StateInfo>
     );
   }
 
   // TODO: add better UX for empty state
   if (entries.isFetched && !entries.data?.length) {
     return (
-      <PageContent title="No data found.">
+      <StateInfo title="No data found.">
         <p>Open your app in the browser, or device, to collect data.</p>
-      </PageContent>
+      </StateInfo>
     );
   }
 
   // TODO: add better UX for error state
   return (
-    <PageContent title="No data source.">
+    <StateInfo title="No data source.">
       <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
-    </PageContent>
+    </StateInfo>
   );
 }
 
