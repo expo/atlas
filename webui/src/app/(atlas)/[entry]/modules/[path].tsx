@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
+import { CodeBlock, guessLanguageFromPath } from '~/components/code/CodeBlock';
+import { CodeBlockSectionWithPrettier } from '~/components/code/CodeBlockWithPrettier';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
-import { CodeBlock, CodeBlockSectionWithPrettier, guessLanguageFromPath } from '~/ui/CodeBlock';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
@@ -15,7 +16,7 @@ export default function ModulePage() {
   const { entry } = useEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entry.id, absolutePath!);
-  const outputCode = module.data?.output?.map((output) => output.data.code).join('\n');
+  const outputJs = module.data?.output?.find((output) => output.type.startsWith('js'));
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -67,12 +68,13 @@ export default function ModulePage() {
           <CodeBlockSectionWithPrettier
             title="Source"
             language={guessLanguageFromPath(module.data?.path)}
-          >
-            {module.data.source || '[no data available]'}
-          </CodeBlockSectionWithPrettier>
-          <CodeBlockSectionWithPrettier title="Output">
-            {outputCode || '[no data available]'}
-          </CodeBlockSectionWithPrettier>
+            code={module.data.source || '[no data available]'}
+          />
+          <CodeBlockSectionWithPrettier
+            title="Output"
+            language="js"
+            code={outputJs?.data.code || '[no data available]'}
+          />
         </CodeBlock>
       </div>
     </Page>

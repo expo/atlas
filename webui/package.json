@@ -33,7 +33,6 @@
     "nativewind": "^4.0.36",
     "picomatch": "^4.0.1",
     "prettier": "^3.2.5",
-    "prism-react-renderer": "^2.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.5",
@@ -41,6 +40,7 @@
     "react-native-safe-area-context": "4.8.2",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.6",
+    "shiki": "^1.2.4",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7"
   },

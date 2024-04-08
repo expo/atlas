@@ -4,7 +4,7 @@ import { TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { CallbackDataParams, TooltipFormatterCallback } from 'echarts/types/dist/shared';
-import EchartCore from 'echarts-for-react/lib/core';
+import EchartsReact from 'echarts-for-react/lib/core';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 
@@ -40,7 +40,7 @@ export function BundleGraph(props: BundleGraphProps) {
   );
 
   return (
-    <EchartCore
+    <EchartsReact
       className="h-full min-w " // Enable full height of parent container
       style={{ height: undefined }} // Disable fixed default inline height of 300px
       lazyUpdate
