@@ -2,21 +2,22 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { CodeBlock, guessLanguageFromPath } from '~/components/code/CodeBlock';
-import { CodeBlockSectionWithPrettier } from '~/components/code/CodeBlockWithPrettier';
+import { CodeBlockButton, CodeBlockHeader, CodeBlockTitle } from '~/components/code/CodeBlock';
+import { HighlightCode, useLanguageFromPath } from '~/components/code/HighlightCode';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
+import { Panel, PanelGroup } from '~/ui/Panel';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { relativeEntryPath } from '~/utils/entry';
 import { formatFileSize } from '~/utils/formatString';
+import { useFormatCode } from '~/utils/prettier';
 import { type PartialAtlasEntry, type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {
   const { entry } = useEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entry.id, absolutePath!);
-  const outputJs = module.data?.output?.find((output) => output.type.startsWith('js'));
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -63,21 +64,34 @@ export default function ModulePage() {
             </ul>
           </div>
         )}
-
-        <CodeBlock>
-          <CodeBlockSectionWithPrettier
-            title="Source"
-            language={guessLanguageFromPath(module.data?.path)}
-            code={module.data.source || '[no data available]'}
-          />
-          <CodeBlockSectionWithPrettier
-            title="Output"
-            language="js"
-            code={outputJs?.data.code || '[no data available]'}
-          />
-        </CodeBlock>
+        <ModuleCode module={module.data} />
       </div>
     </Page>
+  );
+}
+
+function ModuleCode({ module }: { module: AtlasModule }) {
+  const language = useLanguageFromPath(module.path);
+  const outputCode = useFormatCode(
+    module.output?.find((output) => output.type.startsWith('js'))?.data.code || ''
+  );
+
+  return (
+    <PanelGroup>
+      <Panel>
+        <CodeBlockHeader>Source</CodeBlockHeader>
+        <HighlightCode language={language}>{module.source || ''}</HighlightCode>
+      </Panel>
+      <Panel>
+        <CodeBlockHeader>
+          <CodeBlockTitle>Output</CodeBlockTitle>
+          <CodeBlockButton onClick={outputCode.toggleFormatCode} disabled={outputCode.isFormatting}>
+            {outputCode.isFormatted ? 'Original' : 'Format'}
+          </CodeBlockButton>
+        </CodeBlockHeader>
+        <HighlightCode language="js">{outputCode.code}</HighlightCode>
+      </Panel>
+    </PanelGroup>
   );
 }
 

@@ -59,6 +59,7 @@ export async function GET(request: Request, params: Record<'entry', string>) {
 /**
  * Get the full module information through a post request.
  * This requires a `path` property in the request body.
+ * Note, this is a workaround due to routing issues when having both `/modules/graph` and `/modules/:module/index` routes.
  */
 export async function POST(request: Request, params: Record<'entry', string>) {
   const moduleRef: string | undefined = (await request.json()).path;
