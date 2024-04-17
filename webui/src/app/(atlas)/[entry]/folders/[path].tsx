@@ -1,7 +1,9 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
+import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StateInfo } from '~/components/StateInfo';
@@ -9,9 +11,10 @@ import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { relativeEntryPath } from '~/utils/entry';
+import { breadcrumbsForPath } from '~/utils/entry';
 import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
+import { type PartialAtlasEntry } from '~core/data/types';
 
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
@@ -25,9 +28,7 @@ export default function FolderPage() {
       <div className="flex flex-1 flex-col">
         <PageHeader>
           <PageTitle>
-            <h1 className="text-slate-50 font-bold text-lg mr-4" title={absolutePath}>
-              {relativeEntryPath(entry, absolutePath!)}/
-            </h1>
+            <FolderTitle entry={entry} folderPath={absolutePath!} />
             {!!modules.data && <FolderSummary data={modules.data} />}
           </PageTitle>
           <ModuleFiltersForm disableNodeModules />
@@ -51,6 +52,11 @@ export default function FolderPage() {
       </div>
     </Page>
   );
+}
+
+function FolderTitle({ entry, folderPath }: { entry: PartialAtlasEntry; folderPath: string }) {
+  const links = useMemo(() => breadcrumbsForPath(entry, folderPath), [entry, folderPath]);
+  return <BreadcrumbLinks entryId={entry.id} links={links} />;
 }
 
 function FolderSummary({ data }: { data: ModuleGraphResponse }) {
