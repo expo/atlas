@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 
+import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { ModuleCode } from '~/components/ModuleCode';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StateInfo } from '~/components/StateInfo';
@@ -8,7 +10,7 @@ import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { relativeEntryPath } from '~/utils/entry';
+import { breadcrumbsForPath, relativeEntryPath } from '~/utils/entry';
 import { formatFileSize } from '~/utils/formatString';
 import { type PartialAtlasEntry, type AtlasModule } from '~core/data/types';
 
@@ -37,9 +39,7 @@ export default function ModulePage() {
     <Page>
       <PageHeader>
         <PageTitle>
-          <h1 className="text-slate-50 font-bold text-lg mr-4" title={module.data.path}>
-            {relativeEntryPath(entry, module.data.path)}
-          </h1>
+          <ModuleTitle entry={entry} modulePath={absolutePath} />
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
       </PageHeader>
@@ -70,6 +70,11 @@ export default function ModulePage() {
       </div>
     </Page>
   );
+}
+
+function ModuleTitle({ entry, modulePath }: { entry: PartialAtlasEntry; modulePath: string }) {
+  const links = useMemo(() => breadcrumbsForPath(entry, modulePath), [entry, modulePath]);
+  return <BreadcrumbLinks entryId={entry.id} links={links} />;
 }
 
 function ModuleSummary({

@@ -18,14 +18,12 @@ export default function BundlePage() {
   const modules = useModuleGraphData(entry.id, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
-  // useEntryDelta(entry.id);
-
   return (
     <Page variant="viewport">
       <div className="flex flex-1 flex-col">
         <PageHeader>
           <PageTitle>
-            <h1 className="text-lg font-bold mr-4">Bundle</h1>
+            <h1 className="text-lg font-bold mr-8">Bundle</h1>
             {!!modules.data && <BundleSummary data={modules.data} />}
           </PageTitle>
           <ModuleFiltersForm />
