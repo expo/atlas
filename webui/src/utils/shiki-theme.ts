@@ -1,4 +1,5 @@
 // Extracted from `vscode-expo-theme`'s dark mode
+// See: https://github.com/expo/vscode-expo-theme
 export const expoTheme = {
   name: 'expo-theme',
   colors: {

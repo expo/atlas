@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 
+import { ModuleCode } from '~/components/ModuleCode';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { CodeBlock, guessLanguageFromPath } from '~/components/code/CodeBlock';
-import { CodeBlockSectionWithPrettier } from '~/components/code/CodeBlockWithPrettier';
+import { StateInfo } from '~/components/StateInfo';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
@@ -16,18 +16,20 @@ export default function ModulePage() {
   const { entry } = useEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const module = useModuleData(entry.id, absolutePath!);
-  const outputJs = module.data?.output?.find((output) => output.type.startsWith('js'));
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
   }
 
-  if (!module.data || module.isError) {
-    // TODO: improve
+  if (!module.data) {
+    return <StateInfo title="Module not found.">Try another bundle entry</StateInfo>;
+  }
+
+  if (module.isError) {
     return (
-      <div className="flex flex-1 flex-col justify-center items-center">
-        <h2 className="text-slate-50 font-bold text-lg">Module not found</h2>
-      </div>
+      <StateInfo title="Failed to load module.">
+        Try restarting Expo Atlas. If this error keeps happening, open a bug report.
+      </StateInfo>
     );
   }
 
@@ -64,18 +66,7 @@ export default function ModulePage() {
           </div>
         )}
 
-        <CodeBlock>
-          <CodeBlockSectionWithPrettier
-            title="Source"
-            language={guessLanguageFromPath(module.data?.path)}
-            code={module.data.source || '[no data available]'}
-          />
-          <CodeBlockSectionWithPrettier
-            title="Output"
-            language="js"
-            code={outputJs?.data.code || '[no data available]'}
-          />
-        </CodeBlock>
+        <ModuleCode module={module.data} />
       </div>
     </Page>
   );

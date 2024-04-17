@@ -17,3 +17,17 @@ html, body, #root {
 #root {
   display: flex;
 }
+
+@layer components {
+  .shiki code {
+    @apply grid grid-cols-[auto,1fr];
+  }
+
+  .shiki .line-number {
+    @apply px-4 text-right select-none;
+  }
+
+  .shiki .line {
+    @apply pr-4;
+  }
+}
