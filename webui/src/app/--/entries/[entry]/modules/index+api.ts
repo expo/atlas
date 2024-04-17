@@ -55,31 +55,3 @@ export async function GET(request: Request, params: Record<'entry', string>) {
 
   return Response.json(response);
 }
-
-/**
- * Get the full module information through a post request.
- * This requires a `path` property in the request body.
- * Note, this is a workaround due to routing issues when having both `/modules/graph` and `/modules/:module/index` routes.
- */
-export async function POST(request: Request, params: Record<'entry', string>) {
-  const moduleRef: string | undefined = (await request.json()).path;
-  if (!moduleRef) {
-    return Response.json(
-      { error: `Module ID not provided, expected a "path" property.` },
-      { status: 406 }
-    );
-  }
-
-  let entry: AtlasEntry;
-
-  try {
-    entry = await getSource().getEntry(params.entry);
-  } catch (error: any) {
-    return Response.json({ error: error.message }, { status: 406 });
-  }
-
-  const module = entry.modules.get(moduleRef);
-  return module
-    ? Response.json(module)
-    : Response.json({ error: `Module "${moduleRef}" not found.` }, { status: 404 });
-}

@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
+import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StateInfo } from '~/components/StateInfo';
@@ -91,8 +91,8 @@ function useModuleGraphData(entryId: string, filters: ModuleFilters) {
       ];
 
       const url = filters
-        ? `/entries/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
-        : `/entries/${entry}/modules/graph`;
+        ? `/entries/${entry}/graph?${moduleFiltersToParams(filters)}`
+        : `/entries/${entry}/graph`;
 
       return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))

@@ -1,13 +1,14 @@
 .shiki code {
-  counter-reset: step;
-  counter-increment: step 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
 }
 
-.shiki code .line::before {
-  content: counter(step);
-  counter-increment: step;
-  margin-right: 1rem;
-  width: 2.5rem;
-  display: inline-block;
+.shiki .line-number {
+  user-select: none;
   text-align: right;
+  padding: 0 1rem;
+}
+
+.shiki .line {
+  padding-right: 1rem;
 }

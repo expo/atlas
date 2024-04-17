@@ -27,6 +27,7 @@ import '@radix-ui/colors/gray.css';
 import '@radix-ui/colors/grayDark.css';
 
 import '~/styles-expo.css';
+import '~/styles-highlighter.css';
 import '~/styles.css';
 
 export default function RootLayout() {

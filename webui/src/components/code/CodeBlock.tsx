@@ -1,30 +1,71 @@
-import { type ComponentProps, type PropsWithChildren } from 'react';
+import cn from 'classnames';
+import {
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  type ComponentProps,
+  forwardRef,
+} from 'react';
 
 import { Button } from '~/ui/Button';
 
-export function CodeBlockTitle({ children }: PropsWithChildren) {
-  return <h3 className="text-md select-none font-medium truncate">{children}</h3>;
-}
+export const CodeBlockTitle = forwardRef<ElementRef<'h3'>, ComponentPropsWithoutRef<'h3'>>(
+  ({ className, ...props }, ref) => (
+    <h3
+      ref={ref}
+      className={cn('text-md select-none font-medium truncate', className)}
+      {...props}
+    />
+  )
+);
 
-export function CodeBlockButton(props: ComponentProps<typeof Button>) {
-  return (
-    <Button variant="quaternary" className="m-0 border-l border-default rounded-none" {...props} />
-  );
-}
+export const CodeBlockButton = forwardRef<ElementRef<typeof Button>, ComponentProps<typeof Button>>(
+  ({ className, ...props }, ref) => (
+    <Button
+      ref={ref}
+      className={cn('m-0 border-l border-default rounded-none', className)}
+      variant="quaternary"
+      {...props}
+    />
+  )
+);
 
-export function CodeBlockHeader({ children }: PropsWithChildren) {
-  return (
-    <div className="flex justify-between items-center bg-default min-h-[40px] pl-4 border-b border-default">
+export const CodeBlockHeader = forwardRef<ElementRef<'div'>, ComponentPropsWithoutRef<'div'>>(
+  ({ children, className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        'flex justify-between items-center bg-default min-h-[40px] pl-4 border-b border-default',
+        className
+      )}
+      {...props}
+    >
       {typeof children === 'string' ? <CodeBlockTitle>{children}</CodeBlockTitle> : children}
     </div>
-  );
-}
+  )
+);
 
-export function CodeBlockContent({ children }: { children: string }) {
-  return (
-    <div
-      className="overflow-x-auto h-full text-xs leading-6 py-2 whitespace-pre"
-      dangerouslySetInnerHTML={{ __html: children }}
-    />
-  );
-}
+export const CodeBlockContent = forwardRef<ElementRef<'div'>, ComponentPropsWithoutRef<'div'>>(
+  ({ children, className, ...props }, ref) => {
+    const componentClasses = cn(
+      'overflow-x-auto h-full text-xs leading-6 py-2 whitespace-pre',
+      className
+    );
+
+    if (typeof children !== 'string') {
+      return (
+        <div ref={ref} className={componentClasses} {...props}>
+          {children}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={componentClasses}
+        dangerouslySetInnerHTML={{ __html: children }}
+        {...props}
+      />
+    );
+  }
+);

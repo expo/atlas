@@ -1,0 +1,25 @@
+.highlighter code {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.highlighter .line-number {
+  user-select: none;
+  text-align: right;
+  padding: 0 1rem;
+}
+
+.highlighter .line {
+  padding-right: 1rem;
+}
+
+.highlighter.focused .line,
+.highlighter.focused .line-number {
+  opacity: 0.5;
+  transition: opacity;
+}
+
+.highlighter.focused .line.focused,
+.highlighter.focused .line-number.focused {
+  opacity: 1;
+}

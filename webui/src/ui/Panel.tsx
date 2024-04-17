@@ -1,10 +1,17 @@
-import { type PropsWithChildren } from 'react';
+import cn from 'classnames';
+import { type ComponentPropsWithoutRef, forwardRef, type PropsWithChildren } from 'react';
 
-export function PanelGroup({ children }: PropsWithChildren) {
-  return (
-    <div className="grid grid-cols-2 auto-rows-fr md:grid-cols-2 md:auto-rows-auto">{children}</div>
-  );
-}
+export const PanelGroup = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('grid grid-cols-2 auto-rows-fr md:grid-cols-2 md:auto-rows-auto', className)}
+        {...props}
+      />
+    );
+  }
+);
 
 export function Panel({ children }: PropsWithChildren) {
   return (

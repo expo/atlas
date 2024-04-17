@@ -1,16 +1,7 @@
-import { type PropsWithChildren, createContext, useState, useEffect, useContext } from 'react';
-import { type BundledLanguage, getHighlighter, type Highlighter } from 'shiki/bundle/web';
+import { type PropsWithChildren, createContext, useContext, useState, useEffect } from 'react';
 
-import { expoTheme } from './expoTheme';
 import './shiki.css';
-
-export type HighlightLanguages = BundledLanguage;
-export type HighlightThemes = 'expo-theme';
-
-const options: Parameters<typeof getHighlighter>[0] = {
-  langs: ['jsx', 'tsx', 'javascript', 'typescript', 'json'],
-  themes: [expoTheme],
-};
+import { type Highlighter, getHighlighter } from './highlighter';
 
 type HighlightContext = {
   highlighter: null | Highlighter;
@@ -21,19 +12,16 @@ export const highlightContext = createContext<HighlightContext>({
 });
 
 export function HighlightProvider(props: PropsWithChildren) {
-  const [highlighter, setHighlighter] = useState<HighlightContext['highlighter'] | undefined>();
+  const [highlighter, setHighlighter] = useState<null | Highlighter>(null);
 
   useEffect(() => {
-    if (highlighter === undefined) {
-      setHighlighter(null); // Mark as loading
-      getHighlighter(options).then(setHighlighter);
+    if (!highlighter) {
+      getHighlighter().then(setHighlighter);
     }
   }, [highlighter]);
 
   return (
-    <highlightContext.Provider value={{ highlighter: highlighter || null }}>
-      {props.children}
-    </highlightContext.Provider>
+    <highlightContext.Provider value={{ highlighter }}>{props.children}</highlightContext.Provider>
   );
 }
 

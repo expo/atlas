@@ -1,23 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
+import { type MouseEventHandler, useEffect, useState } from 'react';
 
+import type { PartialModule } from '~/app/--/entries/[entry]/modules/index+api';
 import { Page, PageHeader, PageTitle } from '~/components/Page';
-import { CodeBlockButton, CodeBlockHeader, CodeBlockTitle } from '~/components/code/CodeBlock';
-import { HighlightCode, useLanguageFromPath } from '~/components/code/HighlightCode';
+import { StateInfo } from '~/components/StateInfo';
+import {
+  CodeBlockButton,
+  CodeBlockContent,
+  CodeBlockHeader,
+  CodeBlockTitle,
+} from '~/components/code/CodeBlock';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Panel, PanelGroup } from '~/ui/Panel';
 import { Skeleton } from '~/ui/Skeleton';
+import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { relativeEntryPath } from '~/utils/entry';
 import { formatFileSize } from '~/utils/formatString';
-import { useFormatCode } from '~/utils/prettier';
+import { applyHighlightOpacityFromHash } from '~/utils/highlighter';
 import { type PartialAtlasEntry, type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {
   const { entry } = useEntry();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const module = useModuleData(entry.id, absolutePath!);
+  const module = useModuleData({ entry: entry.id, path: absolutePath! });
 
   if (module.isLoading) {
     return <ModulePageSkeleton />;
@@ -64,32 +72,58 @@ export default function ModulePage() {
             </ul>
           </div>
         )}
-        <ModuleCode module={module.data} />
+        <ModuleCode entry={entry.id} path={absolutePath} />
       </div>
     </Page>
   );
 }
 
-function ModuleCode({ module }: { module: AtlasModule }) {
-  const language = useLanguageFromPath(module.path);
-  const outputCode = useFormatCode(
-    module.output?.find((output) => output.type.startsWith('js'))?.data.code || ''
-  );
+function ModuleCode(props: { entry: string; path: string }) {
+  const [outputFormat, setOutputFormat] = useState<ModuleCodeDataParams['format']>('raw');
+
+  const source = useModuleCodeData({ ...props, type: 'source' });
+  const output = useModuleCodeData({ ...props, type: 'output', format: outputFormat });
+
+  useEffect(() => {
+    const listener = (event: HashChangeEvent) => {
+      const hash = event.newURL.split('#')[1];
+      if (hash) applyHighlightOpacityFromHash(hash);
+    };
+
+    window.addEventListener('hashchange', listener);
+    return () => {
+      window.removeEventListener('hashchange', listener);
+    };
+  }, []);
+
+  const onMouseUp: MouseEventHandler<'div'> = (event) => {
+    console.log({
+      target: event.target,
+      currentTarget: event.currentTarget,
+    });
+  };
 
   return (
-    <PanelGroup>
+    <PanelGroup onMouseUp={onMouseUp}>
       <Panel>
         <CodeBlockHeader>Source</CodeBlockHeader>
-        <HighlightCode language={language}>{module.source || ''}</HighlightCode>
+        {source.isFetched && <CodeBlockContent>{source.data?.html || ''}</CodeBlockContent>}
+        {source.isLoading && <Skeleton className="h-full w-full min-h-64 bg-hover" />}
       </Panel>
       <Panel>
         <CodeBlockHeader>
           <CodeBlockTitle>Output</CodeBlockTitle>
-          <CodeBlockButton onClick={outputCode.toggleFormatCode} disabled={outputCode.isFormatting}>
-            {outputCode.isFormatted ? 'Original' : 'Format'}
+          <CodeBlockButton
+            onClick={() => setOutputFormat((value) => (value === 'pretty' ? 'raw' : 'pretty'))}
+            disabled={output.isLoading}
+          >
+            {outputFormat === 'pretty' ? 'Original' : 'Format'}
           </CodeBlockButton>
         </CodeBlockHeader>
-        <HighlightCode language="js">{outputCode.code}</HighlightCode>
+        {output.isFetched && <CodeBlockContent>{output.data?.html || ''}</CodeBlockContent>}
+        {output.isLoading && !output.isPlaceholderData && (
+          <Skeleton className="h-full w-full min-h-64 bg-hover" />
+        )}
       </Panel>
     </PanelGroup>
   );
@@ -128,17 +162,55 @@ function getModuleType(module: AtlasModule) {
   return module.package ? `package ${type}` : type;
 }
 
+type ModuleDataParams = {
+  entry: string;
+  path: string;
+};
+
 /** Load the module data from API, by path reference only */
-function useModuleData(entryId: string, path: string) {
-  return useQuery<AtlasModule>({
+function useModuleData(params: ModuleDataParams) {
+  return useQuery<PartialModule>({
     refetchOnWindowFocus: false,
-    queryKey: [`entries`, entryId, `module`, path],
+    queryKey: [`entries`, params.entry, `module`, params.path],
     queryFn: async ({ queryKey }) => {
       const [_key, entry, _module, path] = queryKey as [string, string, string, string];
-      return fetchApi(`/entries/${entry}/modules`, {
-        method: 'POST',
-        body: JSON.stringify({ path }),
-      })
+      return fetchApi(`/entries/${entry}/modules/${encodeURIComponent(path)}`)
+        .then((res) => (res.ok ? res : Promise.reject(res)))
+        .then((res) => res.json());
+    },
+  });
+}
+
+type ModuleCodeDataParams = {
+  type: 'source' | 'output';
+  format?: 'pretty' | 'raw';
+};
+
+function useModuleCodeData(options: ModuleDataParams & ModuleCodeDataParams) {
+  return useQuery<{ html: string }>({
+    refetchOnWindowFocus: false,
+    queryKey: [
+      `entries`,
+      options.entry,
+      `module`,
+      options.path,
+      'code',
+      options.type,
+      options.format,
+    ],
+    queryFn: async ({ queryKey }) => {
+      const [_key, entry, _module, path, _code, type, format] = queryKey as [
+        'entries',
+        string,
+        'module',
+        string,
+        'code',
+        ModuleCodeDataParams['type'],
+        ModuleCodeDataParams['format'],
+      ];
+
+      const query = new URLSearchParams({ type, format: format || 'raw' });
+      return fetchApi(`/entries/${entry}/modules/${encodeURIComponent(path)}/code?${query}`)
         .then((res) => (res.ok ? res : Promise.reject(res)))
         .then((res) => res.json());
     },
