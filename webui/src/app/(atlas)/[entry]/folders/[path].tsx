@@ -28,7 +28,7 @@ export default function FolderPage() {
       <div className="flex flex-1 flex-col">
         <PageHeader>
           <PageTitle>
-            <FolderTitle entry={entry} folderPath={absolutePath} />
+            <FolderTitle entry={entry} folderPath={absolutePath!} />
             {!!modules.data && <FolderSummary data={modules.data} />}
           </PageTitle>
           <ModuleFiltersForm disableNodeModules />

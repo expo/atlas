@@ -39,7 +39,7 @@ export default function ModulePage() {
     <Page>
       <PageHeader>
         <PageTitle>
-          <ModuleTitle entry={entry} modulePath={absolutePath} />
+          <ModuleTitle entry={entry} modulePath={absolutePath!} />
           <ModuleSummary platform={entry?.platform} module={module.data} />
         </PageTitle>
       </PageHeader>

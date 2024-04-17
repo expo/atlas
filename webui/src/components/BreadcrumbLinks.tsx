@@ -1,5 +1,5 @@
-import { type HrefObject, type AllRoutes, Link } from 'expo-router';
-import { Fragment } from 'react';
+import { Link } from 'expo-router';
+import { ComponentProps, Fragment } from 'react';
 
 import {
   Breadcrumb,
@@ -14,7 +14,7 @@ type BreadcrumbLinksProps = {
   entryId: string;
   links: {
     label: string;
-    href?: HrefObject<any, AllRoutes>;
+    href?: ComponentProps<typeof Link>['href'];
   }[];
 };
 
@@ -40,10 +40,7 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
                 <BreadcrumbLink asChild>
                   <Link
                     className="text-lg text-default font-bold underline-offset-4 hover:underline"
-                    href={{
-                      pathname: link.href.pathname,
-                      params: { entry: props.entryId, ...link.href.params },
-                    }}
+                    href={link.href}
                   >
                     {link.label}
                   </Link>
