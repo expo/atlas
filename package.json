@@ -1,7 +1,7 @@
 {
   "sideEffects": false,
   "name": "expo-atlas",
-  "version": "0.0.18-preview.3",
+  "version": "0.0.18",
   "description": "Inspect bundle contents, on module level, from Metro",
   "keywords": [
     "expo",
