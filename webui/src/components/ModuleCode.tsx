@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CodeAction, CodeContent, CodeHeader, CodeTitle } from '~/ui/Code';
 import { Panel, PanelGroup } from '~/ui/Panel';
+import { Skeleton } from '~/ui/Skeleton';
 import { prettifyCode } from '~/utils/prettier';
 import { getHighlightedHtml, getLanguageFromPath, useHighlighter } from '~/utils/shiki';
 import { type AtlasModule } from '~core/data/types';
@@ -15,8 +16,8 @@ export function ModuleCode({ module }: ModuleCodeProps) {
   const outputCode = output?.data.code || '[not available]';
   const outputFormat = useFormattedCode(outputCode);
 
-  const sourceHtml = useHighlightedCode(module.path, module.source || '[not available]');
-  const outputHtml = useHighlightedCode(
+  const sourceHighlight = useHighlightedCode(module.path, module.source || '[not available]');
+  const outputHighlight = useHighlightedCode(
     module.path,
     outputFormat.formatted || outputCode || '[not available]'
   );
@@ -27,7 +28,11 @@ export function ModuleCode({ module }: ModuleCodeProps) {
         <CodeHeader>
           <CodeTitle>Source</CodeTitle>
         </CodeHeader>
-        <CodeContent>{sourceHtml}</CodeContent>
+        {sourceHighlight.state === 'loading' ? (
+          <Skeleton className="min-h-96" />
+        ) : (
+          <CodeContent>{sourceHighlight.html}</CodeContent>
+        )}
       </Panel>
       <Panel>
         <CodeHeader>
@@ -36,7 +41,11 @@ export function ModuleCode({ module }: ModuleCodeProps) {
             {outputFormat.formatted ? 'Original' : 'Format'}
           </CodeAction>
         </CodeHeader>
-        <CodeContent>{outputHtml}</CodeContent>
+        {outputHighlight.state === 'loading' ? (
+          <Skeleton className="min-h-96" />
+        ) : (
+          <CodeContent>{outputHighlight.html}</CodeContent>
+        )}
       </Panel>
     </PanelGroup>
   );
@@ -45,10 +54,13 @@ export function ModuleCode({ module }: ModuleCodeProps) {
 function useHighlightedCode(path: string, code: string) {
   const { highlighter } = useHighlighter();
 
-  return useMemo(
-    () => getHighlightedHtml(highlighter, { code, language: getLanguageFromPath(path) }),
-    [highlighter, path, code]
-  );
+  return {
+    state: !highlighter ? 'loading' : 'idle',
+    html: useMemo(
+      () => getHighlightedHtml(highlighter, { code, language: getLanguageFromPath(path) }),
+      [highlighter, path, code]
+    ),
+  };
 }
 
 function useFormattedCode(code = '') {
