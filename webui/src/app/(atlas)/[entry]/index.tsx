@@ -2,10 +2,11 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
-import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StateInfo } from '~/components/StateInfo';
+import { EntrySelectForm } from '~/components/forms/EntrySelect';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
+import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
@@ -19,37 +20,36 @@ export default function BundlePage() {
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
-    <Page variant="viewport">
-      <div className="flex flex-1 flex-col">
-        <PageHeader>
-          <PageTitle>
-            <h1 className="text-lg font-bold mr-8">Bundle</h1>
-            {!!modules.data && <BundleSummary data={modules.data} />}
-          </PageTitle>
-          <ModuleFiltersForm />
-        </PageHeader>
-        <EntryDeltaToast entryId={entry.id} />
-        {modules.isPending && !modules.isPlaceholderData ? (
-          <StateInfo>
-            <Spinner />
-          </StateInfo>
-        ) : modules.isError ? (
-          <StateInfo title="Failed to generate graph.">
-            <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
-          </StateInfo>
-        ) : treeHasData ? (
-          <BundleGraph entry={entry} graph={modules.data!.data} />
-        ) : (
-          <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
-            <p>
-              {filtersEnabled
-                ? 'Try adjusting or clearing the filters'
-                : 'Try another bundle entry'}
-            </p>
-          </StateInfo>
-        )}
-      </div>
-    </Page>
+    <Layout variant="viewport">
+      <LayoutNavigation>
+        <EntrySelectForm />
+      </LayoutNavigation>
+      <LayoutHeader>
+        <LayoutTitle>
+          <h1 className="text-lg font-bold mr-8">Bundle</h1>
+          {!!modules.data && <BundleSummary data={modules.data} />}
+        </LayoutTitle>
+        <ModuleFiltersForm />
+      </LayoutHeader>
+      <EntryDeltaToast entryId={entry.id} />
+      {modules.isPending && !modules.isPlaceholderData ? (
+        <StateInfo>
+          <Spinner />
+        </StateInfo>
+      ) : modules.isError ? (
+        <StateInfo title="Failed to generate graph.">
+          <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
+        </StateInfo>
+      ) : treeHasData ? (
+        <BundleGraph entry={entry} graph={modules.data!.data} />
+      ) : (
+        <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
+          <p>
+            {filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle entry'}
+          </p>
+        </StateInfo>
+      )}
+    </Layout>
   );
 }
 

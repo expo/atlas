@@ -5,10 +5,11 @@ import { useMemo } from 'react';
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
-import { Page, PageHeader, PageTitle } from '~/components/Page';
 import { StateInfo } from '~/components/StateInfo';
+import { EntrySelectForm } from '~/components/forms/EntrySelect';
 import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
+import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { breadcrumbsForPath } from '~/utils/entry';
@@ -24,33 +25,32 @@ export default function FolderPage() {
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
-    <Page variant="viewport">
-      <div className="flex flex-1 flex-col">
-        <PageHeader>
-          <PageTitle>
-            <FolderTitle entry={entry} folderPath={absolutePath!} />
-            {!!modules.data && <FolderSummary data={modules.data} />}
-          </PageTitle>
-          <ModuleFiltersForm disableNodeModules />
-        </PageHeader>
-        <EntryDeltaToast entryId={entry.id} />
-        {modules.isError ? (
-          <StateInfo title="Failed to generate graph.">
-            Try restarting Expo Atlas. If this error keeps happening, open a bug report.
+    <Layout variant="viewport">
+      <LayoutNavigation>
+        <EntrySelectForm />
+      </LayoutNavigation>
+      <LayoutHeader>
+        <LayoutTitle>
+          <FolderTitle entry={entry} folderPath={absolutePath!} />
+          {!!modules.data && <FolderSummary data={modules.data} />}
+        </LayoutTitle>
+        <ModuleFiltersForm disableNodeModules />
+      </LayoutHeader>
+      <EntryDeltaToast entryId={entry.id} />
+      {modules.isError ? (
+        <StateInfo title="Failed to generate graph.">
+          Try restarting Expo Atlas. If this error keeps happening, open a bug report.
+        </StateInfo>
+      ) : treeHasData ? (
+        <BundleGraph entry={entry} graph={modules.data!.data} />
+      ) : (
+        !modules.isPending && (
+          <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
+            {filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle entry'}
           </StateInfo>
-        ) : treeHasData ? (
-          <BundleGraph entry={entry} graph={modules.data!.data} />
-        ) : (
-          !modules.isPending && (
-            <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
-              {filtersEnabled
-                ? 'Try adjusting or clearing the filters'
-                : 'Try another bundle entry'}
-            </StateInfo>
-          )
-        )}
-      </div>
-    </Page>
+        )
+      )}
+    </Layout>
   );
 }
 

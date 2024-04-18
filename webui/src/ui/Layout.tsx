@@ -1,13 +1,42 @@
+import { cva, type VariantProps } from 'class-variance-authority';
 import cn from 'classnames';
-import { Link, useRouter } from 'expo-router';
-import { HTMLAttributes, PropsWithChildren } from 'react';
+import { Link } from 'expo-router';
+import { type HTMLAttributes, type PropsWithChildren } from 'react';
+
+const layoutVariants = cva('', {
+  variants: {
+    variant: {
+      default: '',
+      viewport: 'flex flex-col h-full',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+export function Layout(props: PropsWithChildren<VariantProps<typeof layoutVariants>>) {
+  const { variant, children, ...rest } = props;
+
+  return (
+    <main className={cn(layoutVariants({ variant }))} {...rest}>
+      {children}
+    </main>
+  );
+}
+
+export function LayoutHeader({ children }: PropsWithChildren) {
+  return <div className="flex flex-row justify-between my-6 px-8">{children}</div>;
+}
+
+export function LayoutTitle({ children }: PropsWithChildren) {
+  return <div className="flex flex-row items-center gap-3 min-h-10">{children}</div>;
+}
 
 export function LayoutNavigation({
   children,
   className,
 }: PropsWithChildren & { className?: string }) {
-  const router = useRouter();
-
   return (
     <header
       className={cn(
@@ -20,34 +49,10 @@ export function LayoutNavigation({
           <ExpoLogoBig title="Expo" className="w-[74px] text-default max-md-gutters:hidden" />
           <ExpoLogoSmall title="Expo" className="hidden text-default max-md-gutters:flex" />
         </Link>
-        {router.canGoBack() ? (
-          <a
-            className="text-link hover:underline"
-            href="#"
-            onClick={(event) => {
-              event.preventDefault();
-              router.back();
-            }}
-          >
-            ← go back
-          </a>
-        ) : null}
       </div>
       {children}
     </header>
   );
-}
-
-export function LayoutHeader({ children }: PropsWithChildren) {
-  return <div className="flex flex-row justify-between my-6 px-8">{children}</div>;
-}
-
-export function LayoutTitle({ children }: PropsWithChildren) {
-  return <div className="flex flex-row items-center min-h-10">{children}</div>;
-}
-
-export function LayoutContent({ children }: PropsWithChildren) {
-  return <main className="flex flex-grow">{children}</main>;
 }
 
 function ExpoLogoBig({ className, ...props }: HTMLAttributes<SVGSVGElement>) {
