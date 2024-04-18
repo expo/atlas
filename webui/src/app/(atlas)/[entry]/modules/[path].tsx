@@ -3,9 +3,9 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
+import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
 import { StateInfo } from '~/components/StateInfo';
-import { EntrySelectForm } from '~/components/forms/EntrySelect';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
@@ -23,7 +23,7 @@ export default function ModulePage() {
   return (
     <Layout>
       <LayoutNavigation>
-        <EntrySelectForm />
+        <BundleSelectForm />
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>

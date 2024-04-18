@@ -11,7 +11,7 @@ import { Button } from '~/ui/Button';
 import { Tag } from '~/ui/Tag';
 import { relativeEntryPath } from '~/utils/entry';
 
-export function EntrySelectForm() {
+export function BundleSelectForm() {
   const router = useRouter();
   const { entry, entries } = useEntry();
 

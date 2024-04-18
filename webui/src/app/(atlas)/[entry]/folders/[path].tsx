@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
+import { BundleSelectForm } from '~/components/BundleSelectForm';
+import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { StateInfo } from '~/components/StateInfo';
-import { EntrySelectForm } from '~/components/forms/EntrySelect';
-import { ModuleFiltersForm } from '~/components/forms/ModuleFilter';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Tag } from '~/ui/Tag';
@@ -27,7 +27,7 @@ export default function FolderPage() {
   return (
     <Layout variant="viewport">
       <LayoutNavigation>
-        <EntrySelectForm />
+        <BundleSelectForm />
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
