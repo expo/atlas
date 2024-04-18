@@ -123,15 +123,26 @@ export function simplifySingleChildNodes(tree: TreemapNode): TreemapNode {
       mergeIntoParent(node.children[0], node);
     }
 
-    // Merge single-child nodes when not modifying the root node
+    // Merge or pull the "useless" nodes into the parent node
     if (parent.children?.length === 1) {
-      parent.name = parent.name !== '/' ? `${parent.name}/${node.name}` : node.name;
-      parent.value = node.value;
-      parent.children = node.children;
-      parent.moduleSize = node.moduleSize;
-      parent.modulePath = node.modulePath;
-      parent.modulePackage = parent.modulePackage || node.modulePackage;
-      parent.moduleFiles = node.moduleFiles; // This should always the same value
+      // If we are modifying the root node with only a single child, only inherit the name
+      if (parent === tree && !node.children) {
+        const nameSegments = node.name.split('/');
+        const nameForOtherSegments = nameSegments.slice(0, -1).join('/');
+
+        // NOTE(cedric): the `modulePath` of the root node is ignored, no need to edit
+        node.name = nameSegments[nameSegments.length - 1];
+        parent.name =
+          parent.name !== '/' ? `${parent.name}/${nameForOtherSegments}` : nameForOtherSegments;
+      } else {
+        parent.name = parent.name !== '/' ? `${parent.name}/${node.name}` : node.name;
+        parent.value = node.value;
+        parent.children = node.children;
+        parent.moduleSize = node.moduleSize;
+        parent.modulePath = node.modulePath;
+        parent.modulePackage = parent.modulePackage || node.modulePackage;
+        parent.moduleFiles = node.moduleFiles; // This should always the same value
+      }
     }
   }
 
