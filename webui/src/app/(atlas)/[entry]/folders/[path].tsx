@@ -10,6 +10,7 @@ import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
+import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
 import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
@@ -46,7 +47,11 @@ export default function FolderPage() {
         <ModuleFiltersForm disableNodeModules />
       </LayoutHeader>
       <EntryDeltaToast entryId={entry.id} />
-      {modules.isError ? (
+      {modules.isPending && !modules.isPlaceholderData ? (
+        <StateInfo>
+          <Spinner />
+        </StateInfo>
+      ) : modules.isError ? (
         <StateInfo title="Failed to generate graph.">
           Try restarting Expo Atlas. If this error keeps happening, open a bug report.
         </StateInfo>

@@ -15,22 +15,33 @@ const layoutVariants = cva('', {
   },
 });
 
-export function Layout(props: PropsWithChildren<VariantProps<typeof layoutVariants>>) {
-  const { variant, children, ...rest } = props;
-
+export function Layout({
+  variant,
+  className,
+  children,
+  ...props
+}: PropsWithChildren<VariantProps<typeof layoutVariants> & { className?: string }>) {
   return (
-    <main className={cn(layoutVariants({ variant }))} {...rest}>
+    <main className={cn(layoutVariants({ variant }), className)} {...props}>
       {children}
     </main>
   );
 }
 
-export function LayoutHeader({ children }: PropsWithChildren) {
-  return <div className="flex flex-row justify-between my-6 px-8">{children}</div>;
+export function LayoutHeader(props: PropsWithChildren<{ className?: string }>) {
+  return (
+    <div className={cn('flex flex-row justify-between my-6 px-8', props.className)}>
+      {props.children}
+    </div>
+  );
 }
 
-export function LayoutTitle({ children }: PropsWithChildren) {
-  return <div className="flex flex-row items-center gap-3 min-h-10">{children}</div>;
+export function LayoutTitle(props: PropsWithChildren<{ className?: string }>) {
+  return (
+    <div className={cn('flex flex-row flex-wrap items-center gap-3 min-h-10', props.className)}>
+      {props.children}
+    </div>
+  );
 }
 
 export function LayoutNavigation({
