@@ -39,20 +39,20 @@ export class AtlasFileSource implements AtlasSource {
  * This only reads the bundle name, and adds a line number as ID.
  */
 export async function listAtlasEntries(filePath: string) {
-  const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+),"([^"]+)/;
+  const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"/;
   const entries: PartialAtlasEntry[] = [];
 
   await forEachJsonLines(filePath, (contents, line) => {
     // Skip the metadata line
     if (line === 1) return;
 
-    const [_, platform, projectRoot, serverRoot, entryPoint] = contents.match(bundlePattern) ?? [];
-    if (platform && projectRoot && serverRoot && entryPoint) {
+    const [_, platform, projectRoot, sharedRoot, entryPoint] = contents.match(bundlePattern) ?? [];
+    if (platform && projectRoot && sharedRoot && entryPoint) {
       entries.push({
         id: String(line),
         platform: platform as any,
         projectRoot,
-        serverRoot,
+        sharedRoot,
         entryPoint,
       });
     }
@@ -70,7 +70,7 @@ export async function readAtlasEntry(filePath: string, id: number): Promise<Atla
     id: String(id),
     platform: atlasEntry[0],
     projectRoot: atlasEntry[1],
-    serverRoot: atlasEntry[2],
+    sharedRoot: atlasEntry[2],
     entryPoint: atlasEntry[3],
     runtimeModules: atlasEntry[4],
     modules: new Map(atlasEntry[5].map((module) => [module.path, module])),
@@ -90,7 +90,7 @@ export function writeAtlasEntry(filePath: string, entry: AtlasEntry) {
   const line = [
     entry.platform,
     entry.projectRoot,
-    entry.serverRoot,
+    entry.sharedRoot,
     entry.entryPoint,
     entry.runtimeModules,
     Array.from(entry.modules.values()),

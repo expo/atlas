@@ -33,6 +33,7 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   }
 
   const atlasFile = options?.atlasFile ?? getAtlasPath(projectRoot);
+  const watchFolders = config.watchFolders;
   const extensions = {
     source: config.resolver?.sourceExts,
     asset: config.resolver?.assetExts,
@@ -46,7 +47,15 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
     // Note(cedric): we don't have to await this, it has a built-in write queue
     writeAtlasEntry(
       atlasFile,
-      convertGraph({ projectRoot, entryPoint, preModules, graph, options, extensions })
+      convertGraph({
+        projectRoot,
+        entryPoint,
+        preModules,
+        graph,
+        options,
+        extensions,
+        watchFolders,
+      })
     );
 
     return originalSerializer(entryPoint, preModules, graph, options);

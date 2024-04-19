@@ -6,6 +6,7 @@ import path from 'path';
 import type { AtlasEntry, AtlasEntryDelta, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';
 import { getPackageNameFromPath } from '../utils/package';
+import { findSharedRoot } from '../utils/paths';
 
 type MetroGraph = metro.Graph | metro.ReadOnlyGraph;
 type MetroModule = metro.Module;
@@ -16,6 +17,7 @@ type ConvertGraphToAtlasOptions = {
   preModules: Readonly<MetroModule[]>;
   graph: MetroGraph;
   options: Readonly<metro.SerializerOptions>;
+  watchFolders?: Readonly<string[]>;
   extensions?: {
     source?: Readonly<string[]>;
     asset?: Readonly<string[]>;
@@ -38,7 +40,7 @@ export class MetroGraphSource implements AtlasSource {
       id: item.entry.id,
       platform: item.entry.platform,
       projectRoot: item.entry.projectRoot,
-      serverRoot: item.entry.serverRoot,
+      sharedRoot: item.entry.sharedRoot,
       entryPoint: item.entry.entryPoint,
     }));
   }
@@ -140,7 +142,7 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasEntry {
     id: Buffer.from(`${options.entryPoint}+${platform}`).toString('base64url'), // FIX: only use URL allowed characters
     platform,
     projectRoot: options.projectRoot,
-    serverRoot: options.options.serverRoot,
+    sharedRoot: convertSharedRoot(options),
     entryPoint: options.entryPoint,
     runtimeModules: options.preModules.map((module) => convertModule(options, module)),
     modules: collectEntryPointModules(options),
@@ -238,4 +240,15 @@ export function convertSerializeOptions(
   delete serializeOptions['shouldAddToIgnoreList'];
 
   return serializeOptions;
+}
+
+/** Convert Metro config to a shared root we can use as "relative root" for all file paths */
+export function convertSharedRoot(
+  options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' | 'watchFolders'>
+) {
+  if (!options.watchFolders?.length) {
+    return options.projectRoot;
+  }
+
+  return findSharedRoot([options.projectRoot, ...options.watchFolders]) ?? options.projectRoot;
 }

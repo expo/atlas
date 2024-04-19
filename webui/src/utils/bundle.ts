@@ -5,8 +5,8 @@ import { PartialAtlasEntry } from '~core/data/types';
  * This is a simple replace operation.
  */
 export function relativeBundlePath(
-  entry: Pick<PartialAtlasEntry, 'projectRoot' | 'serverRoot'>,
+  entry: Pick<PartialAtlasEntry, 'projectRoot' | 'sharedRoot'>,
   path: string
 ) {
-  return path.replace((entry.serverRoot || entry.projectRoot) + '/', '');
+  return path.replace((entry.sharedRoot || entry.projectRoot) + '/', '');
 }

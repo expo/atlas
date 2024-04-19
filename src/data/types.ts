@@ -13,7 +13,7 @@ export interface AtlasSource {
 
 export type PartialAtlasEntry = Pick<
   AtlasEntry,
-  'id' | 'platform' | 'projectRoot' | 'serverRoot' | 'entryPoint'
+  'id' | 'platform' | 'projectRoot' | 'sharedRoot' | 'entryPoint'
 >;
 
 export type AtlasEntry = {
@@ -24,7 +24,7 @@ export type AtlasEntry = {
   /** The absolute path to the root of the project */
   projectRoot: string;
   /** The absolute path to the shared root of all imported modules */
-  serverRoot: string;
+  sharedRoot: string;
   /** The absolute path to the entry point used when creating the bundle */
   entryPoint: string;
   /** All known modules that are prepended for the runtime itself */
