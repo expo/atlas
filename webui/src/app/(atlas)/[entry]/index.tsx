@@ -4,6 +4,7 @@ import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
+import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
@@ -27,7 +28,22 @@ export default function BundlePage() {
       <LayoutHeader>
         <LayoutTitle>
           <h1 className="text-lg font-bold mr-8">Bundle</h1>
-          {!!modules.data && <BundleSummary data={modules.data} />}
+          {!!modules.data && (
+            <PropertySummary>
+              <Tag variant={entry.platform} />
+              <span>{modules.data.entry.moduleFiles} modules</span>
+              <span>{formatFileSize(modules.data.entry.moduleSize)}</span>
+              {modules.data.filtered.moduleFiles !== modules.data.entry.moduleFiles && (
+                <PropertySummary
+                  className="text-tertiary italic"
+                  prefix={<span className="select-none mr-2">visible:</span>}
+                >
+                  <span>{modules.data.filtered.moduleFiles} modules</span>
+                  <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
+                </PropertySummary>
+              )}
+            </PropertySummary>
+          )}
         </LayoutTitle>
         <ModuleFiltersForm />
       </LayoutHeader>
@@ -50,27 +66,6 @@ export default function BundlePage() {
         </StateInfo>
       )}
     </Layout>
-  );
-}
-
-function BundleSummary({ data }: { data: ModuleGraphResponse }) {
-  return (
-    <div className="font-sm text-secondary inline-block">
-      <Tag variant={data.entry.platform} />
-      <span className="text-tertiary mx-2 select-none">-</span>
-      <span>{data.entry.moduleFiles} modules</span>
-      <span className="text-tertiary mx-2 select-none">-</span>
-      <span>{formatFileSize(data.entry.moduleSize)}</span>
-      {data.filtered.moduleFiles !== data.entry.moduleFiles && (
-        <div className="text-tertiary italic inline">
-          <span className="mx-2 select-none">—</span>
-          <span className="mr-2 select-none italic ">visible:</span>
-          <span>{data.filtered.moduleFiles} modules</span>
-          <span className="mx-2 select-none">-</span>
-          <span>{formatFileSize(data.filtered.moduleSize)}</span>
-        </div>
-      )}
-    </div>
   );
 }
 

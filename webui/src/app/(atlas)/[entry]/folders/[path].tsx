@@ -6,6 +6,7 @@ import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
+import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
 import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
@@ -29,7 +30,18 @@ export default function FolderPage() {
       <LayoutHeader>
         <LayoutTitle>
           <BreadcrumbLinks entry={entry} path={absolutePath!} />
-          {!!modules.data && <FolderSummary data={modules.data} />}
+          {!!modules.data && (
+            <PropertySummary>
+              <Tag variant={entry.platform} />
+              <span>folder</span>
+              <span>
+                {modules.data.filtered.moduleFiles === 1
+                  ? `${modules.data.filtered.moduleFiles} module`
+                  : `${modules.data.filtered.moduleFiles} modules`}
+              </span>
+              <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
+            </PropertySummary>
+          )}
         </LayoutTitle>
         <ModuleFiltersForm disableNodeModules />
       </LayoutHeader>
@@ -48,28 +60,6 @@ export default function FolderPage() {
         )
       )}
     </Layout>
-  );
-}
-
-function FolderSummary({ data }: { data: ModuleGraphResponse }) {
-  return (
-    <div className="font-sm text-secondary">
-      {!!data.entry.platform && (
-        <>
-          <Tag variant={data.entry.platform} />
-          <span className="text-tertiary mx-2 select-none">-</span>
-        </>
-      )}
-      <span>folder</span>
-      <span className="text-tertiary mx-2 select-none">-</span>
-      <span>
-        {data.filtered.moduleFiles === 1
-          ? `${data.filtered.moduleFiles} module`
-          : `${data.filtered.moduleFiles} modules`}
-      </span>
-      <span className="text-tertiary mx-2 select-none">-</span>
-      <span>{formatFileSize(data.filtered.moduleSize)}</span>
-    </div>
   );
 }
 
