@@ -28,14 +28,12 @@ export default function ModulePage() {
       <LayoutHeader>
         <LayoutTitle>
           <BreadcrumbLinks entry={entry} path={absolutePath!} />
-          {!!module.data && (
-            <PropertySummary>
-              <Tag variant={entry.platform} />
-              {!!module.data.package && <span>{module.data.package}</span>}
-              <span>{getModuleType(module.data)}</span>
-              <span>{formatFileSize(module.data.size)}</span>
-            </PropertySummary>
-          )}
+          <PropertySummary>
+            <Tag variant={entry.platform} />
+            {!!module.data?.package && <span>{module.data.package}</span>}
+            {!!module.data && <span>{getModuleType(module.data)}</span>}
+            {!!module.data && <span>{formatFileSize(module.data.size)}</span>}
+          </PropertySummary>
         </LayoutTitle>
       </LayoutHeader>
       <EntryDeltaToast entryId={entry.id} modulePath={absolutePath} />

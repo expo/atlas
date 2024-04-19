@@ -31,18 +31,20 @@ export default function FolderPage() {
       <LayoutHeader>
         <LayoutTitle>
           <BreadcrumbLinks entry={entry} path={absolutePath!} />
-          {!!modules.data && (
-            <PropertySummary>
-              <Tag variant={entry.platform} />
-              <span>folder</span>
+          <PropertySummary>
+            <Tag variant={entry.platform} />
+            <span>folder</span>
+            {!!modules.data?.filtered.moduleFiles && (
               <span>
                 {modules.data.filtered.moduleFiles === 1
                   ? `${modules.data.filtered.moduleFiles} module`
                   : `${modules.data.filtered.moduleFiles} modules`}
               </span>
+            )}
+            {!!modules.data?.filtered.moduleSize && (
               <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
-            </PropertySummary>
-          )}
+            )}
+          </PropertySummary>
         </LayoutTitle>
         <ModuleFiltersForm disableNodeModules />
       </LayoutHeader>

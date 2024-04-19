@@ -28,12 +28,12 @@ export default function BundlePage() {
       <LayoutHeader>
         <LayoutTitle>
           <h1 className="text-lg font-bold mr-8">Bundle</h1>
-          {!!modules.data && (
-            <PropertySummary>
-              <Tag variant={entry.platform} />
-              <span>{modules.data.entry.moduleFiles} modules</span>
-              <span>{formatFileSize(modules.data.entry.moduleSize)}</span>
-              {modules.data.filtered.moduleFiles !== modules.data.entry.moduleFiles && (
+          <PropertySummary>
+            <Tag variant={entry.platform} />
+            {!!modules.data && <span>{modules.data.entry.moduleFiles} modules</span>}
+            {!!modules.data && <span>{formatFileSize(modules.data.entry.moduleSize)}</span>}
+            {modules.data &&
+              modules.data.filtered.moduleFiles !== modules.data.entry.moduleFiles && (
                 <PropertySummary
                   className="text-tertiary italic"
                   prefix={<span className="select-none mr-2">visible:</span>}
@@ -42,8 +42,7 @@ export default function BundlePage() {
                   <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
                 </PropertySummary>
               )}
-            </PropertySummary>
-          )}
+          </PropertySummary>
         </LayoutTitle>
         <ModuleFiltersForm />
       </LayoutHeader>
