@@ -67,8 +67,6 @@ function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
   const rootPath = rootBundlePath(props.entry).replace(/\/$/, '');
   const relativePath = relativeBundlePath(props.entry, props.path).replace(/^\//, '');
 
-  console.log({ rootPath, relativePath });
-
   return relativePath.split('/').map((label, index, breadcrumbs) => {
     const isLastSegment = index === breadcrumbs.length - 1;
     const breadcrumb: BreadcrumbLinkItem = { key: `${index}-${label}`, label };
