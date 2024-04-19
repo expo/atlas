@@ -139,6 +139,7 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasEntry {
     id: Buffer.from(`${options.entryPoint}+${platform}`).toString('base64url'), // FIX: only use URL allowed characters
     platform,
     projectRoot: options.projectRoot,
+    serverRoot: options.options.serverRoot,
     entryPoint: options.entryPoint,
     runtimeModules: options.preModules.map((module) => convertModule(options, module)),
     modules: collectEntryPointModules(options),

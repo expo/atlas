@@ -11,7 +11,10 @@ export interface AtlasSource {
   entryDeltaEnabled(): boolean;
 }
 
-export type PartialAtlasEntry = Pick<AtlasEntry, 'id' | 'platform' | 'projectRoot' | 'entryPoint'>;
+export type PartialAtlasEntry = Pick<
+  AtlasEntry,
+  'id' | 'platform' | 'projectRoot' | 'serverRoot' | 'entryPoint'
+>;
 
 export type AtlasEntry = {
   /** The unique reference or ID to this entry */
@@ -20,6 +23,8 @@ export type AtlasEntry = {
   platform: 'android' | 'ios' | 'web' | 'server';
   /** The absolute path to the root of the project */
   projectRoot: string;
+  /** The absolute path to the shared root of all imported modules */
+  serverRoot: string;
   /** The absolute path to the entry point used when creating the bundle */
   entryPoint: string;
   /** All known modules that are prepended for the runtime itself */
