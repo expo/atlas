@@ -11,7 +11,7 @@ import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { relativeEntryPath } from '~/utils/entry';
+import { relativeBundlePath } from '~/utils/bundle';
 import { formatFileSize } from '~/utils/formatString';
 import { type AtlasModule } from '~core/data/types';
 
@@ -28,14 +28,12 @@ export default function ModulePage() {
       <LayoutHeader>
         <LayoutTitle>
           <BreadcrumbLinks entry={entry} path={absolutePath!} />
-          {!!module.data && (
-            <PropertySummary>
-              <Tag variant={entry.platform} />
-              {!!module.data.package && <span>{module.data.package}</span>}
-              <span>{getModuleType(module.data)}</span>
-              <span>{formatFileSize(module.data.size)}</span>
-            </PropertySummary>
-          )}
+          <PropertySummary>
+            <Tag variant={entry.platform} />
+            {!!module.data?.package && <span>{module.data.package}</span>}
+            {!!module.data && <span>{getModuleType(module.data)}</span>}
+            {!!module.data && <span>{formatFileSize(module.data.size)}</span>}
+          </PropertySummary>
         </LayoutTitle>
       </LayoutHeader>
       <EntryDeltaToast entryId={entry.id} modulePath={absolutePath} />
@@ -62,7 +60,7 @@ export default function ModulePage() {
                         params: { entry: entry.id, path },
                       }}
                     >
-                      {relativeEntryPath(entry, path)}
+                      {relativeBundlePath(entry, path)}
                     </Link>
                   </li>
                 ))}

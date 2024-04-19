@@ -9,7 +9,7 @@ import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 import { useEntry } from '~/providers/entries';
 import { Button } from '~/ui/Button';
 import { Tag } from '~/ui/Tag';
-import { relativeEntryPath } from '~/utils/entry';
+import { relativeBundlePath } from '~/utils/bundle';
 
 export function BundleSelectForm() {
   const router = useRouter();
@@ -45,7 +45,7 @@ export function BundleSelectForm() {
                 <Select.Item value={item.id} asChild>
                   <Button variant="quaternary" size="sm" className="w-full">
                     <Tag variant={item.platform} className="mr-2" />
-                    <Select.ItemText>{relativeEntryPath(entry, item.entryPoint)}</Select.ItemText>
+                    <Select.ItemText>{relativeBundlePath(entry, item.entryPoint)}</Select.ItemText>
                   </Button>
                 </Select.Item>
               </div>

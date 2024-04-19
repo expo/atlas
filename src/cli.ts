@@ -42,6 +42,7 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
       graph,
       options,
       extensions: metroExtensions,
+      watchFolders: config.watchFolders,
     });
 
     return metroCustomSerializer(entryPoint, preModules, graph, options);

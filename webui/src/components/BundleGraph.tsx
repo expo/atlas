@@ -122,7 +122,7 @@ function getBundleGraphSeries(graph: TreemapNode): TreemapSeriesOption {
       {
         itemStyle: {
           color: '#37434A',
-          borderColorSaturation: 0.18,
+          borderColorSaturation: 0.15,
           colorSaturation: 0.25,
           borderWidth: 4,
         },
