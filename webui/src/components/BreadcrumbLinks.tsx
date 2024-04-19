@@ -9,7 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '~/ui/Breadcrumb';
-import { relativeEntryPath } from '~/utils/entry';
+import { relativeBundlePath } from '~/utils/bundle';
 import { type PartialAtlasEntry } from '~core/data/types';
 
 type BreadcrumbLinksProps = {
@@ -61,7 +61,7 @@ type BreadcrumbLinkItem = {
 };
 
 function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
-  const relativePath = relativeEntryPath(props.entry, props.path);
+  const relativePath = relativeBundlePath(props.entry, props.path);
 
   return relativePath.split('/').map((label, index, breadcrumbs) => {
     const isLastSegment = index === breadcrumbs.length - 1;

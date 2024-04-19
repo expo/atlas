@@ -11,7 +11,7 @@ import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { relativeEntryPath } from '~/utils/entry';
+import { relativeBundlePath } from '~/utils/bundle';
 import { formatFileSize } from '~/utils/formatString';
 import { type AtlasModule } from '~core/data/types';
 
@@ -62,7 +62,7 @@ export default function ModulePage() {
                         params: { entry: entry.id, path },
                       }}
                     >
-                      {relativeEntryPath(entry, path)}
+                      {relativeBundlePath(entry, path)}
                     </Link>
                   </li>
                 ))}
