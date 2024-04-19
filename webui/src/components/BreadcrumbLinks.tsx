@@ -9,7 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '~/ui/Breadcrumb';
-import { relativeBundlePath } from '~/utils/bundle';
+import { relativeBundlePath, rootBundlePath } from '~/utils/bundle';
 import { type PartialAtlasEntry } from '~core/data/types';
 
 type BreadcrumbLinksProps = {
@@ -19,6 +19,8 @@ type BreadcrumbLinksProps = {
 
 export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
   const links = useMemo(() => getBreadcrumbLinks(props), [props.entry.id, props.path]);
+
+  console.log({ links, path: props.path });
 
   return (
     <Breadcrumb>
@@ -31,8 +33,8 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
             Bundle
           </Link>
         </BreadcrumbLink>
-        {links.map((link, index) => (
-          <Fragment key={`link-${index}`}>
+        {links.map((link) => (
+          <Fragment key={link.key}>
             <BreadcrumbSeparator className="text-secondary" />
             <BreadcrumbItem>
               {!link.href ? (
@@ -56,25 +58,28 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
 }
 
 type BreadcrumbLinkItem = {
+  key: string;
   label: string;
   href?: ComponentProps<typeof Link>['href'];
 };
 
 function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
-  const relativePath = relativeBundlePath(props.entry, props.path);
+  const rootPath = rootBundlePath(props.entry).replace(/\/$/, '');
+  const relativePath = relativeBundlePath(props.entry, props.path).replace(/^\//, '');
+
+  console.log({ rootPath, relativePath });
 
   return relativePath.split('/').map((label, index, breadcrumbs) => {
     const isLastSegment = index === breadcrumbs.length - 1;
-    const breadcrumb: BreadcrumbLinkItem = { label };
+    const breadcrumb: BreadcrumbLinkItem = { key: `${index}-${label}`, label };
 
     // NOTE(cedric): a bit of a workaround to avoid linking the module page, might need to change this
     if (!isLastSegment || !label.includes('.')) {
+      const path = `${rootPath}/${breadcrumbs.slice(0, index + 1).join('/')}`;
+      breadcrumb.key = path;
       breadcrumb.href = {
         pathname: '/(atlas)/[entry]/folders/[path]',
-        params: {
-          entry: props.entry.id,
-          path: `${props.entry.projectRoot}/${breadcrumbs.slice(0, index + 1).join('/')}`,
-        },
+        params: { entry: props.entry.id, path },
       };
     }
 

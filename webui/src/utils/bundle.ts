@@ -8,5 +8,13 @@ export function relativeBundlePath(
   entry: Pick<PartialAtlasEntry, 'projectRoot' | 'sharedRoot'>,
   path: string
 ) {
-  return path.replace((entry.sharedRoot || entry.projectRoot) + '/', '');
+  return path.replace(rootBundlePath(entry) + '/', '');
+}
+
+/**
+ * Get the "shared root" of all paths within the entry.
+ * This is calculated by comparing `projectRoot` and `watchFolders`.
+ */
+export function rootBundlePath(entry: Pick<PartialAtlasEntry, 'projectRoot' | 'sharedRoot'>) {
+  return entry.sharedRoot || entry.projectRoot;
 }
