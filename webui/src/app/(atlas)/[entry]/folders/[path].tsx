@@ -1,6 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
 
 import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
@@ -12,10 +11,8 @@ import { EntryDeltaToast, useEntry } from '~/providers/entries';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { breadcrumbsForPath } from '~/utils/entry';
 import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
-import { type PartialAtlasEntry } from '~core/data/types';
 
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
@@ -31,7 +28,7 @@ export default function FolderPage() {
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
-          <FolderTitle entry={entry} folderPath={absolutePath!} />
+          <BreadcrumbLinks entry={entry} path={absolutePath!} />
           {!!modules.data && <FolderSummary data={modules.data} />}
         </LayoutTitle>
         <ModuleFiltersForm disableNodeModules />
@@ -52,11 +49,6 @@ export default function FolderPage() {
       )}
     </Layout>
   );
-}
-
-function FolderTitle({ entry, folderPath }: { entry: PartialAtlasEntry; folderPath: string }) {
-  const links = useMemo(() => breadcrumbsForPath(entry, folderPath), [entry, folderPath]);
-  return <BreadcrumbLinks entryId={entry.id} links={links} />;
 }
 
 function FolderSummary({ data }: { data: ModuleGraphResponse }) {
