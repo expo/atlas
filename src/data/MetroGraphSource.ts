@@ -38,6 +38,7 @@ export class MetroGraphSource implements AtlasSource {
       id: item.entry.id,
       platform: item.entry.platform,
       projectRoot: item.entry.projectRoot,
+      serverRoot: item.entry.serverRoot,
       entryPoint: item.entry.entryPoint,
     }));
   }
