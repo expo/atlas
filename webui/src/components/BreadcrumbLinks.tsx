@@ -26,7 +26,7 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
         <BreadcrumbLink asChild>
           <Link
             className="text-lg font-bold text-default underline-offset-4 hover:underline"
-            href={{ pathname: '/(atlas)/[entry]/', params: { entry: props.bundle.id } }}
+            href={{ pathname: '/(atlas)/[bundle]/', params: { bundle: props.bundle.id } }}
           >
             Bundle
           </Link>
@@ -74,8 +74,8 @@ function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
       const path = `${rootPath}/${breadcrumbs.slice(0, index + 1).join('/')}`;
       breadcrumb.key = path;
       breadcrumb.href = {
-        pathname: '/(atlas)/[entry]/folders/[path]',
-        params: { entry: props.bundle.id, path },
+        pathname: '/(atlas)/[bundle]/folders/[path]',
+        params: { bundle: props.bundle.id, path },
       };
     }
 

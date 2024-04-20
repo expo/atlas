@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 
-import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
+import type { ModuleGraphResponse } from '~/app/--/bundles/[bundle]/modules/graph+api';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
@@ -60,7 +60,7 @@ export default function FolderPage() {
           Try restarting Expo Atlas. If this error keeps happening, open a bug report.
         </StateInfo>
       ) : treeHasData ? (
-        <BundleGraph entry={bundle} graph={modules.data!.data} />
+        <BundleGraph bundle={bundle} graph={modules.data!.data} />
       ) : (
         !modules.isPending && (
           <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
@@ -73,13 +73,13 @@ export default function FolderPage() {
 }
 
 /** Load the folder data from API, by path reference only */
-function useModuleGraphDataInFolder(entryId: string, path: string, filters: ModuleFilters) {
+function useModuleGraphDataInFolder(bundleId: string, path: string, filters: ModuleFilters) {
   return useQuery<ModuleGraphResponse>({
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
-    queryKey: [`entries`, entryId, `module`, path, filters],
+    queryKey: [`bundles`, bundleId, `module`, path, filters],
     queryFn: async ({ queryKey }) => {
-      const [_key, entry, _module, path, filters] = queryKey as [
+      const [_key, bundle, _module, path, filters] = queryKey as [
         string,
         string,
         string,
@@ -88,8 +88,8 @@ function useModuleGraphDataInFolder(entryId: string, path: string, filters: Modu
       ];
 
       const url = filters
-        ? `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
-        : `/entries/${entry}/modules/graph?path=${encodeURIComponent(path)}`;
+        ? `/bundles/${bundle}/modules/graph?path=${encodeURIComponent(path)}&${moduleFiltersToParams(filters)}`
+        : `/bundles/${bundle}/modules/graph?path=${encodeURIComponent(path)}`;
 
       return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))

@@ -16,7 +16,7 @@ import type { PartialAtlasBundle } from '~core/data/types';
 echarts.use([TooltipComponent, TitleComponent, TreemapChart, CanvasRenderer]);
 
 type BundleGraphProps = {
-  entry: PartialAtlasBundle;
+  bundle: PartialAtlasBundle;
   graph: TreemapNode;
 };
 
@@ -51,10 +51,10 @@ export function BundleGraph(props: BundleGraphProps) {
           if (event.event.altKey || event.event.ctrlKey || event.event.metaKey) {
             router.push({
               pathname: data.children?.length
-                ? '/(atlas)/[entry]/folders/[path]'
-                : '/(atlas)/[entry]/modules/[path]',
+                ? '/(atlas)/[bundle]/folders/[path]'
+                : '/(atlas)/[bundle]/modules/[path]',
               params: {
-                entry: props.entry.id,
+                bundle: props.bundle.id,
                 path: data.value === 100 ? data.name : data.modulePath,
               },
             });
