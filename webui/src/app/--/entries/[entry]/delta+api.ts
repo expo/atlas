@@ -1,9 +1,9 @@
 import { getSource } from '~/utils/atlas';
-import { AtlasEntryDelta } from '~core/data/types';
+import { AtlasBundleDelta } from '~core/data/types';
 
 export type EntryDeltaResponse = {
   isEnabled: boolean;
-  delta: null | AtlasEntryDelta;
+  delta: null | AtlasBundleDelta;
 };
 
 export async function GET(_request: Request, params: Record<'entry', string>) {

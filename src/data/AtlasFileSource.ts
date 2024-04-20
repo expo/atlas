@@ -2,7 +2,7 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 
-import type { PartialAtlasEntry, AtlasEntry, AtlasSource } from './types';
+import type { PartialAtlasBundle, AtlasBundle, AtlasSource } from './types';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
 import { AtlasValidationError } from '../utils/errors';
@@ -40,7 +40,7 @@ export class AtlasFileSource implements AtlasSource {
  */
 export async function listAtlasEntries(filePath: string) {
   const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"/;
-  const entries: PartialAtlasEntry[] = [];
+  const entries: PartialAtlasBundle[] = [];
 
   await forEachJsonLines(filePath, (contents, line) => {
     // Skip the metadata line
@@ -64,7 +64,7 @@ export async function listAtlasEntries(filePath: string) {
 /**
  * Get the entry by id or line number, and parse the data.
  */
-export async function readAtlasEntry(filePath: string, id: number): Promise<AtlasEntry> {
+export async function readAtlasEntry(filePath: string, id: number): Promise<AtlasBundle> {
   const atlasEntry = await parseJsonLine<any[]>(filePath, id);
   return {
     id: String(id),
@@ -86,7 +86,7 @@ let writeQueue: Promise<any> = Promise.resolve();
  * Add a new entry to the file.
  * This is appended on a new line, so we can load the selectively.
  */
-export function writeAtlasEntry(filePath: string, entry: AtlasEntry) {
+export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
   const line = [
     entry.platform,
     entry.projectRoot,

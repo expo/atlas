@@ -10,10 +10,10 @@ import {
   BreadcrumbSeparator,
 } from '~/ui/Breadcrumb';
 import { relativeBundlePath, rootBundlePath } from '~/utils/bundle';
-import { type PartialAtlasEntry } from '~core/data/types';
+import { type PartialAtlasBundle } from '~core/data/types';
 
 type BreadcrumbLinksProps = {
-  bundle: PartialAtlasEntry;
+  bundle: PartialAtlasBundle;
   path: string;
 };
 

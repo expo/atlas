@@ -1,7 +1,7 @@
 import { getSource } from '~/utils/atlas';
 import { filterModules, moduleFiltersFromParams } from '~/utils/filters';
 import { type TreemapNode, createModuleTree, finalizeModuleTree } from '~/utils/treemap';
-import type { AtlasEntry } from '~core/data/types';
+import type { AtlasBundle } from '~core/data/types';
 
 export type ModuleGraphResponse = {
   data: TreemapNode;
@@ -17,7 +17,7 @@ export type ModuleGraphResponse = {
 };
 
 export async function GET(request: Request, params: Record<'entry', string>) {
-  let entry: AtlasEntry;
+  let entry: AtlasBundle;
 
   try {
     entry = await getSource().getEntry(params.entry);

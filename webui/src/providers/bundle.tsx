@@ -15,7 +15,7 @@ import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
 import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
 import { fetchApi } from '~/utils/api';
-import { type PartialAtlasEntry } from '~core/data/types';
+import { type PartialAtlasBundle } from '~core/data/types';
 
 type BundleContext = {
   bundles: NonNullable<ReturnType<typeof useBundleData>['data']>;
@@ -75,7 +75,7 @@ export function BundleProvider({ children }: PropsWithChildren) {
 
 /** Load all available entries from API, this is refetched every 2s when no data is present */
 function useBundleData() {
-  return useQuery<PartialAtlasEntry[]>({
+  return useQuery<PartialAtlasBundle[]>({
     refetchOnWindowFocus: false,
     refetchInterval: (query) => (!query.state.data?.length ? 2000 : false),
     queryKey: ['entries'],
@@ -88,7 +88,7 @@ export function BundleDeltaToast({
   bundle,
   modulePath,
 }: {
-  bundle: Pick<PartialAtlasEntry, 'id'>;
+  bundle: Pick<PartialAtlasBundle, 'id'>;
   modulePath?: string;
 }) {
   const client = useQueryClient();

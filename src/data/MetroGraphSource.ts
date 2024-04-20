@@ -3,7 +3,7 @@ import type DeltaBundler from 'metro/src/DeltaBundler';
 import type MetroServer from 'metro/src/Server';
 import path from 'path';
 
-import type { AtlasEntry, AtlasEntryDelta, AtlasModule, AtlasSource } from './types';
+import type { AtlasBundle, AtlasBundleDelta, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';
 import { getPackageNameFromPath } from '../utils/package';
 import { findSharedRoot } from '../utils/paths';
@@ -28,7 +28,7 @@ export class MetroGraphSource implements AtlasSource {
   /** The Metro delta listener, instantiated when the Metro server is registered */
   protected deltaListener: MetroDeltaListener | null = null;
   /** All known entries, and detected changes, stored by ID */
-  readonly entries: Map<AtlasEntry['id'], { entry: AtlasEntry; delta?: AtlasEntryDelta }> =
+  readonly entries: Map<AtlasBundle['id'], { entry: AtlasBundle; delta?: AtlasBundleDelta }> =
     new Map();
 
   constructor() {
@@ -86,14 +86,14 @@ export class MetroGraphSource implements AtlasSource {
 class MetroDeltaListener {
   private source: MetroGraphSource;
   private bundler: DeltaBundler<void>;
-  private listeners: Map<AtlasEntry['id'], () => any> = new Map();
+  private listeners: Map<AtlasBundle['id'], () => any> = new Map();
 
   constructor(source: MetroGraphSource, metro: MetroServer) {
     this.source = source;
     this.bundler = metro.getBundler().getDeltaBundler();
   }
 
-  registerGraph(entryId: AtlasEntry['id'], graph: MetroGraph) {
+  registerGraph(entryId: AtlasBundle['id'], graph: MetroGraph) {
     // Unregister the previous listener, to always have the most up-to-date graph
     if (this.listeners.has(entryId)) {
       this.listeners.get(entryId)!();
@@ -115,7 +115,7 @@ class MetroDeltaListener {
    * Event handler invoked when a change is detected by Metro, using the DeltaBundler.
    * The detected change is combined with the Atlas entry ID, and updates the source entry with the delta.
    */
-  onMetroChange(entryId: AtlasEntry['id'], delta: metro.DeltaResult<void>, createdAt: Date) {
+  onMetroChange(entryId: AtlasBundle['id'], delta: metro.DeltaResult<void>, createdAt: Date) {
     const item = this.source.entries.get(entryId);
     const hasChanges = (delta.added.size || delta.modified.size || delta.deleted.size) > 0;
 
@@ -130,7 +130,7 @@ class MetroDeltaListener {
 }
 
 /** Convert a Metro graph instance to a JSON-serializable entry */
-export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasEntry {
+export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
   const platform =
@@ -223,15 +223,15 @@ function getModuleSourceContent(
 /** Convert Metro transform options to a JSON-serializable object */
 export function convertTransformOptions(
   options: Pick<ConvertGraphToAtlasOptions, 'graph'>
-): AtlasEntry['transformOptions'] {
+): AtlasBundle['transformOptions'] {
   return options.graph.transformOptions ?? {};
 }
 
 /** Convert Metro serialize options to a JSON-serializable object */
 export function convertSerializeOptions(
   options: Pick<ConvertGraphToAtlasOptions, 'options'>
-): AtlasEntry['serializeOptions'] {
-  const serializeOptions: AtlasEntry['serializeOptions'] = { ...options.options };
+): AtlasBundle['serializeOptions'] {
+  const serializeOptions: AtlasBundle['serializeOptions'] = { ...options.options };
 
   // Delete all filters
   delete serializeOptions['processModuleFilter'];

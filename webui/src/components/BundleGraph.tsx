@@ -10,13 +10,13 @@ import { useMemo } from 'react';
 
 import { formatFileSize } from '~/utils/formatString';
 import type { TreemapNode } from '~/utils/treemap';
-import type { PartialAtlasEntry } from '~core/data/types';
+import type { PartialAtlasBundle } from '~core/data/types';
 
 // Register used echarts components, to avoid loading unused code
 echarts.use([TooltipComponent, TitleComponent, TreemapChart, CanvasRenderer]);
 
 type BundleGraphProps = {
-  entry: PartialAtlasEntry;
+  entry: PartialAtlasBundle;
   graph: TreemapNode;
 };
 

@@ -2,21 +2,21 @@ import type { MixedOutput } from 'metro';
 
 export interface AtlasSource {
   /** List all available entries */
-  listEntries(): PartialAtlasEntry[] | Promise<PartialAtlasEntry[]>;
+  listEntries(): PartialAtlasBundle[] | Promise<PartialAtlasBundle[]>;
   /** Load the full entry, by reference */
-  getEntry(ref: string): AtlasEntry | Promise<AtlasEntry>;
+  getEntry(ref: string): AtlasBundle | Promise<AtlasBundle>;
   /** Load the entry changes since last bundle collection, if any */
-  getEntryDelta(ref: string): null | AtlasEntryDelta | Promise<null | AtlasEntryDelta>;
+  getEntryDelta(ref: string): null | AtlasBundleDelta | Promise<null | AtlasBundleDelta>;
   /** Determine if the source is watching for (live) changes. */
   entryDeltaEnabled(): boolean;
 }
 
-export type PartialAtlasEntry = Pick<
-  AtlasEntry,
+export type PartialAtlasBundle = Pick<
+  AtlasBundle,
   'id' | 'platform' | 'projectRoot' | 'sharedRoot' | 'entryPoint'
 >;
 
-export type AtlasEntry = {
+export type AtlasBundle = {
   /** The unique reference or ID to this entry */
   id: string;
   /** The platform for which the bundle was created */
@@ -37,7 +37,7 @@ export type AtlasEntry = {
   transformOptions?: Record<string, any>;
 };
 
-export type AtlasEntryDelta = {
+export type AtlasBundleDelta = {
   /** When this delta or change was created */
   createdAt: Date;
   /** Both added and modified module paths */

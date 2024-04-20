@@ -1,5 +1,5 @@
 import { getSource } from '~/utils/atlas';
-import { PartialAtlasEntry } from '~core/data/types';
+import { PartialAtlasBundle } from '~core/data/types';
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
   }
 }
 
-function sortEntriesByPlatform(a: PartialAtlasEntry, b: PartialAtlasEntry) {
+function sortEntriesByPlatform(a: PartialAtlasBundle, b: PartialAtlasBundle) {
   if (a.platform === 'server') return 1;
   if (b.platform === 'server') return -1;
   return 0;
