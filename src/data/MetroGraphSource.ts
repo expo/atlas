@@ -159,8 +159,10 @@ export function collectEntryPointModules(
 
   function discover(modulePath: string) {
     const module = options.graph.dependencies.get(modulePath);
+    // TODO(cedric): figure out how to handle shims properly
+    const moduleIsShim = !!module?.path?.startsWith('\0shim:');
 
-    if (module && !modules.has(modulePath)) {
+    if (module && !moduleIsShim && !modules.has(modulePath)) {
       modules.set(modulePath, convertModule(options, module));
       module.dependencies.forEach((modulePath) => discover(modulePath.absolutePath));
     }
