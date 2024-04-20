@@ -6,7 +6,7 @@ import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
 import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
-import { EntryDeltaToast, useEntry } from '~/providers/entries';
+import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
@@ -16,27 +16,29 @@ import { formatFileSize } from '~/utils/formatString';
 import { type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {
-  const { entry } = useEntry();
+  const { bundle } = useBundle();
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const module = useModuleData(entry.id, absolutePath!);
+  const module = useModuleData(bundle.id, absolutePath!);
 
   return (
     <Layout>
+      <BundleDeltaToast bundle={bundle} modulePath={absolutePath} />
+
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
-          <BreadcrumbLinks entry={entry} path={absolutePath!} />
+          <BreadcrumbLinks bundle={bundle} path={absolutePath!} />
           <PropertySummary>
-            <Tag variant={entry.platform} />
+            <Tag variant={bundle.platform} />
             {!!module.data?.package && <span>{module.data.package}</span>}
             {!!module.data && <span>{getModuleType(module.data)}</span>}
             {!!module.data && <span>{formatFileSize(module.data.size)}</span>}
           </PropertySummary>
         </LayoutTitle>
       </LayoutHeader>
-      <EntryDeltaToast entryId={entry.id} modulePath={absolutePath} />
+
       {module.isLoading ? (
         <ModulePageSkeleton />
       ) : module.isError ? (
@@ -57,10 +59,10 @@ export default function ModulePage() {
                       className="text-link hover:underline"
                       href={{
                         pathname: '/(atlas)/[entry]/modules/[path]',
-                        params: { entry: entry.id, path },
+                        params: { entry: bundle.id, path },
                       }}
                     >
-                      {relativeBundlePath(entry, path)}
+                      {relativeBundlePath(bundle, path)}
                     </Link>
                   </li>
                 ))}

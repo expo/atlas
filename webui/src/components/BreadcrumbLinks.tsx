@@ -13,12 +13,12 @@ import { relativeBundlePath, rootBundlePath } from '~/utils/bundle';
 import { type PartialAtlasEntry } from '~core/data/types';
 
 type BreadcrumbLinksProps = {
-  entry: PartialAtlasEntry;
+  bundle: PartialAtlasEntry;
   path: string;
 };
 
 export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
-  const links = useMemo(() => getBreadcrumbLinks(props), [props.entry.id, props.path]);
+  const links = useMemo(() => getBreadcrumbLinks(props), [props.bundle.id, props.path]);
 
   return (
     <Breadcrumb>
@@ -26,7 +26,7 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
         <BreadcrumbLink asChild>
           <Link
             className="text-lg font-bold text-default underline-offset-4 hover:underline"
-            href={{ pathname: '/(atlas)/[entry]/', params: { entry: props.entry.id } }}
+            href={{ pathname: '/(atlas)/[entry]/', params: { entry: props.bundle.id } }}
           >
             Bundle
           </Link>
@@ -62,8 +62,8 @@ type BreadcrumbLinkItem = {
 };
 
 function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
-  const rootPath = rootBundlePath(props.entry).replace(/\/$/, '');
-  const relativePath = relativeBundlePath(props.entry, props.path).replace(/^\//, '');
+  const rootPath = rootBundlePath(props.bundle).replace(/\/$/, '');
+  const relativePath = relativeBundlePath(props.bundle, props.path).replace(/^\//, '');
 
   return relativePath.split('/').map((label, index, breadcrumbs) => {
     const isLastSegment = index === breadcrumbs.length - 1;
@@ -75,7 +75,7 @@ function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
       breadcrumb.key = path;
       breadcrumb.href = {
         pathname: '/(atlas)/[entry]/folders/[path]',
-        params: { entry: props.entry.id, path },
+        params: { entry: props.bundle.id, path },
       };
     }
 

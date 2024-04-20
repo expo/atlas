@@ -1,9 +1,9 @@
 import { Redirect } from 'expo-router';
 
-import { useEntry } from '~/providers/entries';
+import { useBundle } from '~/providers/bundle';
 
 export default function HomeScreen() {
-  const { entry } = useEntry();
+  const { bundle } = useBundle();
 
-  return <Redirect href={{ pathname: '/(atlas)/[entry]/', params: { entry: entry.id } }} />;
+  return <Redirect href={{ pathname: '/(atlas)/[entry]/', params: { entry: bundle.id } }} />;
 }

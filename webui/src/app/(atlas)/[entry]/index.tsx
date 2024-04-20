@@ -6,7 +6,7 @@ import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
-import { EntryDeltaToast, useEntry } from '~/providers/entries';
+import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
@@ -15,13 +15,15 @@ import { type ModuleFilters, moduleFiltersToParams, useModuleFilters } from '~/u
 import { formatFileSize } from '~/utils/formatString';
 
 export default function BundlePage() {
-  const { entry } = useEntry();
+  const { bundle } = useBundle();
   const { filters, filtersEnabled } = useModuleFilters();
-  const modules = useModuleGraphData(entry.id, filters);
+  const modules = useModuleGraphData(bundle.id, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
     <Layout variant="viewport">
+      <BundleDeltaToast bundle={bundle} />
+
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>
@@ -29,7 +31,7 @@ export default function BundlePage() {
         <LayoutTitle>
           <h1 className="text-lg font-bold mr-8">Bundle</h1>
           <PropertySummary>
-            <Tag variant={entry.platform} />
+            <Tag variant={bundle.platform} />
             {!!modules.data && <span>{modules.data.entry.moduleFiles} modules</span>}
             {!!modules.data && <span>{formatFileSize(modules.data.entry.moduleSize)}</span>}
             {modules.data &&
@@ -46,7 +48,7 @@ export default function BundlePage() {
         </LayoutTitle>
         <ModuleFiltersForm />
       </LayoutHeader>
-      <EntryDeltaToast entryId={entry.id} />
+
       {modules.isPending && !modules.isPlaceholderData ? (
         <StateInfo>
           <Spinner />
@@ -56,7 +58,7 @@ export default function BundlePage() {
           <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
         </StateInfo>
       ) : treeHasData ? (
-        <BundleGraph entry={entry} graph={modules.data!.data} />
+        <BundleGraph entry={bundle} graph={modules.data!.data} />
       ) : (
         <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
           <p>

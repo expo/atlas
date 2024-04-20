@@ -17,38 +17,38 @@ import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
 import { fetchApi } from '~/utils/api';
 import { type PartialAtlasEntry } from '~core/data/types';
 
-type EntryContext = {
-  entries: NonNullable<ReturnType<typeof useEntryData>['data']>;
+type BundleContext = {
+  bundles: NonNullable<ReturnType<typeof useBundleData>['data']>;
 };
 
-export const entryContext = createContext<EntryContext>({
-  entries: [],
+export const bundleContext = createContext<BundleContext>({
+  bundles: [],
 });
 
-export const useEntry = () => {
-  const { entries } = useContext(entryContext);
-  const { entry: entryId } = useLocalSearchParams<{ entry?: string }>();
-  const entry = useMemo(
-    () => entries.find((entry) => entry.id === entryId) || entries[0],
-    [entries, entryId]
+export const useBundle = () => {
+  const { bundles } = useContext(bundleContext);
+  const { entry: bundleId } = useLocalSearchParams<{ entry?: string }>();
+  const bundle = useMemo(
+    () => bundles.find((entry) => entry.id === bundleId) || bundles[0],
+    [bundles, bundleId]
   );
 
-  return { entry, entries };
+  return { bundle, bundles };
 };
 
-export function EntryProvider({ children }: PropsWithChildren) {
-  const entries = useEntryData();
+export function BundleProvider({ children }: PropsWithChildren) {
+  const bundles = useBundleData();
 
-  if (entries.data?.length) {
+  if (bundles.data?.length) {
     return (
-      <entryContext.Provider value={{ entries: entries.data || [] }}>
+      <bundleContext.Provider value={{ bundles: bundles.data || [] }}>
         {children}
-      </entryContext.Provider>
+      </bundleContext.Provider>
     );
   }
 
   // TODO: add better UX for loading
-  if (entries.isFetching && !entries.data?.length) {
+  if (bundles.isFetching && !bundles.data?.length) {
     return (
       <StateInfo>
         <Spinner />
@@ -57,7 +57,7 @@ export function EntryProvider({ children }: PropsWithChildren) {
   }
 
   // TODO: add better UX for empty state
-  if (entries.isFetched && !entries.data?.length) {
+  if (bundles.isFetched && !bundles.data?.length) {
     return (
       <StateInfo title="No data found.">
         <p>Open your app in the browser, or device, to collect data.</p>
@@ -73,29 +73,36 @@ export function EntryProvider({ children }: PropsWithChildren) {
   );
 }
 
-/** Load all available entries from API */
-function useEntryData() {
+/** Load all available entries from API, this is refetched every 2s when no data is present */
+function useBundleData() {
   return useQuery<PartialAtlasEntry[]>({
     refetchOnWindowFocus: false,
+    refetchInterval: (query) => (!query.state.data?.length ? 2000 : false),
     queryKey: ['entries'],
     queryFn: () => fetchApi('/entries').then((res) => res.json()),
   });
 }
 
 /** A logic-component to show a toast notification when the entry is outdated. */
-export function EntryDeltaToast({ entryId, modulePath }: { entryId: string; modulePath?: string }) {
+export function BundleDeltaToast({
+  bundle,
+  modulePath,
+}: {
+  bundle: Pick<PartialAtlasEntry, 'id'>;
+  modulePath?: string;
+}) {
   const client = useQueryClient();
   const toaster = useToast();
 
-  const deltaResponse = useEntryDeltaData(entryId);
+  const deltaResponse = useBundleDeltaData(bundle.id);
   const entryDelta = deltaResponse.data?.delta;
 
   const refetchEntryData = useCallback(
     () =>
-      fetchApi(`/entries/${entryId}/reload`)
+      fetchApi(`/entries/${bundle.id}/reload`)
         .then((res) => (!res.ok ? Promise.reject(res) : res.text()))
-        .then(() => client.refetchQueries({ queryKey: ['entries', entryId], type: 'active' })),
-    [entryId]
+        .then(() => client.refetchQueries({ queryKey: ['entries', bundle.id], type: 'active' })),
+    [bundle.id]
   );
 
   useEffect(() => {
@@ -103,22 +110,22 @@ export function EntryDeltaToast({ entryId, modulePath }: { entryId: string; modu
 
     if (modulePath) {
       if (entryDelta.deletedPaths.includes(modulePath)) {
-        toaster.toast(toastModuleDeleted(entryId));
+        toaster.toast(toastModuleDeleted(bundle.id));
       } else if (entryDelta.modifiedPaths.includes(modulePath)) {
-        refetchEntryData().then(() => toaster.toast(toastModuleModified(entryId)));
+        refetchEntryData().then(() => toaster.toast(toastModuleModified(bundle.id)));
       }
       return;
     }
 
-    toaster.toast(toastBundleUpdate(entryId, refetchEntryData));
-  }, [entryId, entryDelta, refetchEntryData, modulePath]);
+    toaster.toast(toastBundleUpdate(bundle.id, refetchEntryData));
+  }, [bundle.id, entryDelta, refetchEntryData, modulePath]);
 
   return null;
 }
 
 function toastModuleModified(entryId: string): ToasterToast {
   return {
-    id: `entry-delta-${entryId}`,
+    id: `bundle-delta-${entryId}`,
     title: 'Module modified',
     description: 'This module is updated to reflect the latest changes.',
   };
@@ -126,7 +133,7 @@ function toastModuleModified(entryId: string): ToasterToast {
 
 function toastModuleDeleted(entryId: string): ToasterToast {
   return {
-    id: `entry-delta-${entryId}`,
+    id: `bundle-delta-${entryId}`,
     title: 'Module deleted',
     description: 'This file is deleted since latest build, and is no longer available.',
   };
@@ -134,7 +141,7 @@ function toastModuleDeleted(entryId: string): ToasterToast {
 
 function toastBundleUpdate(entryId: string, refetchEntryData: () => any): ToasterToast {
   return {
-    id: `entry-delta-${entryId}`,
+    id: `bundle-delta-${entryId}`,
     title: 'Bundle outdated',
     description: 'The code was changed since last build.',
     action: (
@@ -148,7 +155,7 @@ function toastBundleUpdate(entryId: string, refetchEntryData: () => any): Toaste
 }
 
 /** Poll the server to check for possible changes in entries */
-function useEntryDeltaData(entryId: string) {
+function useBundleDeltaData(entryId: string) {
   return useQuery<EntryDeltaResponse>({
     refetchInterval: (query) => (query.state.data?.isEnabled === false ? false : 2000),
     queryKey: ['entries', entryId, 'delta'],

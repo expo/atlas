@@ -6,20 +6,20 @@ import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 // @ts-expect-error
 import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 
-import { useEntry } from '~/providers/entries';
+import { useBundle } from '~/providers/bundle';
 import { Button } from '~/ui/Button';
 import { Tag } from '~/ui/Tag';
 import { relativeBundlePath } from '~/utils/bundle';
 
 export function BundleSelectForm() {
   const router = useRouter();
-  const { entry, entries } = useEntry();
+  const { bundle, bundles } = useBundle();
 
   return (
-    <Select.Root value={entry.id} onValueChange={(entry) => router.setParams({ entry })}>
+    <Select.Root value={bundle.id} onValueChange={(entry) => router.setParams({ entry })}>
       <Select.Trigger asChild>
         <Button variant="quaternary" size="sm">
-          <Tag variant={entry.platform} size="xs" className="mr-2" />
+          <Tag variant={bundle.platform} size="xs" className="mr-2" />
           <Select.Value placeholder="Select bundle to inspect" />
           <Select.Icon className="text-icon-default">
             <ChevronDownIcon size={16} className="m-1 mr-0 align-middle" />
@@ -40,12 +40,12 @@ export function BundleSelectForm() {
             <ChevronUpIcon />
           </Select.ScrollUpButton>
           <Select.Viewport className="SelectViewport">
-            {entries.map((item) => (
+            {bundles.map((item) => (
               <div key={item.id}>
                 <Select.Item value={item.id} asChild>
                   <Button variant="quaternary" size="sm" className="w-full">
                     <Tag variant={item.platform} className="mr-2" />
-                    <Select.ItemText>{relativeBundlePath(entry, item.entryPoint)}</Select.ItemText>
+                    <Select.ItemText>{relativeBundlePath(item, item.entryPoint)}</Select.ItemText>
                   </Button>
                 </Select.Item>
               </div>

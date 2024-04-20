@@ -8,7 +8,7 @@ import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
-import { EntryDeltaToast, useEntry } from '~/providers/entries';
+import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
@@ -18,21 +18,23 @@ import { formatFileSize } from '~/utils/formatString';
 
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const { entry } = useEntry();
+  const { bundle } = useBundle();
   const { filters, filtersEnabled } = useModuleFilters();
-  const modules = useModuleGraphDataInFolder(entry.id, absolutePath!, filters);
+  const modules = useModuleGraphDataInFolder(bundle.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
     <Layout variant="viewport">
+      <BundleDeltaToast bundle={bundle} />
+
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
-          <BreadcrumbLinks entry={entry} path={absolutePath!} />
+          <BreadcrumbLinks bundle={bundle} path={absolutePath!} />
           <PropertySummary>
-            <Tag variant={entry.platform} />
+            <Tag variant={bundle.platform} />
             <span>folder</span>
             {!!modules.data?.filtered.moduleFiles && (
               <span>
@@ -48,7 +50,7 @@ export default function FolderPage() {
         </LayoutTitle>
         <ModuleFiltersForm disableNodeModules />
       </LayoutHeader>
-      <EntryDeltaToast entryId={entry.id} />
+
       {modules.isPending && !modules.isPlaceholderData ? (
         <StateInfo>
           <Spinner />
@@ -58,7 +60,7 @@ export default function FolderPage() {
           Try restarting Expo Atlas. If this error keeps happening, open a bug report.
         </StateInfo>
       ) : treeHasData ? (
-        <BundleGraph entry={entry} graph={modules.data!.data} />
+        <BundleGraph entry={bundle} graph={modules.data!.data} />
       ) : (
         !modules.isPending && (
           <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
