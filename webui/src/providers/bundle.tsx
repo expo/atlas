@@ -9,7 +9,7 @@ import {
   useCallback,
 } from 'react';
 
-import { type EntryDeltaResponse } from '~/app/--/entries/[entry]/delta+api';
+import { type BundleDeltaResponse } from '~/app/--/bundles/[bundle]/delta+api';
 import { StateInfo } from '~/components/StateInfo';
 import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
@@ -73,13 +73,13 @@ export function BundleProvider({ children }: PropsWithChildren) {
   );
 }
 
-/** Load all available entries from API, this is refetched every 2s when no data is present */
+/** Load all available bundles from API, this is refetched every 2s when no data is present */
 function useBundleData() {
   return useQuery<PartialAtlasBundle[]>({
     refetchOnWindowFocus: false,
     refetchInterval: (query) => (!query.state.data?.length ? 2000 : false),
-    queryKey: ['entries'],
-    queryFn: () => fetchApi('/entries').then((res) => res.json()),
+    queryKey: ['bundles'],
+    queryFn: () => fetchApi('/bundles').then((res) => res.json()),
   });
 }
 
@@ -99,9 +99,9 @@ export function BundleDeltaToast({
 
   const refetchEntryData = useCallback(
     () =>
-      fetchApi(`/entries/${bundle.id}/reload`)
+      fetchApi(`/bundles/${bundle.id}/reload`)
         .then((res) => (!res.ok ? Promise.reject(res) : res.text()))
-        .then(() => client.refetchQueries({ queryKey: ['entries', bundle.id], type: 'active' })),
+        .then(() => client.refetchQueries({ queryKey: ['bundles', bundle.id], type: 'active' })),
     [bundle.id]
   );
 
@@ -154,14 +154,14 @@ function toastBundleUpdate(entryId: string, refetchEntryData: () => any): Toaste
   };
 }
 
-/** Poll the server to check for possible changes in entries */
-function useBundleDeltaData(entryId: string) {
-  return useQuery<EntryDeltaResponse>({
+/** Poll the server to check for possible changes in bundles */
+function useBundleDeltaData(bundleId: string) {
+  return useQuery<BundleDeltaResponse>({
     refetchInterval: (query) => (query.state.data?.isEnabled === false ? false : 2000),
-    queryKey: ['entries', entryId, 'delta'],
+    queryKey: ['bundles', bundleId, 'delta'],
     queryFn: ({ queryKey }) => {
-      const [_key, entry] = queryKey as [string, string];
-      return fetchApi(`/entries/${entry}/delta`).then((res) => res.json());
+      const [_key, bundle] = queryKey as [string, string];
+      return fetchApi(`/bundles/${bundle}/delta`).then((res) => res.json());
     },
   });
 }

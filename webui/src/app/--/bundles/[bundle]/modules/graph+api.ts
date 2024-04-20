@@ -5,7 +5,7 @@ import type { AtlasBundle } from '~core/data/types';
 
 export type ModuleGraphResponse = {
   data: TreemapNode;
-  entry: {
+  bundle: {
     platform: 'android' | 'ios' | 'web';
     moduleSize: number;
     moduleFiles: number;
@@ -16,29 +16,29 @@ export type ModuleGraphResponse = {
   };
 };
 
-export async function GET(request: Request, params: Record<'entry', string>) {
-  let entry: AtlasBundle;
+export async function GET(request: Request, params: Record<'bundle', string>) {
+  let bundle: AtlasBundle;
 
   try {
-    entry = await getSource().getEntry(params.entry);
+    bundle = await getSource().getBundle(params.bundle);
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 406 });
   }
 
   const query = new URL(request.url).searchParams;
-  const allModules = Array.from(entry.modules.values());
+  const allModules = Array.from(bundle.modules.values());
   const filteredModules = filterModules(allModules, {
-    projectRoot: entry.projectRoot,
+    projectRoot: bundle.projectRoot,
     filters: moduleFiltersFromParams(query),
     rootPath: query.get('path') || undefined,
   });
 
   const response: ModuleGraphResponse = {
     data: finalizeModuleTree(createModuleTree(filteredModules)),
-    entry: {
-      platform: entry.platform as any,
+    bundle: {
+      platform: bundle.platform as any,
       moduleSize: allModules.reduce((size, module) => size + module.size, 0),
-      moduleFiles: entry.modules.size,
+      moduleFiles: bundle.modules.size,
     },
     filtered: {
       moduleSize: filteredModules.reduce((size, module) => size + module.size, 0),

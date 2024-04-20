@@ -15,21 +15,21 @@ export class AtlasFileSource implements AtlasSource {
     //
   }
 
-  listEntries() {
+  listBundles() {
     return listAtlasEntries(this.filePath);
   }
 
-  getEntry(id: string) {
+  getBundle(id: string) {
     const numeric = parseInt(id, 10);
     assert(!Number.isNaN(numeric) && numeric > 1, `Invalid entry ID: ${id}`);
     return readAtlasEntry(this.filePath, Number(id));
   }
 
-  entryDeltaEnabled() {
+  bundleDeltaEnabled() {
     return false; // File source does not implement the delta mechanism
   }
 
-  getEntryDelta() {
+  getBundleDelta() {
     return null; // File source does not implement the delta mechanism
   }
 }

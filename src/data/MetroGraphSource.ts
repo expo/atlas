@@ -35,7 +35,7 @@ export class MetroGraphSource implements AtlasSource {
     this.serializeGraph = this.serializeGraph.bind(this);
   }
 
-  listEntries() {
+  listBundles() {
     return Array.from(this.entries.values()).map((item) => ({
       id: item.entry.id,
       platform: item.entry.platform,
@@ -45,17 +45,17 @@ export class MetroGraphSource implements AtlasSource {
     }));
   }
 
-  getEntry(id: string) {
+  getBundle(id: string) {
     const item = this.entries.get(id);
     if (!item) throw new Error(`Entry "${id}" not found.`);
     return item.entry;
   }
 
-  getEntryDelta(id: string) {
+  getBundleDelta(id: string) {
     return this.entries.get(id)?.delta || null;
   }
 
-  entryDeltaEnabled() {
+  bundleDeltaEnabled() {
     return !!this.deltaListener;
   }
 

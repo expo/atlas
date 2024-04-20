@@ -58,8 +58,8 @@ export default function ModulePage() {
                     <Link
                       className="text-link hover:underline"
                       href={{
-                        pathname: '/(atlas)/[entry]/modules/[path]',
-                        params: { entry: bundle.id, path },
+                        pathname: '/(atlas)/[bundle]/modules/[path]',
+                        params: { bundle: bundle.id, path },
                       }}
                     >
                       {relativeBundlePath(bundle, path)}
@@ -82,13 +82,13 @@ function getModuleType(module: AtlasModule) {
 }
 
 /** Load the module data from API, by path reference only */
-function useModuleData(entryId: string, path: string) {
+function useModuleData(bundleId: string, path: string) {
   return useQuery<AtlasModule>({
     refetchOnWindowFocus: false,
-    queryKey: [`entries`, entryId, `module`, path],
+    queryKey: [`bundles`, bundleId, `module`, path],
     queryFn: async ({ queryKey }) => {
-      const [_key, entry, _module, path] = queryKey as [string, string, string, string];
-      return fetchApi(`/entries/${entry}/modules`, {
+      const [_key, bundle, _module, path] = queryKey as [string, string, string, string];
+      return fetchApi(`/bundles/${bundle}/modules`, {
         method: 'POST',
         body: JSON.stringify({ path }),
       })

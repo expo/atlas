@@ -1,14 +1,14 @@
 import type { MixedOutput } from 'metro';
 
 export interface AtlasSource {
-  /** List all available entries */
-  listEntries(): PartialAtlasBundle[] | Promise<PartialAtlasBundle[]>;
+  /** List the partial data of all available bundles */
+  listBundles(): PartialAtlasBundle[] | Promise<PartialAtlasBundle[]>;
   /** Load the full entry, by reference */
-  getEntry(ref: string): AtlasBundle | Promise<AtlasBundle>;
+  getBundle(ref: string): AtlasBundle | Promise<AtlasBundle>;
   /** Load the entry changes since last bundle collection, if any */
-  getEntryDelta(ref: string): null | AtlasBundleDelta | Promise<null | AtlasBundleDelta>;
+  getBundleDelta(ref: string): null | AtlasBundleDelta | Promise<null | AtlasBundleDelta>;
   /** Determine if the source is watching for (live) changes. */
-  entryDeltaEnabled(): boolean;
+  bundleDeltaEnabled(): boolean;
 }
 
 export type PartialAtlasBundle = Pick<

@@ -5,5 +5,5 @@ import { useBundle } from '~/providers/bundle';
 export default function HomeScreen() {
   const { bundle } = useBundle();
 
-  return <Redirect href={{ pathname: '/(atlas)/[entry]/', params: { entry: bundle.id } }} />;
+  return <Redirect href={{ pathname: '/(atlas)/[bundle]/', params: { bundle: bundle.id } }} />;
 }

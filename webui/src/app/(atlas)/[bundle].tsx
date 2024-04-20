@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import type { ModuleGraphResponse } from '~/app/--/entries/[entry]/modules/graph+api';
+import type { ModuleGraphResponse } from '~/app/--/bundles/[bundle]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
@@ -32,10 +32,10 @@ export default function BundlePage() {
           <h1 className="text-lg font-bold mr-8">Bundle</h1>
           <PropertySummary>
             <Tag variant={bundle.platform} />
-            {!!modules.data && <span>{modules.data.entry.moduleFiles} modules</span>}
-            {!!modules.data && <span>{formatFileSize(modules.data.entry.moduleSize)}</span>}
+            {!!modules.data && <span>{modules.data.bundle.moduleFiles} modules</span>}
+            {!!modules.data && <span>{formatFileSize(modules.data.bundle.moduleSize)}</span>}
             {modules.data &&
-              modules.data.filtered.moduleFiles !== modules.data.entry.moduleFiles && (
+              modules.data.filtered.moduleFiles !== modules.data.bundle.moduleFiles && (
                 <PropertySummary
                   className="text-tertiary italic"
                   prefix={<span className="select-none mr-2">visible:</span>}
@@ -58,7 +58,7 @@ export default function BundlePage() {
           <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
         </StateInfo>
       ) : treeHasData ? (
-        <BundleGraph entry={bundle} graph={modules.data!.data} />
+        <BundleGraph bundle={bundle} graph={modules.data!.data} />
       ) : (
         <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
           <p>
@@ -71,11 +71,11 @@ export default function BundlePage() {
 }
 
 /** Load the bundle graph data from API, with default or custom filters */
-function useModuleGraphData(entryId: string, filters: ModuleFilters) {
+function useModuleGraphData(bundleId: string, filters: ModuleFilters) {
   return useQuery<ModuleGraphResponse>({
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
-    queryKey: [`entries`, entryId, 'bundle-graph', filters],
+    queryKey: [`bundles`, bundleId, 'bundle-graph', filters],
     queryFn: ({ queryKey }) => {
       const [_key, entry, _graph, filters] = queryKey as [
         string,
@@ -85,8 +85,8 @@ function useModuleGraphData(entryId: string, filters: ModuleFilters) {
       ];
 
       const url = filters
-        ? `/entries/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
-        : `/entries/${entry}/modules/graph`;
+        ? `/bundles/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
+        : `/bundles/${entry}/modules/graph`;
 
       return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))
