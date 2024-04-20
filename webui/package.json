@@ -9,7 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build": "expo export --platform web",
-    "typecheck": "expo-module typecheck"
+    "typecheck": "expo-module typecheck",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.2",
@@ -48,6 +49,7 @@
     "@babel/core": "^7.20.0",
     "@types/picomatch": "^2.3.3",
     "@types/react": "~18.2.79",
+    "patch-package": "^8.0.0",
     "typescript": "^5.4.5"
   }
 }
