@@ -20,8 +20,6 @@ type BreadcrumbLinksProps = {
 export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
   const links = useMemo(() => getBreadcrumbLinks(props), [props.entry.id, props.path]);
 
-  console.log({ links, path: props.path });
-
   return (
     <Breadcrumb>
       <BreadcrumbList className="mr-8">
