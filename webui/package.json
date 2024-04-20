@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "build": "expo export --platform web",
     "typecheck": "expo-module typecheck",
+    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl",
     "postinstall": "patch-package"
   },
   "dependencies": {
