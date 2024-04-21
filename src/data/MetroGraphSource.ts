@@ -142,7 +142,7 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
     id: Buffer.from(`${options.entryPoint}+${platform}`).toString('base64url'), // FIX: only use URL allowed characters
     platform,
     projectRoot: options.projectRoot,
-    sharedRoot: convertSharedRoot(options),
+    sharedRoot: getSharedRoot(options),
     entryPoint: options.entryPoint,
     runtimeModules: options.preModules.map((module) => convertModule(options, module)),
     modules: collectEntryPointModules(options),
@@ -159,10 +159,7 @@ export function collectEntryPointModules(
 
   function discover(modulePath: string) {
     const module = options.graph.dependencies.get(modulePath);
-    // TODO(cedric): figure out how to handle shims properly
-    const moduleIsShim = !!module?.path?.startsWith('\0shim:');
-
-    if (module && !moduleIsShim && !modules.has(modulePath)) {
+    if (module && !modules.has(modulePath) && !moduleIsVirtual(module)) {
       modules.set(modulePath, convertModule(options, module));
       module.dependencies.forEach((modulePath) => discover(modulePath.absolutePath));
     }
@@ -244,13 +241,16 @@ export function convertSerializeOptions(
   return serializeOptions;
 }
 
-/** Convert Metro config to a shared root we can use as "relative root" for all file paths */
-export function convertSharedRoot(
-  options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' | 'watchFolders'>
-) {
+/** Get the shared root of `projectRoot` and `watchFolders`, used to make all paths within the bundle relative */
+function getSharedRoot(options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' | 'watchFolders'>) {
   if (!options.watchFolders?.length) {
     return options.projectRoot;
   }
 
   return findSharedRoot([options.projectRoot, ...options.watchFolders]) ?? options.projectRoot;
+}
+
+/** Determine if the module is a virtual module, like shims or canaries, which should be excluded from results */
+function moduleIsVirtual(module: MetroModule) {
+  return module.path.startsWith('\0');
 }
