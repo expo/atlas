@@ -59,7 +59,7 @@ export function createModuleTree(modules: AtlasModule[]): TreemapNode {
     value: 100, // 100%
     moduleSize: totalSize,
     moduleFiles: modules.length,
-    // NOTE(cedric): technically, this should be the entry's project root,
+    // NOTE(cedric): technically, this should be the bundle's shared root,
     // but that kind of clutters the treemap's tooltip a bit
     modulePath: '',
     modulePackage: undefined,

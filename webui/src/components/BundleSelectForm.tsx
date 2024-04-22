@@ -16,7 +16,7 @@ export function BundleSelectForm() {
   const { bundle, bundles } = useBundle();
 
   return (
-    <Select.Root value={bundle.id} onValueChange={(entry) => router.setParams({ entry })}>
+    <Select.Root value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
       <Select.Trigger asChild>
         <Button variant="quaternary" size="sm">
           <Tag variant={bundle.platform} size="xs" className="mr-2" />

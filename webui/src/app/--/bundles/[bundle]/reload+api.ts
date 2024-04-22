@@ -4,11 +4,14 @@ export async function GET(_request: Request, params: Record<'bundle', string>) {
   try {
     const bundle = await getSource().getBundle(params.bundle);
     if (!bundle) {
-      return Response.json({ error: 'Entry not found' }, { status: 404 });
+      return Response.json({ error: 'Bundle not found' }, { status: 404 });
     }
 
     if (!bundle.serializeOptions?.sourceUrl) {
-      return Response.json({ error: 'Entry has no `serializeOptions.sourceUrl`' }, { status: 406 });
+      return Response.json(
+        { error: 'Bundle has no `serializeOptions.sourceUrl`' },
+        { status: 406 }
+      );
     }
 
     return Response.redirect(bundle.serializeOptions.sourceUrl, 302);

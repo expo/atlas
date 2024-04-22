@@ -27,9 +27,9 @@ export const bundleContext = createContext<BundleContext>({
 
 export const useBundle = () => {
   const { bundles } = useContext(bundleContext);
-  const { entry: bundleId } = useLocalSearchParams<{ entry?: string }>();
+  const { bundle: bundleId } = useLocalSearchParams<{ bundle?: string }>();
   const bundle = useMemo(
-    () => bundles.find((entry) => entry.id === bundleId) || bundles[0],
+    () => bundles.find((bundle) => bundle.id === bundleId) || bundles[0],
     [bundles, bundleId]
   );
 
@@ -83,7 +83,7 @@ function useBundleData() {
   });
 }
 
-/** A logic-component to show a toast notification when the entry is outdated. */
+/** A logic-component to show a toast notification when the bundle is outdated. */
 export function BundleDeltaToast({
   bundle,
   modulePath,
@@ -95,9 +95,9 @@ export function BundleDeltaToast({
   const toaster = useToast();
 
   const deltaResponse = useBundleDeltaData(bundle.id);
-  const entryDelta = deltaResponse.data?.delta;
+  const bundleDelta = deltaResponse.data?.delta;
 
-  const refetchEntryData = useCallback(
+  const refetchBundleData = useCallback(
     () =>
       fetchApi(`/bundles/${bundle.id}/reload`)
         .then((res) => (!res.ok ? Promise.reject(res) : res.text()))
@@ -106,47 +106,47 @@ export function BundleDeltaToast({
   );
 
   useEffect(() => {
-    if (!entryDelta) return;
+    if (!bundleDelta) return;
 
     if (modulePath) {
-      if (entryDelta.deletedPaths.includes(modulePath)) {
+      if (bundleDelta.deletedPaths.includes(modulePath)) {
         toaster.toast(toastModuleDeleted(bundle.id));
-      } else if (entryDelta.modifiedPaths.includes(modulePath)) {
-        refetchEntryData().then(() => toaster.toast(toastModuleModified(bundle.id)));
+      } else if (bundleDelta.modifiedPaths.includes(modulePath)) {
+        refetchBundleData().then(() => toaster.toast(toastModuleModified(bundle.id)));
       }
       return;
     }
 
-    toaster.toast(toastBundleUpdate(bundle.id, refetchEntryData));
-  }, [bundle.id, entryDelta, refetchEntryData, modulePath]);
+    toaster.toast(toastBundleUpdate(bundle.id, refetchBundleData));
+  }, [bundle.id, bundleDelta, refetchBundleData, modulePath]);
 
   return null;
 }
 
-function toastModuleModified(entryId: string): ToasterToast {
+function toastModuleModified(bundleId: string): ToasterToast {
   return {
-    id: `bundle-delta-${entryId}`,
+    id: `bundle-delta-${bundleId}`,
     title: 'Module modified',
     description: 'This module is updated to reflect the latest changes.',
   };
 }
 
-function toastModuleDeleted(entryId: string): ToasterToast {
+function toastModuleDeleted(bundleId: string): ToasterToast {
   return {
-    id: `bundle-delta-${entryId}`,
+    id: `bundle-delta-${bundleId}`,
     title: 'Module deleted',
     description: 'This file is deleted since latest build, and is no longer available.',
   };
 }
 
-function toastBundleUpdate(entryId: string, refetchEntryData: () => any): ToasterToast {
+function toastBundleUpdate(bundleId: string, refetchBundleData: () => any): ToasterToast {
   return {
-    id: `bundle-delta-${entryId}`,
+    id: `bundle-delta-${bundleId}`,
     title: 'Bundle outdated',
     description: 'The code was changed since last build.',
     action: (
       <ToastAction altText="Reload bundle">
-        <Button variant="secondary" size="xs" onClick={refetchEntryData}>
+        <Button variant="secondary" size="xs" onClick={refetchBundleData}>
           Reload bundle
         </Button>
       </ToastAction>

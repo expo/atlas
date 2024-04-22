@@ -46,7 +46,7 @@ export default function ModulePage() {
           Try restarting Expo Atlas. If this error keeps happening, open a bug report.
         </StateInfo>
       ) : !module.data ? (
-        <StateInfo title="Module not found.">Try another bundle entry</StateInfo>
+        <StateInfo title="Module not found.">Try another bundle</StateInfo>
       ) : (
         <div className="mx-8 mb-4">
           {!!module.data.importedBy?.length && (

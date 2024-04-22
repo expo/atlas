@@ -61,9 +61,7 @@ export default function BundlePage() {
         <BundleGraph bundle={bundle} graph={modules.data!.data} />
       ) : (
         <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
-          <p>
-            {filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle entry'}
-          </p>
+          <p>{filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle'}</p>
         </StateInfo>
       )}
     </Layout>
@@ -77,7 +75,7 @@ function useModuleGraphData(bundleId: string, filters: ModuleFilters) {
     placeholderData: keepPreviousData,
     queryKey: [`bundles`, bundleId, 'bundle-graph', filters],
     queryFn: ({ queryKey }) => {
-      const [_key, entry, _graph, filters] = queryKey as [
+      const [_key, bundle, _graph, filters] = queryKey as [
         string,
         string,
         string,
@@ -85,8 +83,8 @@ function useModuleGraphData(bundleId: string, filters: ModuleFilters) {
       ];
 
       const url = filters
-        ? `/bundles/${entry}/modules/graph?${moduleFiltersToParams(filters)}`
-        : `/bundles/${entry}/modules/graph`;
+        ? `/bundles/${bundle}/modules/graph?${moduleFiltersToParams(filters)}`
+        : `/bundles/${bundle}/modules/graph`;
 
       return fetchApi(url)
         .then((res) => (res.ok ? res : Promise.reject(res)))

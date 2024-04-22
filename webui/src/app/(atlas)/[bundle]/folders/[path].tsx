@@ -64,7 +64,7 @@ export default function FolderPage() {
       ) : (
         !modules.isPending && (
           <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
-            {filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle entry'}
+            {filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle'}
           </StateInfo>
         )
       )}
