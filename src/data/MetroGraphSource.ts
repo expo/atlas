@@ -178,10 +178,13 @@ export function convertModule(
     path: module.path,
     package: getPackageNameFromPath(module.path),
     size: module.output.reduce((bytes, output) => bytes + Buffer.byteLength(output.data.code), 0),
-    imports: Array.from(module.dependencies.values()).map((module) => module.absolutePath),
-    importedBy: Array.from(module.inverseDependencies).filter((dependecy) =>
-      options.graph.dependencies.has(dependecy)
-    ),
+    imports: Array.from(module.dependencies.values()).map((module) => ({
+      path: module.absolutePath,
+      package: getPackageNameFromPath(module.absolutePath),
+    })),
+    importedBy: Array.from(module.inverseDependencies)
+      .filter((path) => options.graph.dependencies.has(path))
+      .map((path) => ({ path, package: getPackageNameFromPath(path) })),
     source: getModuleSourceContent(options, module),
     output: module.output.map((output) => ({
       type: output.type,

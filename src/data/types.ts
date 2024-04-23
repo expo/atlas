@@ -54,11 +54,13 @@ export type AtlasModule = {
   /** The original module size, in bytes */
   size: number;
   /** Absolute file paths of modules imported inside this module */
-  imports: string[];
-  /** Absolute file paths of modules importing this module */
-  importedBy: string[];
+  imports: AtlasModuleRef[];
+  /** All modules importing this module */
+  importedBy: AtlasModuleRef[];
   /** The original source code, as a buffer or string */
   source?: string;
   /** The transformed output source code */
   output?: MixedOutput[];
 };
+
+export type AtlasModuleRef = Pick<AtlasModule, 'path' | 'package'>;
