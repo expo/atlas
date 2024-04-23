@@ -78,6 +78,7 @@ export function getLanguageFromPath(path: string): HighlightLanguage {
 export type HighlightOptions = {
   code: string;
   language: HighlightLanguage;
+  lineNumberStart?: number;
 };
 
 /**
@@ -89,6 +90,9 @@ export function getHighlightedHtml(highlighter: Highlighter | null, options: Hig
     lang: options.language,
     theme: 'expo-theme',
     transformers: [AtlasTransformer],
+    meta: {
+      lineNumberStart: options.lineNumberStart || 0,
+    },
   });
 }
 
@@ -123,6 +127,6 @@ const AtlasTransformer: ShikiTransformer = {
   },
 
   line(hast, line) {
-    hast.properties['data-atlas-line'] = line;
+    hast.properties['data-atlas-line'] = line + (this.options.meta?.lineNumberStart || 0);
   },
 };

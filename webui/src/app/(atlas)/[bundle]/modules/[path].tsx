@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
+import { ModuleImportedBy } from '~/components/ModuleImportedBy';
 import { PropertySummary } from '~/components/PropertySummary';
 import { StateInfo } from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
@@ -11,7 +12,6 @@ import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
 import { fetchApi } from '~/utils/api';
-import { relativeBundlePath } from '~/utils/bundle';
 import { formatFileSize } from '~/utils/formatString';
 import { type AtlasModule } from '~core/data/types';
 
@@ -48,28 +48,17 @@ export default function ModulePage() {
       ) : !module.data ? (
         <StateInfo title="Module not found.">Try another bundle</StateInfo>
       ) : (
-        <div className="mx-8 mb-4">
+        <div className="mx-6 mb-4">
           {!!module.data.importedBy?.length && (
-            <div className="my-4">
-              <p className="text-md">Imported from:</p>
-              <ul style={{ listStyle: 'initial' }} className="mb-6">
-                {module.data.importedBy.map((path) => (
-                  <li key={path} className="ml-4">
-                    <Link
-                      className="text-link hover:underline"
-                      href={{
-                        pathname: '/(atlas)/[bundle]/modules/[path]',
-                        params: { bundle: bundle.id, path },
-                      }}
-                    >
-                      {relativeBundlePath(bundle, path)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="mb-2 my-6">
+              <h3 className="font-semibold mx-2">Imported by</h3>
+              <ModuleImportedBy bundle={bundle} module={module.data} />
             </div>
           )}
-          <ModuleCode module={module.data} />
+          <div className="mx-2 my-8">
+            <h3 className="font-semibold my-2">Module content</h3>
+            <ModuleCode module={module.data} />
+          </div>
         </div>
       )}
     </Layout>
@@ -103,6 +92,7 @@ function ModulePageSkeleton() {
     <div className="flex flex-col mx-8 gap-4">
       <Skeleton className="w-52 h-6 bg-selected" />
       <Skeleton className="w-96 h-6 bg-selected" />
+      <Skeleton className="w-52 h-6 bg-selected mt-4" />
       <Skeleton className="grow h-96 rounded-md" />
     </div>
   );
