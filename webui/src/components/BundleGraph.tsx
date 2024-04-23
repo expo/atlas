@@ -49,13 +49,17 @@ export function BundleGraph(props: BundleGraphProps) {
       onEvents={{
         click({ event, data }: { event: any; data: TreemapNode }) {
           if (event.event.altKey || event.event.ctrlKey || event.event.metaKey) {
+            const path = data.value === 100 ? data.name : data.modulePath;
+
             router.push({
-              pathname: data.children?.length
-                ? '/(atlas)/[bundle]/folders/[path]'
-                : '/(atlas)/[bundle]/modules/[path]',
+              pathname: !path
+                ? '/(atlas)/[bundle]'
+                : data.children?.length
+                  ? '/(atlas)/[bundle]/folders/[path]'
+                  : '/(atlas)/[bundle]/modules/[path]',
               params: {
+                path,
                 bundle: props.bundle.id,
-                path: data.value === 100 ? data.name : data.modulePath,
               },
             });
           }
