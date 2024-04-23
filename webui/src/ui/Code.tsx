@@ -5,7 +5,7 @@ import { Button } from './Button';
 
 export function CodeHeader(props: PropsWithChildren) {
   return (
-    <div className="flex justify-between items-center bg-default min-h-[40px] pl-4 border-b border-default">
+    <div className="flex justify-between items-center bg-default min-h-[40px] pl-4 border-b border-secondary">
       {props.children}
     </div>
   );
@@ -19,7 +19,7 @@ export function CodeAction({ className, ...props }: ComponentProps<typeof Button
   return (
     <Button
       variant="quaternary"
-      className={cn('m-0 border-l border-default rounded-none', className)}
+      className={cn('m-0 border-l border-secondary rounded-none', className)}
       {...props}
     />
   );
