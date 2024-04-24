@@ -16,3 +16,15 @@ export function fetchApi(path: string, options?: RequestInit) {
 
   return fetch(path.startsWith('/') ? `${baseUrl}${path}` : `${baseUrl}/${path}`, options);
 }
+
+/**
+ * Attempt to handle possible API errors, by returning:
+ *   - the response for ok status codes
+ *   - null for `404` status codes
+ *   - throws response on other status codes
+ */
+export function handleApiError(response: Response) {
+  if (response.ok) return response;
+  if (response.status === 404) return null;
+  throw response;
+}

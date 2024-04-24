@@ -11,7 +11,7 @@ import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
-import { fetchApi } from '~/utils/api';
+import { fetchApi, handleApiError } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
 import { type AtlasModule } from '~core/data/types';
 
@@ -81,8 +81,8 @@ function useModuleData(bundleId: string, path: string) {
         method: 'POST',
         body: JSON.stringify({ path }),
       })
-        .then((res) => (res.ok ? res : Promise.reject(res)))
-        .then((res) => res.json());
+        .then(handleApiError)
+        .then((response) => response?.json());
     },
   });
 }

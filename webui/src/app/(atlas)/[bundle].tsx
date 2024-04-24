@@ -10,7 +10,7 @@ import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
-import { fetchApi } from '~/utils/api';
+import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams, useModuleFilters } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
 
@@ -87,8 +87,8 @@ function useModuleGraphData(bundleId: string, filters: ModuleFilters) {
         : `/bundles/${bundle}/modules/graph`;
 
       return fetchApi(url)
-        .then((res) => (res.ok ? res : Promise.reject(res)))
-        .then((res) => res.json());
+        .then(handleApiError)
+        .then((response) => response?.json());
     },
   });
 }
