@@ -7,10 +7,14 @@ import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
-import { StateInfo } from '~/components/StateInfo';
+import {
+  DataErrorState,
+  LoadingState,
+  NoDataState,
+  NoDataWithFiltersState,
+} from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
-import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
@@ -52,21 +56,15 @@ export default function FolderPage() {
       </LayoutHeader>
 
       {modules.isPending && !modules.isPlaceholderData ? (
-        <StateInfo>
-          <Spinner />
-        </StateInfo>
+        <LoadingState />
       ) : modules.isError ? (
-        <StateInfo title="Failed to generate graph.">
-          Try restarting Expo Atlas. If this error keeps happening, open a bug report.
-        </StateInfo>
+        <DataErrorState title="Failed to generate graph." />
       ) : treeHasData ? (
         <BundleGraph bundle={bundle} graph={modules.data!.data} />
+      ) : filtersEnabled ? (
+        <NoDataWithFiltersState />
       ) : (
-        !modules.isPending && (
-          <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
-            {filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle'}
-          </StateInfo>
-        )
+        <NoDataState />
       )}
     </Layout>
   );

@@ -5,10 +5,14 @@ import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
-import { StateInfo } from '~/components/StateInfo';
+import {
+  DataErrorState,
+  LoadingState,
+  NoDataState,
+  NoDataWithFiltersState,
+} from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
-import { Spinner } from '~/ui/Spinner';
 import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams, useModuleFilters } from '~/utils/filters';
@@ -18,7 +22,11 @@ export default function BundlePage() {
   const { bundle } = useBundle();
   const { filters, filtersEnabled } = useModuleFilters();
   const modules = useModuleGraphData(bundle.id, filters);
+
   const treeHasData = !!modules.data?.data?.children?.length;
+  const modulesAreFiltered = modules.data
+    ? modules.data.filtered.moduleFiles !== modules.data.bundle.moduleFiles
+    : null;
 
   return (
     <Layout variant="viewport">
@@ -34,35 +42,30 @@ export default function BundlePage() {
             <Tag variant={bundle.platform} />
             {!!modules.data && <span>{modules.data.bundle.moduleFiles} modules</span>}
             {!!modules.data && <span>{formatFileSize(modules.data.bundle.moduleSize)}</span>}
-            {modules.data &&
-              modules.data.filtered.moduleFiles !== modules.data.bundle.moduleFiles && (
-                <PropertySummary
-                  className="text-tertiary italic"
-                  prefix={<span className="select-none mr-2">visible:</span>}
-                >
-                  <span>{modules.data.filtered.moduleFiles} modules</span>
-                  <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
-                </PropertySummary>
-              )}
+            {!!modules.data && modulesAreFiltered && (
+              <PropertySummary
+                className="text-tertiary italic"
+                prefix={<span className="select-none mr-2">visible:</span>}
+              >
+                <span>{modules.data.filtered.moduleFiles} modules</span>
+                <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
+              </PropertySummary>
+            )}
           </PropertySummary>
         </LayoutTitle>
         <ModuleFiltersForm />
       </LayoutHeader>
 
       {modules.isPending && !modules.isPlaceholderData ? (
-        <StateInfo>
-          <Spinner />
-        </StateInfo>
+        <LoadingState />
       ) : modules.isError ? (
-        <StateInfo title="Failed to generate graph.">
-          <p>Try restarting Expo Atlas. If this error keeps happening, open a bug report.</p>
-        </StateInfo>
+        <DataErrorState title="Failed to generate graph." />
       ) : treeHasData ? (
         <BundleGraph bundle={bundle} graph={modules.data!.data} />
+      ) : filtersEnabled ? (
+        <NoDataWithFiltersState />
       ) : (
-        <StateInfo title={filtersEnabled ? 'No data matching filters' : 'No data available'}>
-          <p>{filtersEnabled ? 'Try adjusting or clearing the filters' : 'Try another bundle'}</p>
-        </StateInfo>
+        <NoDataState />
       )}
     </Layout>
   );

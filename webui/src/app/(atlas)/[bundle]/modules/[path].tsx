@@ -6,7 +6,7 @@ import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
 import { ModuleImportedBy } from '~/components/ModuleImportedBy';
 import { PropertySummary } from '~/components/PropertySummary';
-import { StateInfo } from '~/components/StateInfo';
+import { DataErrorState, NoDataState } from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
@@ -42,11 +42,9 @@ export default function ModulePage() {
       {module.isLoading ? (
         <ModulePageSkeleton />
       ) : module.isError ? (
-        <StateInfo title="Failed to load module.">
-          Try restarting Expo Atlas. If this error keeps happening, open a bug report.
-        </StateInfo>
+        <DataErrorState title="Failed to load module." />
       ) : !module.data ? (
-        <StateInfo title="Module not found.">Try another bundle</StateInfo>
+        <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
           {!!module.data.importedBy?.length && (
