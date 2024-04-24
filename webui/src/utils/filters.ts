@@ -1,4 +1,4 @@
-import { useGlobalSearchParams } from 'expo-router';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 import path from 'path';
 import picomatch from 'picomatch';
 
@@ -54,10 +54,12 @@ export function moduleFiltersToParams(filters: ModuleFilters) {
  * This returns the filters, with default values, and if any of the filters has been defined.
  */
 export function useModuleFilters() {
+  const router = useRouter();
   const filters = useGlobalSearchParams<ModuleFilters>();
   return {
-    filtersEnabled: !!filters.scope || !!filters.include || !!filters.exclude,
     filters,
+    filtersEnabled: !!filters.scope || !!filters.include || !!filters.exclude,
+    resetFilters: () => router.setParams(DEFAULT_FILTERS),
   };
 }
 

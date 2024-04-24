@@ -20,7 +20,7 @@ import { formatFileSize } from '~/utils/formatString';
 
 export default function BundlePage() {
   const { bundle } = useBundle();
-  const { filters, filtersEnabled } = useModuleFilters();
+  const { filters, filtersEnabled, resetFilters } = useModuleFilters();
   const modules = useModuleGraphData(bundle.id, filters);
 
   const treeHasData = !!modules.data?.data?.children?.length;
@@ -63,7 +63,7 @@ export default function BundlePage() {
       ) : treeHasData ? (
         <BundleGraph bundle={bundle} graph={modules.data!.data} />
       ) : filtersEnabled ? (
-        <NoDataWithFiltersState />
+        <NoDataWithFiltersState onResetFilters={resetFilters} />
       ) : (
         <NoDataState />
       )}

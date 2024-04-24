@@ -23,7 +23,7 @@ import { formatFileSize } from '~/utils/formatString';
 export default function FolderPage() {
   const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
   const { bundle } = useBundle();
-  const { filters, filtersEnabled } = useModuleFilters();
+  const { filters, filtersEnabled, resetFilters } = useModuleFilters();
   const modules = useModuleGraphDataInFolder(bundle.id, absolutePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
@@ -62,7 +62,7 @@ export default function FolderPage() {
       ) : treeHasData ? (
         <BundleGraph bundle={bundle} graph={modules.data!.data} />
       ) : filtersEnabled ? (
-        <NoDataWithFiltersState />
+        <NoDataWithFiltersState onResetFilters={resetFilters} />
       ) : (
         <NoDataState />
       )}
