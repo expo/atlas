@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import cn from 'classnames';
 import { type ComponentProps, forwardRef } from 'react';
 
 const tagVariants = cva(
@@ -49,7 +48,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
     }
 
     return (
-      <span className={cn(tagVariants({ variant, size }), className)} ref={ref} {...props}>
+      <span className={tagVariants({ variant, size, className })} ref={ref} {...props}>
         {children}
       </span>
     );
