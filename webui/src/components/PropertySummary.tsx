@@ -1,4 +1,4 @@
-import cn from 'classnames';
+import { cx } from 'class-variance-authority';
 import { Children, ReactNode, type PropsWithChildren } from 'react';
 
 /**
@@ -9,7 +9,7 @@ export function PropertySummary(
   props: PropsWithChildren<{ className?: string; prefix?: ReactNode }>
 ) {
   return (
-    <div className={cn('inline font-sm text-secondary', props.className)}>
+    <div className={cx('inline font-sm text-secondary', props.className)}>
       {props.prefix}
       {Children.map(props.children, (child, index) => {
         if (index === 0) return child;

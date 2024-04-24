@@ -1,46 +1,44 @@
 // see: https://ui.shadcn.com/docs/components/button
 
 import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
-import cn from 'classnames';
+import { cva, cx, type VariantProps } from 'class-variance-authority';
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
 
 const buttonVariants = cva(
-  // 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
         // see: https://github.com/expo/styleguide/blob/251c92ac4558794903b83575fb97b4f03d00b1f8/packages/styleguide/src/components/Button/Button.tsx#L44
-        primary: cn(
+        primary: cx(
           'border-button-primary bg-button-primary text-button-primary shadow-xs',
           'hocus:bg-button-primary-hover active:scale-98',
           disabled(
             'bg-button-primary-disabled border-button-primary-disabled text-button-primary-disabled'
           )
         ),
-        secondary: cn(
+        secondary: cx(
           'border-button-secondary bg-button-secondary text-button-secondary shadow-xs',
           'hocus:bg-button-secondary-hover active:scale-98',
           disabled(
             'bg-button-secondary-disabled border-button-secondary-disabled text-button-secondary-disabled'
           )
         ),
-        tertiary: cn(
+        tertiary: cx(
           'border-button-tertiary bg-button-tertiary text-button-tertiary shadow-none',
           'hocus:bg-button-tertiary-hover active:scale-98',
           disabled(
             'bg-button-tertiary-disabled border-button-tertiary-disabled text-button-tertiary-disabled'
           )
         ),
-        quaternary: cn(
+        quaternary: cx(
           'border-button-quaternary bg-button-quaternary text-button-quaternary shadow-none',
           'hocus:bg-button-quaternary-hover active:scale-98',
           disabled(
             'bg-button-quaternary-disabled border-button-quaternary-disabled text-button-quaternary-disabled'
           )
         ),
-        destructive: cn(
+        destructive: cx(
           'border-button-primary-destructive bg-button-primary-destructive text-button-primary-destructive shadow-xs',
           'hocus:bg-button-primary-destructive-hover active:scale-98',
           disabled(
@@ -71,9 +69,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
-    return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
-    );
+    return <Comp className={buttonVariants({ variant, size, className })} ref={ref} {...props} />;
   }
 );
 Button.displayName = 'Button';
