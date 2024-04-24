@@ -14,7 +14,7 @@ import { StateInfo } from '~/components/StateInfo';
 import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
 import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
-import { fetchApi } from '~/utils/api';
+import { fetchApi, handleApiError } from '~/utils/api';
 import { type PartialAtlasBundle } from '~core/data/types';
 
 type BundleContext = {
@@ -79,7 +79,10 @@ function useBundleData() {
     refetchOnWindowFocus: false,
     refetchInterval: (query) => (!query.state.data?.length ? 2000 : false),
     queryKey: ['bundles'],
-    queryFn: () => fetchApi('/bundles').then((res) => res.json()),
+    queryFn: () =>
+      fetchApi('/bundles')
+        .then(handleApiError)
+        .then((response) => response?.json()),
   });
 }
 
@@ -100,7 +103,8 @@ export function BundleDeltaToast({
   const refetchBundleData = useCallback(
     () =>
       fetchApi(`/bundles/${bundle.id}/reload`)
-        .then((res) => (!res.ok ? Promise.reject(res) : res.text()))
+        .then(handleApiError)
+        .then((response) => response?.text())
         .then(() => client.refetchQueries({ queryKey: ['bundles', bundle.id], type: 'active' })),
     [bundle.id]
   );
@@ -161,7 +165,9 @@ function useBundleDeltaData(bundleId: string) {
     queryKey: ['bundles', bundleId, 'delta'],
     queryFn: ({ queryKey }) => {
       const [_key, bundle] = queryKey as [string, string];
-      return fetchApi(`/bundles/${bundle}/delta`).then((res) => res.json());
+      return fetchApi(`/bundles/${bundle}/delta`)
+        .then(handleApiError)
+        .then((response) => response?.json());
     },
   });
 }

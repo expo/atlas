@@ -6,12 +6,12 @@ import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
 import { ModuleImportedBy } from '~/components/ModuleImportedBy';
 import { PropertySummary } from '~/components/PropertySummary';
-import { StateInfo } from '~/components/StateInfo';
+import { DataErrorState, NoDataState } from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
-import { fetchApi } from '~/utils/api';
+import { fetchApi, handleApiError } from '~/utils/api';
 import { formatFileSize } from '~/utils/formatString';
 import { type AtlasModule } from '~core/data/types';
 
@@ -42,11 +42,9 @@ export default function ModulePage() {
       {module.isLoading ? (
         <ModulePageSkeleton />
       ) : module.isError ? (
-        <StateInfo title="Failed to load module.">
-          Try restarting Expo Atlas. If this error keeps happening, open a bug report.
-        </StateInfo>
+        <DataErrorState title="Failed to load module." />
       ) : !module.data ? (
-        <StateInfo title="Module not found.">Try another bundle</StateInfo>
+        <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
           {!!module.data.importedBy?.length && (
@@ -81,8 +79,8 @@ function useModuleData(bundleId: string, path: string) {
         method: 'POST',
         body: JSON.stringify({ path }),
       })
-        .then((res) => (res.ok ? res : Promise.reject(res)))
-        .then((res) => res.json());
+        .then(handleApiError)
+        .then((response) => response?.json());
     },
   });
 }
