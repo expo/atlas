@@ -35,7 +35,7 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   const atlasFile = options?.atlasFile ?? getAtlasPath(projectRoot);
   const metroConfig = convertMetroConfig(config);
 
-  // Note(cedric): we don't have to await this, Metro would never bundle before this is finisheds
+  // Note(cedric): we don't have to await this, Metro would never bundle before this is finishes
   createAtlasFile(atlasFile);
 
   // @ts-expect-error
