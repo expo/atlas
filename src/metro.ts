@@ -57,6 +57,10 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   return config;
 }
 
+/**
+ * Fully reset, or recreate, the Expo Atlas file containing all Metro information.
+ * This method should only be called once per exporting session, to avoid overwriting data with mutliple Metro instances.
+ */
 export async function resetExpoAtlasFile(projectRoot: string) {
   const filePath = getAtlasPath(projectRoot);
   await createAtlasFile(filePath);
