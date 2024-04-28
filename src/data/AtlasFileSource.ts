@@ -83,8 +83,9 @@ export async function readAtlasEntry(filePath: string, id: number): Promise<Atla
 let writeQueue: Promise<any> = Promise.resolve();
 
 /**
- * Add a new entry to the file.
- * This is appended on a new line, so we can load the selectively.
+ * Add a new entry to the Atlas file.
+ * This function also ensures the Atlas file is ready to be written to, due to complications with Expo CLI.
+ * Eventually, the entry is appended on a new line, so we can load them selectively.
  */
 export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
   const line = [
@@ -98,7 +99,11 @@ export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
     entry.serializeOptions,
   ];
 
-  return (writeQueue = writeQueue.then(() => appendJsonLine(filePath, line)));
+  writeQueue = writeQueue
+    .then(() => prepareAtlasFileForBundle(filePath, entry))
+    .then(() => appendJsonLine(filePath, line));
+
+  return writeQueue;
 }
 
 /** The default location of the metro file */
@@ -136,4 +141,51 @@ export async function createAtlasFile(filePath: string) {
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
   await fs.promises.rm(filePath, { force: true });
   await appendJsonLine(filePath, getAtlasMetdata());
+}
+
+/**
+ * Create the Atlas file, if it does not exist yet.
+ */
+export async function ensureAtlasFileExist(filePath: string) {
+  if (!fs.existsSync(filePath)) {
+    await createAtlasFile(filePath);
+  }
+}
+
+/**
+ * This checks if we can reuse the existing Atlas file, or if it needs to be recreated.
+ * Expo creates multiple instances of Metro when exporting static bundles, so we need to handle this properly.
+ * The logic to recreate or reuse the Atlas file is based on:
+ *   - Does an Atlas file currently exist?
+ *     > No: (Re)create
+ *   - Is the Atlas file compatible with the current library version?
+ *     > No: Recreate
+ *   - Is this entry a native platform bundle (android|ios), and does the Atlas file contain that platform?
+ *     > Yes: Recreate
+ *   - Otherwise, reuse the Atlas file.
+ */
+async function prepareAtlasFileForBundle(filePath: string, entry: AtlasBundle) {
+  try {
+    // Recreate the file when versions are incompatible
+    await validateAtlasFile(filePath);
+  } catch (error: any) {
+    if (error.code === 'ATLAS_FILE_NOT_FOUND' || error.code === 'ATLAS_FILE_INCOMPATIBLE') {
+      await createAtlasFile(filePath);
+      return false;
+    }
+
+    throw error;
+  }
+
+  // Recreate the file if one of the native platforms already exists in the Atlas file
+  if (entry.platform === 'android' || entry.platform === 'ios') {
+    const entries = await listAtlasEntries(filePath);
+    if (entries.some((existing) => existing.platform === entry.platform)) {
+      await createAtlasFile(filePath);
+      return false;
+    }
+  }
+
+  // Reuse the file, do not recreate it
+  return true;
 }

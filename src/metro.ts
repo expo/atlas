@@ -1,6 +1,6 @@
 import { type MetroConfig } from 'metro-config';
 
-import { createAtlasFile, getAtlasPath, writeAtlasEntry } from './data/AtlasFileSource';
+import { ensureAtlasFileExist, getAtlasPath, writeAtlasEntry } from './data/AtlasFileSource';
 import { convertGraph, convertMetroConfig } from './data/MetroGraphSource';
 
 type ExpoAtlasOptions = Partial<{
@@ -36,7 +36,7 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   const metroConfig = convertMetroConfig(config);
 
   // Note(cedric): we don't have to await this, Metro would never bundle before this is finishes
-  createAtlasFile(atlasFile);
+  ensureAtlasFileExist(atlasFile);
 
   // @ts-expect-error
   config.serializer.customSerializer = (entryPoint, preModules, graph, serializeOptions) => {
