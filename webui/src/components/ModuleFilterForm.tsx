@@ -105,7 +105,7 @@ export function ModuleFiltersForm(props: ModuleFiltersFormProps) {
               name="filterInclude"
               type="text"
               className="mt-2"
-              placeholder="e.g. app/**/*.{ts}"
+              placeholder="e.g. app, index.ts, app/**/index.ts"
               defaultValue={filters.include}
               onChange={(event) => onIncludeChange(event.currentTarget.value)}
               onKeyDown={onInputEnter}
@@ -121,7 +121,7 @@ export function ModuleFiltersForm(props: ModuleFiltersFormProps) {
               name="filterExclude"
               type="text"
               className="mt-2"
-              placeholder="e.g. react-native/**"
+              placeholder="e.g. react-native, react-native/*/components"
               defaultValue={filters.exclude}
               onChange={(event) => onExcludeChange(event.currentTarget.value)}
               onKeyDown={onInputEnter}
