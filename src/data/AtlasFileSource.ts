@@ -99,9 +99,7 @@ export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
     entry.serializeOptions,
   ];
 
-  writeQueue = writeQueue
-    .then(() => prepareAtlasFileForBundle(filePath, entry))
-    .then(() => appendJsonLine(filePath, line));
+  writeQueue = writeQueue.then(() => appendJsonLine(filePath, line));
 
   return writeQueue;
 }
@@ -144,29 +142,10 @@ export async function createAtlasFile(filePath: string) {
 }
 
 /**
- * Create the Atlas file, if it does not exist yet.
+ * Create the Atlas file if it doesn't exist, or recreate it if it's incompatible.
  */
 export async function ensureAtlasFileExist(filePath: string) {
-  if (!fs.existsSync(filePath)) {
-    await createAtlasFile(filePath);
-  }
-}
-
-/**
- * This checks if we can reuse the existing Atlas file, or if it needs to be recreated.
- * Expo creates multiple instances of Metro when exporting static bundles, so we need to handle this properly.
- * The logic to recreate or reuse the Atlas file is based on:
- *   - Does an Atlas file currently exist?
- *     > No: (Re)create
- *   - Is the Atlas file compatible with the current library version?
- *     > No: Recreate
- *   - Is this entry a native platform bundle (android|ios), and does the Atlas file contain that platform?
- *     > Yes: Recreate
- *   - Otherwise, reuse the Atlas file.
- */
-async function prepareAtlasFileForBundle(filePath: string, entry: AtlasBundle) {
   try {
-    // Recreate the file when versions are incompatible
     await validateAtlasFile(filePath);
   } catch (error: any) {
     if (error.code === 'ATLAS_FILE_NOT_FOUND' || error.code === 'ATLAS_FILE_INCOMPATIBLE') {
@@ -177,15 +156,5 @@ async function prepareAtlasFileForBundle(filePath: string, entry: AtlasBundle) {
     throw error;
   }
 
-  // Recreate the file if one of the native platforms already exists in the Atlas file
-  if (entry.platform === 'android' || entry.platform === 'ios') {
-    const entries = await listAtlasEntries(filePath);
-    if (entries.some((existing) => existing.platform === entry.platform)) {
-      await createAtlasFile(filePath);
-      return false;
-    }
-  }
-
-  // Reuse the file, do not recreate it
   return true;
 }

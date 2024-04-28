@@ -1,6 +1,11 @@
 import { type MetroConfig } from 'metro-config';
 
-import { ensureAtlasFileExist, getAtlasPath, writeAtlasEntry } from './data/AtlasFileSource';
+import {
+  createAtlasFile,
+  ensureAtlasFileExist,
+  getAtlasPath,
+  writeAtlasEntry,
+} from './data/AtlasFileSource';
 import { convertGraph, convertMetroConfig } from './data/MetroGraphSource';
 
 type ExpoAtlasOptions = Partial<{
@@ -50,4 +55,10 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   };
 
   return config;
+}
+
+export async function resetExpoAtlasFile(projectRoot: string) {
+  const filePath = getAtlasPath(projectRoot);
+  await createAtlasFile(filePath);
+  return filePath;
 }
