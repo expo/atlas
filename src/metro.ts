@@ -1,6 +1,11 @@
 import { type MetroConfig } from 'metro-config';
 
-import { createAtlasFile, getAtlasPath, writeAtlasEntry } from './data/AtlasFileSource';
+import {
+  createAtlasFile,
+  ensureAtlasFileExist,
+  getAtlasPath,
+  writeAtlasEntry,
+} from './data/AtlasFileSource';
 import { convertGraph, convertMetroConfig } from './data/MetroGraphSource';
 
 type ExpoAtlasOptions = Partial<{
@@ -36,7 +41,7 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   const metroConfig = convertMetroConfig(config);
 
   // Note(cedric): we don't have to await this, Metro would never bundle before this is finishes
-  createAtlasFile(atlasFile);
+  ensureAtlasFileExist(atlasFile);
 
   // @ts-expect-error
   config.serializer.customSerializer = (entryPoint, preModules, graph, serializeOptions) => {
@@ -50,4 +55,14 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   };
 
   return config;
+}
+
+/**
+ * Fully reset, or recreate, the Expo Atlas file containing all Metro information.
+ * This method should only be called once per exporting session, to avoid overwriting data with mutliple Metro instances.
+ */
+export async function resetExpoAtlasFile(projectRoot: string) {
+  const filePath = getAtlasPath(projectRoot);
+  await createAtlasFile(filePath);
+  return filePath;
 }

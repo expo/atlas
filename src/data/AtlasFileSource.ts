@@ -83,8 +83,9 @@ export async function readAtlasEntry(filePath: string, id: number): Promise<Atla
 let writeQueue: Promise<any> = Promise.resolve();
 
 /**
- * Add a new entry to the file.
- * This is appended on a new line, so we can load the selectively.
+ * Add a new entry to the Atlas file.
+ * This function also ensures the Atlas file is ready to be written to, due to complications with Expo CLI.
+ * Eventually, the entry is appended on a new line, so we can load them selectively.
  */
 export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
   const line = [
@@ -98,7 +99,9 @@ export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
     entry.serializeOptions,
   ];
 
-  return (writeQueue = writeQueue.then(() => appendJsonLine(filePath, line)));
+  writeQueue = writeQueue.then(() => appendJsonLine(filePath, line));
+
+  return writeQueue;
 }
 
 /** The default location of the metro file */
@@ -136,4 +139,22 @@ export async function createAtlasFile(filePath: string) {
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
   await fs.promises.rm(filePath, { force: true });
   await appendJsonLine(filePath, getAtlasMetdata());
+}
+
+/**
+ * Create the Atlas file if it doesn't exist, or recreate it if it's incompatible.
+ */
+export async function ensureAtlasFileExist(filePath: string) {
+  try {
+    await validateAtlasFile(filePath);
+  } catch (error: any) {
+    if (error.code === 'ATLAS_FILE_NOT_FOUND' || error.code === 'ATLAS_FILE_INCOMPATIBLE') {
+      await createAtlasFile(filePath);
+      return false;
+    }
+
+    throw error;
+  }
+
+  return true;
 }
