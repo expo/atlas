@@ -17,7 +17,7 @@ type ConvertGraphToAtlasOptions = {
   entryPoint: string;
   preModules: Readonly<MetroModule[]>;
   graph: MetroGraph;
-  options: Readonly<metro.SerializerOptions>;
+  serializeOptions: Readonly<metro.SerializerOptions>;
   /** Options passed-through from the Metro config */
   metroConfig: {
     watchFolders?: Readonly<string[]>;
@@ -168,7 +168,10 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
 
 /** Find and collect all dependnecies related to the entrypoint within the graph */
 export function collectEntryPointModules(
-  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'entryPoint' | 'metroConfig'>
+  options: Pick<
+    ConvertGraphToAtlasOptions,
+    'graph' | 'entryPoint' | 'serializeOptions' | 'metroConfig'
+  >
 ) {
   const modules = new Map<string, AtlasModule>();
 
@@ -186,10 +189,10 @@ export function collectEntryPointModules(
 
 /** Convert a Metro module to a JSON-serializable Atlas module */
 export function convertModule(
-  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'metroConfig' | 'options'>,
+  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'metroConfig' | 'serializeOptions'>,
   module: MetroModule
 ): AtlasModule {
-  const { createModuleId } = options.options;
+  const { createModuleId } = options.serializeOptions;
 
   return {
     id: createModuleId(module.path),
@@ -254,11 +257,11 @@ export function convertTransformOptions(
 
 /** Convert Metro serialize options to a JSON-serializable object */
 export function convertSerializeOptions(
-  options: Pick<ConvertGraphToAtlasOptions, 'options'>
+  options: Pick<ConvertGraphToAtlasOptions, 'serializeOptions'>
 ): AtlasBundle['serializeOptions'] {
-  const serializeOptions: AtlasBundle['serializeOptions'] = { ...options.options };
+  const serializeOptions: AtlasBundle['serializeOptions'] = { ...options.serializeOptions };
 
-  // Delete all filters
+  // Delete all non-serializable functions
   delete serializeOptions['processModuleFilter'];
   delete serializeOptions['createModuleId'];
   delete serializeOptions['getRunModuleStatement'];

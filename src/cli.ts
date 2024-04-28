@@ -32,7 +32,7 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
 
   // @ts-expect-error Should still be writable at this stage
   config.serializer.customSerializer = (entryPoint, preModules, graph, options) => {
-    source.serializeGraph({ projectRoot, entryPoint, preModules, graph, options, metroConfig });
+    source.serializeGraph({ projectRoot, entryPoint, preModules, graph, serializeOptions: options, metroConfig });
     return metroCustomSerializer(entryPoint, preModules, graph, options);
   };
 

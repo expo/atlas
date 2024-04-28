@@ -39,14 +39,14 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   createAtlasFile(atlasFile);
 
   // @ts-expect-error
-  config.serializer.customSerializer = (entryPoint, preModules, graph, options) => {
+  config.serializer.customSerializer = (entryPoint, preModules, graph, serializeOptions) => {
     // Note(cedric): we don't have to await this, it has a built-in write queue
     writeAtlasEntry(
       atlasFile,
-      convertGraph({ projectRoot, entryPoint, preModules, graph, options, metroConfig })
+      convertGraph({ projectRoot, entryPoint, preModules, graph, serializeOptions, metroConfig })
     );
 
-    return originalSerializer(entryPoint, preModules, graph, options);
+    return originalSerializer(entryPoint, preModules, graph, serializeOptions);
   };
 
   return config;
