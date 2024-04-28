@@ -1,6 +1,7 @@
 import type metro from 'metro';
 import type DeltaBundler from 'metro/src/DeltaBundler';
 import type MetroServer from 'metro/src/Server';
+import type { MetroConfig } from 'metro-config';
 import path from 'path';
 
 import type { AtlasBundle, AtlasBundleDelta, AtlasModule, AtlasSource } from './types';
@@ -16,11 +17,14 @@ type ConvertGraphToAtlasOptions = {
   entryPoint: string;
   preModules: Readonly<MetroModule[]>;
   graph: MetroGraph;
-  options: Readonly<metro.SerializerOptions>;
-  watchFolders?: Readonly<string[]>;
-  extensions?: {
-    source?: Readonly<string[]>;
-    asset?: Readonly<string[]>;
+  serializeOptions: Readonly<metro.SerializerOptions>;
+  /** Options passed-through from the Metro config */
+  metroConfig: {
+    watchFolders?: Readonly<string[]>;
+    resolver?: {
+      sourceExts?: Readonly<string[]>;
+      assetExts?: Readonly<string[]>;
+    };
   };
 };
 
@@ -129,6 +133,17 @@ class MetroDeltaListener {
   }
 }
 
+/** Convert options from the Metro config, used during graph conversions to Atlas */
+export function convertMetroConfig(config: MetroConfig): ConvertGraphToAtlasOptions['metroConfig'] {
+  return {
+    watchFolders: config.watchFolders,
+    resolver: {
+      sourceExts: config.resolver?.sourceExts,
+      assetExts: config.resolver?.assetExts,
+    },
+  };
+}
+
 /** Convert a Metro graph instance to a JSON-serializable entry */
 export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
   const serializeOptions = convertSerializeOptions(options);
@@ -153,7 +168,10 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
 
 /** Find and collect all dependnecies related to the entrypoint within the graph */
 export function collectEntryPointModules(
-  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'entryPoint' | 'extensions'>
+  options: Pick<
+    ConvertGraphToAtlasOptions,
+    'graph' | 'entryPoint' | 'serializeOptions' | 'metroConfig'
+  >
 ) {
   const modules = new Map<string, AtlasModule>();
 
@@ -171,20 +189,28 @@ export function collectEntryPointModules(
 
 /** Convert a Metro module to a JSON-serializable Atlas module */
 export function convertModule(
-  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'extensions'>,
+  options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'metroConfig' | 'serializeOptions'>,
   module: MetroModule
 ): AtlasModule {
+  const { createModuleId } = options.serializeOptions;
+
   return {
+    id: createModuleId(module.path),
     path: module.path,
     package: getPackageNameFromPath(module.path),
     size: module.output.reduce((bytes, output) => bytes + Buffer.byteLength(output.data.code), 0),
     imports: Array.from(module.dependencies.values()).map((module) => ({
+      id: createModuleId(module.absolutePath),
       path: module.absolutePath,
       package: getPackageNameFromPath(module.absolutePath),
     })),
     importedBy: Array.from(module.inverseDependencies)
       .filter((path) => options.graph.dependencies.has(path))
-      .map((path) => ({ path, package: getPackageNameFromPath(path) })),
+      .map((path) => ({
+        id: createModuleId(path),
+        path,
+        package: getPackageNameFromPath(path),
+      })),
     source: getModuleSourceContent(options, module),
     output: module.output.map((output) => ({
       type: output.type,
@@ -198,16 +224,16 @@ export function convertModule(
  * If a file is an asset, it returns `[binary file]` instead.
  */
 function getModuleSourceContent(
-  options: Pick<ConvertGraphToAtlasOptions, 'extensions'>,
+  options: Pick<ConvertGraphToAtlasOptions, 'metroConfig'>,
   module: MetroModule
 ) {
   const fileExtension = path.extname(module.path).replace('.', '');
 
-  if (options.extensions?.source?.includes(fileExtension)) {
+  if (options.metroConfig.resolver?.sourceExts?.includes(fileExtension)) {
     return module.getSource().toString();
   }
 
-  if (options.extensions?.asset?.includes(fileExtension)) {
+  if (options.metroConfig.resolver?.assetExts?.includes(fileExtension)) {
     return '[binary file]';
   }
 
@@ -231,11 +257,11 @@ export function convertTransformOptions(
 
 /** Convert Metro serialize options to a JSON-serializable object */
 export function convertSerializeOptions(
-  options: Pick<ConvertGraphToAtlasOptions, 'options'>
+  options: Pick<ConvertGraphToAtlasOptions, 'serializeOptions'>
 ): AtlasBundle['serializeOptions'] {
-  const serializeOptions: AtlasBundle['serializeOptions'] = { ...options.options };
+  const serializeOptions: AtlasBundle['serializeOptions'] = { ...options.serializeOptions };
 
-  // Delete all filters
+  // Delete all non-serializable functions
   delete serializeOptions['processModuleFilter'];
   delete serializeOptions['createModuleId'];
   delete serializeOptions['getRunModuleStatement'];
@@ -245,12 +271,11 @@ export function convertSerializeOptions(
 }
 
 /** Get the shared root of `projectRoot` and `watchFolders`, used to make all paths within the bundle relative */
-function getSharedRoot(options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' | 'watchFolders'>) {
-  if (!options.watchFolders?.length) {
-    return options.projectRoot;
-  }
-
-  return findSharedRoot([options.projectRoot, ...options.watchFolders]) ?? options.projectRoot;
+function getSharedRoot(options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' | 'metroConfig'>) {
+  const { watchFolders } = options.metroConfig;
+  return !watchFolders?.length
+    ? options.projectRoot
+    : findSharedRoot([options.projectRoot, ...watchFolders]) ?? options.projectRoot;
 }
 
 /** Determine if the module is a virtual module, like shims or canaries, which should be excluded from results */

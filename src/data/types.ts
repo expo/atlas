@@ -47,6 +47,8 @@ export type AtlasBundleDelta = {
 };
 
 export type AtlasModule = {
+  /** The internal module ID given by Metro */
+  id: number;
   /** The absoluate path of this module */
   path: string;
   /** The name of the package this module belongs to, if from an external package */
@@ -63,4 +65,4 @@ export type AtlasModule = {
   output?: MixedOutput[];
 };
 
-export type AtlasModuleRef = Pick<AtlasModule, 'path' | 'package'>;
+export type AtlasModuleRef = Pick<AtlasModule, 'id' | 'path' | 'package'>;

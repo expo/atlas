@@ -1,6 +1,6 @@
 import type { ConfigT as MetroConfig } from 'metro-config';
 
-import { MetroGraphSource } from './data/MetroGraphSource';
+import { MetroGraphSource, convertMetroConfig } from './data/MetroGraphSource';
 import { createAtlasMiddleware } from './utils/middleware';
 
 /**
@@ -28,24 +28,19 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
   const registerMetro = source.registerMetro.bind(source);
 
   const metroCustomSerializer = config.serializer?.customSerializer ?? (() => {});
-  const metroExtensions = {
-    source: config.resolver?.sourceExts,
-    asset: config.resolver?.assetExts,
-  };
+  const metroConfig = convertMetroConfig(config);
 
   // @ts-expect-error Should still be writable at this stage
-  config.serializer.customSerializer = (entryPoint, preModules, graph, options) => {
+  config.serializer.customSerializer = (entryPoint, preModules, graph, serializeOptions) => {
     source.serializeGraph({
       projectRoot,
       entryPoint,
       preModules,
       graph,
-      options,
-      extensions: metroExtensions,
-      watchFolders: config.watchFolders,
+      serializeOptions,
+      metroConfig,
     });
-
-    return metroCustomSerializer(entryPoint, preModules, graph, options);
+    return metroCustomSerializer(entryPoint, preModules, graph, serializeOptions);
   };
 
   return { source, middleware, registerMetro };

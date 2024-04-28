@@ -1,7 +1,7 @@
 import { type MetroConfig } from 'metro-config';
 
 import { createAtlasFile, getAtlasPath, writeAtlasEntry } from './data/AtlasFileSource';
-import { convertGraph } from './data/MetroGraphSource';
+import { convertGraph, convertMetroConfig } from './data/MetroGraphSource';
 
 type ExpoAtlasOptions = Partial<{
   /** The output of the atlas file, defaults to `.expo/atlas.json` */
@@ -33,32 +33,20 @@ export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {
   }
 
   const atlasFile = options?.atlasFile ?? getAtlasPath(projectRoot);
-  const watchFolders = config.watchFolders;
-  const extensions = {
-    source: config.resolver?.sourceExts,
-    asset: config.resolver?.assetExts,
-  };
+  const metroConfig = convertMetroConfig(config);
 
-  // Note(cedric): we don't have to await this, Metro would never bundle before this is finisheds
+  // Note(cedric): we don't have to await this, Metro would never bundle before this is finishes
   createAtlasFile(atlasFile);
 
   // @ts-expect-error
-  config.serializer.customSerializer = (entryPoint, preModules, graph, options) => {
+  config.serializer.customSerializer = (entryPoint, preModules, graph, serializeOptions) => {
     // Note(cedric): we don't have to await this, it has a built-in write queue
     writeAtlasEntry(
       atlasFile,
-      convertGraph({
-        projectRoot,
-        entryPoint,
-        preModules,
-        graph,
-        options,
-        extensions,
-        watchFolders,
-      })
+      convertGraph({ projectRoot, entryPoint, preModules, graph, serializeOptions, metroConfig })
     );
 
-    return originalSerializer(entryPoint, preModules, graph, options);
+    return originalSerializer(entryPoint, preModules, graph, serializeOptions);
   };
 
   return config;
