@@ -10,8 +10,7 @@
     "web": "expo start --web",
     "build": "expo export --platform web",
     "typecheck": "expo-module typecheck",
-    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl",
-    "postinstall": "patch-package"
+    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.2",
@@ -49,7 +48,6 @@
     "@babel/core": "^7.20.0",
     "@types/picomatch": "^2.3.3",
     "@types/react": "~18.2.79",
-    "patch-package": "^8.0.0",
     "typescript": "^5.4.5"
   }
 }
