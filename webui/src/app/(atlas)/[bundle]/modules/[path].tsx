@@ -51,19 +51,19 @@ export default function ModulePage() {
             <div className="mb-2 my-6 flex flex-row">
               <div className="flex-1">
                 <h3 className="font-semibold mx-2">Importing</h3>
-                {module.data.imports.length > 0 ? (
-                  <ModuleReferenceList bundle={bundle} moduleRefs={module.data.imports} />
-                ) : (
-                  <em>This module does not import other modules</em>
-                )}
+                <ModuleReferenceList bundle={bundle} moduleRefs={module.data.imports}>
+                  <span className="italic text-default text-xs">
+                    This module does not import other modules.
+                  </span>
+                </ModuleReferenceList>
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold mx-2">Imported by</h3>
-                {module.data.importedBy.length > 0 ? (
-                  <ModuleReferenceList bundle={bundle} moduleRefs={module.data.importedBy} />
-                ) : (
-                  <em>This module is not imported by other modules</em>
-                )}
+                <ModuleReferenceList bundle={bundle} moduleRefs={module.data.importedBy}>
+                  <span className="italic text-default text-xs">
+                    This module is not imported by other modules.
+                  </span>
+                </ModuleReferenceList>
               </div>
             </div>
           )}

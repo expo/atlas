@@ -8,12 +8,16 @@ import { PropsWithChildren } from 'react';
 import { relativeBundlePath } from '~/utils/bundle';
 import type { AtlasModuleRef, PartialAtlasBundle } from '~core/data/types';
 
-type ModuleReferenceListProps = {
+type ModuleReferenceListProps = PropsWithChildren<{
   bundle: PartialAtlasBundle;
   moduleRefs: AtlasModuleRef[];
-};
+}>;
 
 export function ModuleReferenceList(props: ModuleReferenceListProps) {
+  if (props.moduleRefs.length === 0) {
+    return <div className="m-2">{props.children}</div>;
+  }
+
   return (
     <>
       {props.moduleRefs.map((moduleRef) => (
