@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
-import { ModuleImportedBy } from '~/components/ModuleImportedBy';
+import { ModuleReference } from '~/components/ModuleReference';
 import { PropertySummary } from '~/components/PropertySummary';
 import { DataErrorState, NoDataState } from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
@@ -47,12 +47,7 @@ export default function ModulePage() {
         <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
-          {!!module.data.importedBy?.length && (
-            <div className="mb-2 my-6">
-              <h3 className="font-semibold mx-2">Imported by</h3>
-              <ModuleImportedBy bundle={bundle} module={module.data} />
-            </div>
-          )}
+          <ModuleReference className="mb-2 my-6" bundle={bundle} module={module.data} />
           <div className="mx-2 my-8">
             <h3 className="font-semibold my-2">Module content</h3>
             <ModuleCode module={module.data} />

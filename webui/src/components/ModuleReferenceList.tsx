@@ -6,17 +6,21 @@ import FileIcon from 'lucide-react/dist/esm/icons/file';
 import { PropsWithChildren } from 'react';
 
 import { relativeBundlePath } from '~/utils/bundle';
-import type { AtlasModule, AtlasModuleRef, PartialAtlasBundle } from '~core/data/types';
+import type { AtlasModuleRef, PartialAtlasBundle } from '~core/data/types';
 
-type ModuleImportedByProps = {
+type ModuleReferenceListProps = PropsWithChildren<{
   bundle: PartialAtlasBundle;
-  module: AtlasModule;
-};
+  moduleRefs: AtlasModuleRef[];
+}>;
 
-export function ModuleImportedBy(props: ModuleImportedByProps) {
+export function ModuleReferenceList(props: ModuleReferenceListProps) {
+  if (props.moduleRefs.length === 0) {
+    return <div className="m-2">{props.children}</div>;
+  }
+
   return (
     <>
-      {props.module.importedBy.map((moduleRef) => (
+      {props.moduleRefs.map((moduleRef) => (
         <div key={moduleRef.path} className="inline-block m-2">
           <ModuleImportLink bundle={props.bundle} reference={moduleRef} />
         </div>
