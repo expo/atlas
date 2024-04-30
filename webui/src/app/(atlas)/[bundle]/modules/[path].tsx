@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
-import { ModuleImportedBy } from '~/components/ModuleImportedBy';
+import { ModuleReferenceList } from '~/components/ModuleReferenceList';
 import { PropertySummary } from '~/components/PropertySummary';
 import { DataErrorState, NoDataState } from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
@@ -47,10 +47,24 @@ export default function ModulePage() {
         <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
-          {!!module.data.importedBy?.length && (
-            <div className="mb-2 my-6">
-              <h3 className="font-semibold mx-2">Imported by</h3>
-              <ModuleImportedBy bundle={bundle} module={module.data} />
+          {(module.data.imports.length > 0 || module.data.importedBy.length > 0) && (
+            <div className="mb-2 my-6 flex flex-row">
+              <div className="flex-1">
+                <h3 className="font-semibold mx-2">Importing</h3>
+                {module.data.imports.length > 0 ? (
+                  <ModuleReferenceList bundle={bundle} moduleRefs={module.data.imports} />
+                ) : (
+                  <em>This module does not import other modules</em>
+                )}
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold mx-2">Imported by</h3>
+                {module.data.importedBy.length > 0 ? (
+                  <ModuleReferenceList bundle={bundle} moduleRefs={module.data.importedBy} />
+                ) : (
+                  <em>This module is not imported by other modules</em>
+                )}
+              </div>
             </div>
           )}
           <div className="mx-2 my-8">
