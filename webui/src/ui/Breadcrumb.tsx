@@ -1,3 +1,5 @@
+// see: https://ui.shadcn.com/docs/components/breadcrumb
+
 import { Slot } from '@radix-ui/react-slot';
 import { cx } from 'class-variance-authority';
 // @ts-expect-error

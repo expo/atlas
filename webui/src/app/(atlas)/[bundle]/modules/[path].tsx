@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
 import { ModuleCode } from '~/components/ModuleCode';
-import { ModuleReferenceList } from '~/components/ModuleReferenceList';
+import { ModuleReference } from '~/components/ModuleReference';
 import { PropertySummary } from '~/components/PropertySummary';
 import { DataErrorState, NoDataState } from '~/components/StateInfo';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
@@ -47,26 +47,7 @@ export default function ModulePage() {
         <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
-          {(module.data.imports.length > 0 || module.data.importedBy.length > 0) && (
-            <div className="mb-2 my-6 flex flex-row">
-              <div className="flex-1">
-                <h3 className="font-semibold mx-2">Importing</h3>
-                <ModuleReferenceList bundle={bundle} moduleRefs={module.data.imports}>
-                  <span className="italic text-default text-xs">
-                    This module does not import other modules.
-                  </span>
-                </ModuleReferenceList>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold mx-2">Imported by</h3>
-                <ModuleReferenceList bundle={bundle} moduleRefs={module.data.importedBy}>
-                  <span className="italic text-default text-xs">
-                    This module is not imported by other modules.
-                  </span>
-                </ModuleReferenceList>
-              </div>
-            </div>
-          )}
+          <ModuleReference className="mb-2 my-6" bundle={bundle} module={module.data} />
           <div className="mx-2 my-8">
             <h3 className="font-semibold my-2">Module content</h3>
             <ModuleCode module={module.data} />
