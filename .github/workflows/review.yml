@@ -55,3 +55,6 @@ jobs:
       - name: 👷 Build webui
         run: bun run build
         working-directory: webui
+        env:
+          EXPO_USE_FAST_RESOLVER: true # Use the faster Metro resolver in SDK 51
+          EXPO_OFFLINE: true # Do not check for authenticated user, and/or start a development session
