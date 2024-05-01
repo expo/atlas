@@ -1,3 +1,4 @@
+import { cx } from 'class-variance-authority';
 import { type PropsWithChildren } from 'react';
 
 export function PanelGroup(props: PropsWithChildren) {
@@ -10,7 +11,13 @@ export function PanelGroup(props: PropsWithChildren) {
 
 export function Panel(props: PropsWithChildren) {
   return (
-    <div className="flex flex-col border-secondary bg-subtle border border-l-0 first:border-l first:rounded-l-md last:rounded-r-md overflow-hidden">
+    <div
+      className={cx(
+        'flex flex-col border-secondary bg-subtle border overflow-hidden',
+        'first:rounded-t-md last:rounded-b-md',
+        'md:border-r-0 md:last:border md:first:rounded-r-none md:first:rounded-l-md md:last:rounded-l-none md:last:rounded-r-md'
+      )}
+    >
       {props.children}
     </div>
   );
