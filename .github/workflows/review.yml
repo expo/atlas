@@ -44,13 +44,13 @@ jobs:
         with:
           with-webui: true
 
-      - name: ♻️ Setup cache
+      - name: ♻️ Setup Metro cache
         uses: actions/cache@v4
         with:
-          path: webui/node_modules/.cache
-          key: webui-caches-${{ runner.os }}-${{ hashFiles('webui/bun.lockb') }}
+          path: webui/node_modules/.cache/metro
+          key: webui-metro-${{ runner.os }}-${{ hashFiles('webui/bun.lockb') }}
           restore-keys: |
-            webui-caches-${{ runner.os }}-
+            webui-metro-${{ runner.os }}-
 
       # Required for typechecking webui
       - name: 👷 Build core
