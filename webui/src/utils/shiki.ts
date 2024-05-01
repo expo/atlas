@@ -79,6 +79,7 @@ export type HighlightOptions = {
   code: string;
   language: HighlightLanguage;
   lineNumberStart?: number;
+  slug: string;
 };
 
 /**
@@ -91,6 +92,7 @@ export function getHighlightedHtml(highlighter: Highlighter | null, options: Hig
     theme: 'expo-theme',
     transformers: [AtlasTransformer],
     meta: {
+      slug: options.slug,
       lineNumberStart: options.lineNumberStart || 0,
     },
   });
@@ -103,6 +105,7 @@ export function getHighlightedHtml(highlighter: Highlighter | null, options: Hig
  */
 const AtlasTransformer: ShikiTransformer = {
   root() {
+    const slug = this.options.meta?.slug;
     this.addClassToHast(this.pre, 'highlighter');
     this.code.children = this.code.children.flatMap((node) => {
       const lineNumber = node.type === 'element' && node.properties['data-atlas-line'];
@@ -111,8 +114,10 @@ const AtlasTransformer: ShikiTransformer = {
         return [
           {
             type: 'element',
-            tagName: 'span',
+            tagName: 'a',
             properties: {
+              id: `${slug}L${lineNumber}`,
+              href: `#${slug}L${lineNumber}`,
               class: 'line-number',
               'data-atlas-line': lineNumber,
             },

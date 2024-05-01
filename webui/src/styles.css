@@ -24,7 +24,7 @@ html, body, #root {
   }
 
   .shiki .line-number {
-    @apply px-4 text-right select-none;
+    @apply px-4 text-right select-none hover:underline underline-offset-2;
   }
 
   .shiki .line {

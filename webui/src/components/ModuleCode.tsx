@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CodeAction, CodeContent, CodeHeader, CodeTitle } from '~/ui/Code';
@@ -12,15 +13,28 @@ type ModuleCodeProps = {
 };
 
 export function ModuleCode({ module }: ModuleCodeProps) {
+  const { '#': hash } = useLocalSearchParams(); // NOTE(cedric): this always returns `undefined`, even when a hash is defined
+
   const output = module.output?.find((output) => output.type.startsWith('js'));
   const outputCode = output?.data.code || '[not available]';
   const outputFormat = useFormattedCode(outputCode);
 
-  const sourceHighlight = useHighlightedCode(module.path, module.source || '[not available]');
+  const sourceHighlight = useHighlightedCode(
+    'source',
+    module.path,
+    module.source || '[not available]'
+  );
   const outputHighlight = useHighlightedCode(
+    'output',
     module.path,
     outputFormat.formatted || outputCode || '[not available]'
   );
+
+  useEffect(() => {
+    if (sourceHighlight.html && outputHighlight.html && typeof hash === 'string') {
+      document.getElementById(hash)?.scrollIntoView();
+    }
+  }, [hash, sourceHighlight.html, outputHighlight.html]);
 
   return (
     <PanelGroup>
@@ -51,14 +65,14 @@ export function ModuleCode({ module }: ModuleCodeProps) {
   );
 }
 
-function useHighlightedCode(path: string, code: string) {
+function useHighlightedCode(slug: string, path: string, code = '[not available]') {
   const { highlighter } = useHighlighter();
 
   return {
     state: !highlighter ? 'loading' : 'idle',
     html: useMemo(
-      () => getHighlightedHtml(highlighter, { code, language: getLanguageFromPath(path) }),
-      [highlighter, path, code]
+      () => getHighlightedHtml(highlighter, { slug, code, language: getLanguageFromPath(path) }),
+      [highlighter, slug, path, code]
     ),
   };
 }
