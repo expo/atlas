@@ -1,51 +1,45 @@
 # Expo Atlas
 
-Inspect bundle contents, on module level, from Metro.
+Inspect your Metro bundle, on module level.
 
 > [!Warning]
-> This project is highly experimental and will likely not work for your project.
+> This project is unstable and might not work for your project.
 
 ## 🚀 How to use it
 
-Install the `expo-atlas` package as (development) dependency to your project:
+Atlas is built into Expo starting from SDK 51, and enabled when defining the environment variable `EXPO_UNSTABLE_ATLAS=true`.
+
+You can use Atlas with two Expo commands:
+- `$ expo start` → Start a local dev server, Atlas will listen to any change within your project.
+- `$ expo export` → Export your app to Android, iOS, or web. Atlas will generate the `atlas.jsonl` file.
+
+### Using `$ expo start`
+
+When enabling Atlas with the local dev server, you can access Atlas on [http://localhost:8081/_expo/atlas](http://localhost:8081/_expo/atlas). This shows you all information from the bundle loaded during development.
 
 ```bash
-$ npx expo install expo-atlas
+$ EXPO_UNSTABLE_ATLAS=true npx expo start
 ```
 
-Configure your Metro config to emit an Atlas file containing information about your bundles.
+> [!TIP]
+> Expo start runs in development mode by default. If you want to see a production bundle of your app, you can start the local dev server in production mode: `$ expo start --no-dev --no-minify`.
 
-```js metro.config.js
-const { getDefaultConfig } = require('expo/metro-config');
-const { withExpoAtlas } = require('expo-atlas/metro');
+### Using `$ expo export`
 
-const config = getDefaultConfig(__dirname);
-
-// Add the `withExpoAtlas` from `expo-atlas/metro` as last change
-module.exports = withExpoAtlas(config);
-```
-
-After that, you can generate a new bundle and inspect these through the CLI
+When enabling Atlas during exports, Expo generates the `.expo/atlas.json` file in your project. This file contains all bundle information, including the actual source code of individual files. You can open the Atlas file through `npx expo-atlas [path/to/atlas.jsonl]`.
 
 ```bash
-# Export bundles for all platforms,
-# or use `--platform android --platform ios` to enable specific exports
-$ npx expo export --platform all
+# Export the app for all platforms
+$ EXPO_UNSTABLE_ATLAS=true npx expo export --platform all
 
-# Start inspecting
+# Open Atlas using the default `.expo/atlas.jsonl` path
 $ npx expo-atlas
-```
-
-## 🧑‍🤝‍🧑 Sharing the Atlas file
-
-You can also open a previously created `atlas.jsonl` file:
-
-```
+# Open Atlas from a shared file
 $ npx expo-atlas ./path/to/atlas.jsonl
 ```
 
 <div align="center">
   <br />
-  with&nbsp;❤️&nbsp;&nbsp;<strong>byCedric</strong>
+  with&nbsp;❤️&nbsp;&nbsp;<strong>Expo</strong>
   <br />
 </div>
