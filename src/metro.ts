@@ -8,6 +8,8 @@ import {
 } from './data/AtlasFileSource';
 import { convertGraph, convertMetroConfig } from './data/MetroGraphSource';
 
+export { waitUntilAtlasFileReady } from './data/AtlasFileSource';
+
 type ExpoAtlasOptions = Partial<{
   /** The output of the atlas file, defaults to `.expo/atlas.json` */
   atlasFile: string;
