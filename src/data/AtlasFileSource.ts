@@ -83,6 +83,15 @@ export async function readAtlasEntry(filePath: string, id: number): Promise<Atla
 let writeQueue: Promise<any> = Promise.resolve();
 
 /**
+ * Wait until the Atlas file has all data written.
+ * Note, this is a workaround whenever `process.exit` is required, avoid if possible.
+ * @internal
+ */
+export function waitUntilAtlasFileReady() {
+  return writeQueue;
+}
+
+/**
  * Add a new entry to the Atlas file.
  * This function also ensures the Atlas file is ready to be written to, due to complications with Expo CLI.
  * Eventually, the entry is appended on a new line, so we can load them selectively.
