@@ -19,6 +19,7 @@
     "cli.d.ts",
     "metro.js",
     "metro.d.ts",
+    "static",
     "webui/dist"
   ],
   "homepage": "https://github.com/expo/expo-atlas",
