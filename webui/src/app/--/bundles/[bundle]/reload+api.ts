@@ -14,7 +14,11 @@ export async function GET(_request: Request, params: Record<'bundle', string>) {
       );
     }
 
-    return Response.redirect(bundle.serializeOptions.sourceUrl, 302);
+    // Convert the source URL to localhost, avoiding "unauthorized requests" in Metro
+    const sourceUrl = new URL(bundle.serializeOptions.sourceUrl);
+    sourceUrl.hostname = 'localhost';
+
+    return Response.redirect(sourceUrl, 302);
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 406 });
   }
