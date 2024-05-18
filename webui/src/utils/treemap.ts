@@ -72,7 +72,7 @@ export function createModuleTree(
     moduleSize: totalSize,
     moduleFiles: modules.length,
     moduleRelativePath: '',
-    moduleAbsolutePath: '',
+    moduleAbsolutePath: sharedRoot,
     modulePackage: undefined,
   };
 
