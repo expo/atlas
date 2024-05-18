@@ -14,19 +14,11 @@ export async function GET(_request: Request, params: Record<'bundle', string>) {
       );
     }
 
-    // Convert the source URL to localhost, and call it from within the API.
-    // This is necessary to avoid "unauthorized requests" in Metro.
+    // Convert the source URL to localhost, avoiding "unauthorized requests" in Metro
     const sourceUrl = new URL(bundle.serializeOptions.sourceUrl);
     sourceUrl.hostname = 'localhost';
-    const response = await fetch(sourceUrl);
-    if (!response.ok) {
-      throw new Error(`Metro responded with an error: ${response.statusText}`);
-    }
 
-    // We still need to await the response body, to ensure the data is fully passed through Atlas.
-    await response.text();
-
-    return Response.json({ success: response.ok }, { status: response.status })
+    return Response.redirect(sourceUrl, 302);
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 406 });
   }
