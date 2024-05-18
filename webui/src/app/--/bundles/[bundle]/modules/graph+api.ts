@@ -33,7 +33,7 @@ export async function GET(request: Request, params: Record<'bundle', string>) {
   });
 
   const response: ModuleGraphResponse = {
-    data: finalizeModuleTree(createModuleTree(filteredModules)),
+    data: finalizeModuleTree(createModuleTree(bundle, filteredModules)),
     bundle: {
       platform: bundle.platform as any,
       moduleSize: allModules.reduce((size, module) => size + module.size, 0),

@@ -1,4 +1,4 @@
-import type { AtlasModule } from '~core/data/types';
+import type { AtlasBundle, AtlasModule } from '~core/data/types';
 
 export type TreemapNode = {
   /** If the current node is the root of the treemap */
@@ -54,11 +54,15 @@ export function finalizeModuleTree(node: TreemapNode): TreemapNode {
  * Create a nested treemap from the list of modules.
  * This will group the modules by `module.path` segments, and add metadata to each node.
  */
-export function createModuleTree(modules: AtlasModule[]): TreemapNode {
+export function createModuleTree(
+  bundle: Pick<AtlasBundle, 'sharedRoot'>,
+  modules: AtlasModule[]
+): TreemapNode {
   const totalSize = modules.reduce((total, module) => total + module.size, 0);
+  const sharedRoot = bundle.sharedRoot.replace(/\\/g, '/'); // Format as posix path
   const root: TreemapNode = {
     isRoot: true,
-    name: '/',
+    name: sharedRoot,
     value: 100, // 100%
     moduleSize: totalSize,
     moduleFiles: modules.length,
