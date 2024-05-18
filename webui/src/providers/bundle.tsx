@@ -1,19 +1,11 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import {
-  type PropsWithChildren,
-  createContext,
-  useContext,
-  useMemo,
-  useEffect,
-  useCallback,
-} from 'react';
+import { type PropsWithChildren, createContext, useContext, useMemo, useEffect } from 'react';
 
 import { type BundleDeltaResponse } from '~/app/--/bundles/[bundle]/delta+api';
 import { StateInfo } from '~/components/StateInfo';
-import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
-import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
+import { type ToasterToast, useToast } from '~/ui/Toast';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type PartialAtlasBundle } from '~core/data/types';
 
@@ -94,19 +86,9 @@ export function BundleDeltaToast({
   bundle: Pick<PartialAtlasBundle, 'id'>;
   modulePath?: string;
 }) {
-  const client = useQueryClient();
   const toaster = useToast();
-
   const deltaResponse = useBundleDeltaData(bundle.id);
   const bundleDelta = deltaResponse.data?.delta;
-
-  const refetchBundleData = useCallback(
-    () =>
-      fetchApi(`/bundles/${bundle.id}/reload`)
-        .then(handleApiError)
-        .then(() => client.refetchQueries({ queryKey: ['bundles', bundle.id], type: 'active' })),
-    [bundle.id]
-  );
 
   useEffect(() => {
     if (!bundleDelta) return;
@@ -115,13 +97,13 @@ export function BundleDeltaToast({
       if (bundleDelta.deletedPaths.includes(modulePath)) {
         toaster.toast(toastModuleDeleted(bundle.id));
       } else if (bundleDelta.modifiedPaths.includes(modulePath)) {
-        refetchBundleData().then(() => toaster.toast(toastModuleModified(bundle.id)));
+        toaster.toast(toastModuleModified(bundle.id));
       }
       return;
     }
 
-    toaster.toast(toastBundleUpdate(bundle.id, refetchBundleData));
-  }, [bundle.id, bundleDelta, refetchBundleData, modulePath]);
+    toaster.toast(toastBundleUpdate(bundle.id));
+  }, [bundle.id, bundleDelta, modulePath]);
 
   return null;
 }
@@ -130,7 +112,7 @@ function toastModuleModified(bundleId: string): ToasterToast {
   return {
     id: `bundle-delta-${bundleId}`,
     title: 'Module modified',
-    description: 'This module is updated to reflect the latest changes.',
+    description: 'This file has changed, open your app before reloading this page.',
   };
 }
 
@@ -138,22 +120,15 @@ function toastModuleDeleted(bundleId: string): ToasterToast {
   return {
     id: `bundle-delta-${bundleId}`,
     title: 'Module deleted',
-    description: 'This file is deleted since latest build, and is no longer available.',
+    description: 'This file is deleted since last build, and is no longer available.',
   };
 }
 
-function toastBundleUpdate(bundleId: string, refetchBundleData: () => any): ToasterToast {
+function toastBundleUpdate(bundleId: string): ToasterToast {
   return {
     id: `bundle-delta-${bundleId}`,
     title: 'Bundle outdated',
-    description: 'The code was changed since last build.',
-    action: (
-      <ToastAction altText="Reload bundle">
-        <Button variant="secondary" size="xs" onClick={refetchBundleData}>
-          Reload bundle
-        </Button>
-      </ToastAction>
-    ),
+    description: 'Code was changed since last build, open your app before reloading this page.',
   };
 }
 
