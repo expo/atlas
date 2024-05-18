@@ -155,7 +155,9 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
       : transformOptions?.platform ?? 'unknown';
 
   return {
-    id: Buffer.from(`${options.entryPoint}+${platform}`).toString('base64url'), // FIX: only use URL allowed characters
+    id: Buffer.from(`${path.relative(sharedRoot, options.entryPoint)}+${platform}`).toString(
+      'base64url'
+    ), // FIX: only use URL allowed characters
     platform,
     projectRoot: options.projectRoot,
     sharedRoot,
