@@ -104,7 +104,6 @@ export function BundleDeltaToast({
     () =>
       fetchApi(`/bundles/${bundle.id}/reload`)
         .then(handleApiError)
-        .then((response) => response?.text())
         .then(() => client.refetchQueries({ queryKey: ['bundles', bundle.id], type: 'active' })),
     [bundle.id]
   );
