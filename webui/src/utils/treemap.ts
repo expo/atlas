@@ -1,6 +1,8 @@
 import type { AtlasModule } from '~core/data/types';
 
 export type TreemapNode = {
+  /** If the current node is the root of the treemap */
+  isRoot?: true;
   /** The current path of the node */
   name: string;
   /** The size, in percentage, of all modules within this node (based on `module.size`) */
@@ -54,8 +56,9 @@ export function finalizeModuleTree(node: TreemapNode): TreemapNode {
  */
 export function createModuleTree(modules: AtlasModule[]): TreemapNode {
   const totalSize = modules.reduce((total, module) => total + module.size, 0);
-  const map: TreemapNode = {
-    name: '/', // This is the root, so no prefix
+  const root: TreemapNode = {
+    isRoot: true,
+    name: '/',
     value: 100, // 100%
     moduleSize: totalSize,
     moduleFiles: modules.length,
@@ -66,7 +69,7 @@ export function createModuleTree(modules: AtlasModule[]): TreemapNode {
   };
 
   for (const module of modules) {
-    module.path.split('/').reduce((node, segment, index, segments) => {
+    module.relativePath.split('/').reduce((node, segment, index, segments) => {
       let child = node.children?.find((child) => child.name === segment);
 
       if (!child) {
@@ -100,10 +103,10 @@ export function createModuleTree(modules: AtlasModule[]): TreemapNode {
 
       // Return the updated child node, for next segment path iteration
       return child;
-    }, map);
+    }, root);
   }
 
-  return map;
+  return root;
 }
 
 /**
@@ -132,10 +135,11 @@ export function simplifySingleChildNodes(tree: TreemapNode): TreemapNode {
 
         // NOTE(cedric): the `modulePath` of the root node is ignored, no need to edit
         node.name = nameSegments[nameSegments.length - 1];
-        parent.name =
-          parent.name !== '/' ? `${parent.name}/${nameForOtherSegments}` : nameForOtherSegments;
+        parent.name = !parent.isRoot
+          ? `${parent.name}/${nameForOtherSegments}`
+          : nameForOtherSegments;
       } else {
-        parent.name = parent.name !== '/' ? `${parent.name}/${node.name}` : node.name;
+        parent.name = !parent.isRoot ? `${parent.name}/${node.name}` : node.name;
         parent.value = node.value;
         parent.children = node.children;
         parent.moduleSize = node.moduleSize;
