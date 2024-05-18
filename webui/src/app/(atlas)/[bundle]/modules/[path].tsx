@@ -17,8 +17,8 @@ import { type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {
   const { bundle } = useBundle();
-  const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const module = useModuleData(bundle.id, absolutePath!);
+  const { path: relativePath } = useLocalSearchParams<{ path: string }>();
+  const module = useModuleData(bundle.id, relativePath!);
 
   return (
     <Layout>
@@ -27,7 +27,7 @@ export default function ModulePage() {
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
-          <BreadcrumbLinks bundle={bundle} path={absolutePath!} />
+          <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
             <Tag variant={bundle.platform} />
             {!!module.data?.package && <span>{module.data.package}</span>}
