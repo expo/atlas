@@ -2,12 +2,19 @@
 <html lang="en-US">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=/_expo/atlas" />
 
     <title>Expo Atlas - Redirecting...</title>
 
     <script type="text/javascript">
-      window.location.href = '/_expo/atlas';
+      try {
+        let url = new URL(window.location.href);
+        url.hostname = 'localhost';
+        url.pathname = '/_expo/atlas';
+        window.location.href = url.toString();
+      } catch (error) {
+        console.error('Failed to redirect to Atlas, reason:', error);
+
+      }
     </script>
 
     <style>
@@ -50,7 +57,7 @@
   <body>
     <main>
       <h2>Redirecting.</h2>
-      <p>Opening Atlas for your project, <a href="/_expo/atlas">click here</a> if that doesn't happen automatically</p>
+      <p>Opening Atlas for your project, <a href="http://localhost:8081/_expo/atlas">click here</a> if that doesn't happen automatically</p>
     </main>
   </body>
 </html>
