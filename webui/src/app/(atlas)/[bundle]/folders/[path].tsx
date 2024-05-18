@@ -21,10 +21,10 @@ import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/u
 import { formatFileSize } from '~/utils/formatString';
 
 export default function FolderPage() {
-  const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
+  const { path: relativePath } = useLocalSearchParams<{ path: string }>();
   const { bundle } = useBundle();
   const { filters, filtersEnabled, resetFilters } = useModuleFilters();
-  const modules = useModuleGraphDataInFolder(bundle.id, absolutePath!, filters);
+  const modules = useModuleGraphDataInFolder(bundle.id, relativePath!, filters);
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
@@ -36,7 +36,7 @@ export default function FolderPage() {
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
-          <BreadcrumbLinks bundle={bundle} path={absolutePath!} />
+          <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
             <Tag variant={bundle.platform} />
             <span>folder</span>
