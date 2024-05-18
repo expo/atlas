@@ -16,9 +16,12 @@ export function ModuleCode({ module }: ModuleCodeProps) {
   const outputCode = output?.data.code || '[not available]';
   const outputFormat = useFormattedCode(outputCode);
 
-  const sourceHighlight = useHighlightedCode(module.path, module.source || '[not available]');
+  const sourceHighlight = useHighlightedCode(
+    module.absolutePath,
+    module.source || '[not available]'
+  );
   const outputHighlight = useHighlightedCode(
-    module.path,
+    module.absolutePath,
     outputFormat.formatted || outputCode || '[not available]'
   );
 

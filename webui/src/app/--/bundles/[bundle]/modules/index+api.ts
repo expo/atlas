@@ -77,8 +77,22 @@ export async function POST(request: Request, params: Record<'bundle', string>) {
     return Response.json({ error: error.message }, { status: 406 });
   }
 
-  const module = bundle.modules.get(moduleRef);
+  const module = getModuleByAbsoluteOrRelativePath(bundle, moduleRef);
   return module
     ? Response.json(module)
     : Response.json({ error: `Module "${moduleRef}" not found.` }, { status: 404 });
+}
+
+// TODO(cedric): simplify this
+function getModuleByAbsoluteOrRelativePath(bundle: AtlasBundle, moduleRef: string) {
+  const moduleByRef = bundle.modules.get(moduleRef);
+  if (moduleByRef) return moduleByRef;
+
+  const moduleRefWithSharedRoot = `${bundle.sharedRoot}/${moduleRef}`;
+  const moduleBySharedRoot = bundle.modules.get(moduleRefWithSharedRoot);
+  if (moduleBySharedRoot) return moduleBySharedRoot;
+
+  const moduleBySharedRootNonPosix = moduleRefWithSharedRoot.replace(/\//g, '\\');
+  const moduleBySharedRootNonPosixPath = bundle.modules.get(moduleBySharedRootNonPosix);
+  if (moduleBySharedRootNonPosixPath) return moduleBySharedRootNonPosixPath;
 }

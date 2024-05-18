@@ -22,8 +22,6 @@ export default function ModulePage() {
 
   return (
     <Layout>
-      <BundleDeltaToast bundle={bundle} modulePath={absolutePath} />
-
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>
@@ -47,6 +45,7 @@ export default function ModulePage() {
         <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
+          <BundleDeltaToast bundle={bundle} modulePath={module.data.absolutePath} />
           <ModuleReference className="mb-2 my-6" bundle={bundle} module={module.data} />
           <div className="mx-2 my-8">
             <h3 className="font-semibold my-2">Module content</h3>
@@ -59,7 +58,7 @@ export default function ModulePage() {
 }
 
 function getModuleType(module: AtlasModule) {
-  const type = module.path.includes('?ctx=') ? 'require.context' : 'file';
+  const type = module.relativePath.includes('?ctx=') ? 'require.context' : 'file';
   return module.package ? `package ${type}` : type;
 }
 
