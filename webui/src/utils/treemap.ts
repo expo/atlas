@@ -60,14 +60,13 @@ export function createModuleTree(
 ): TreemapNode {
   const totalSize = modules.reduce((total, module) => total + module.size, 0);
   const sharedRoot = bundle.sharedRoot.replace(/\\/g, '/'); // Format as posix path
+
   const root: TreemapNode = {
     isRoot: true,
     name: sharedRoot,
     value: 100, // 100%
     moduleSize: totalSize,
     moduleFiles: modules.length,
-    // NOTE(cedric): technically, this should be the bundle's shared root,
-    // but that kind of clutters the treemap's tooltip a bit
     modulePath: '',
     modulePackage: undefined,
   };
@@ -83,7 +82,7 @@ export function createModuleTree(
           value: 0,
           moduleSize: 0,
           moduleFiles: 0,
-          modulePath: segments.slice(0, index + 1).join('/'),
+          modulePath: [sharedRoot, ...segments.slice(0, index + 1)].join('/'),
           modulePackage: undefined,
         };
         // Add them to the current node
