@@ -28,13 +28,12 @@ export async function GET(request: Request, params: Record<'bundle', string>) {
   const query = new URL(request.url).searchParams;
   const allModules = Array.from(bundle.modules.values());
   const filteredModules = filterModules(allModules, {
-    projectRoot: bundle.projectRoot,
     filters: moduleFiltersFromParams(query),
-    rootPath: query.get('path') || undefined,
+    searchPath: query.get('path') || undefined,
   });
 
   const response: ModuleGraphResponse = {
-    data: finalizeModuleTree(createModuleTree(filteredModules)),
+    data: finalizeModuleTree(createModuleTree(bundle, filteredModules)),
     bundle: {
       platform: bundle.platform as any,
       moduleSize: allModules.reduce((size, module) => size + module.size, 0),

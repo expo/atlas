@@ -49,7 +49,7 @@ export function BundleGraph(props: BundleGraphProps) {
       onEvents={{
         click({ event, data }: { event: any; data: TreemapNode }) {
           if (event.event.altKey || event.event.ctrlKey || event.event.metaKey) {
-            const path = data.value === 100 ? data.name : data.modulePath;
+            const path = data.value === 100 ? data.name : data.moduleRelativePath;
 
             router.push({
               pathname: !path
@@ -174,7 +174,7 @@ function getBundleGraphTooltip(
   return (params) => {
     const node = params.data as TreemapNode;
     // NOTE(cedric): root only has `value` and `name`, while all nodes should have `modulePath`
-    const isRoot = node.modulePath === undefined;
+    const isRoot = node.moduleAbsolutePath === undefined;
     // TODO(cedric): disable tooltip for root, the name is the absolute path and may be too large in some cases
     if (isRoot) return '';
 
@@ -183,7 +183,7 @@ function getBundleGraphTooltip(
     const files = isRoot ? graph.moduleFiles : node.moduleFiles;
     // NOTE(cedric): quick workaround to _try_ break on `/` characters
     // see: https://stackoverflow.com/a/21780096
-    const path = isRoot ? params.name : node.modulePath?.replaceAll('/', '/&#8203;');
+    const path = isRoot ? params.name : node.moduleAbsolutePath?.replaceAll('/', '/&#8203;');
 
     return `
       <div class="flex flex-col bg-screen text-default rounded-md leading-6 max-w-80">

@@ -17,19 +17,17 @@ import { type AtlasModule } from '~core/data/types';
 
 export default function ModulePage() {
   const { bundle } = useBundle();
-  const { path: absolutePath } = useLocalSearchParams<{ path: string }>();
-  const module = useModuleData(bundle.id, absolutePath!);
+  const { path: relativePath } = useLocalSearchParams<{ path: string }>();
+  const module = useModuleData(bundle.id, relativePath!);
 
   return (
     <Layout>
-      <BundleDeltaToast bundle={bundle} modulePath={absolutePath} />
-
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>
       <LayoutHeader>
         <LayoutTitle>
-          <BreadcrumbLinks bundle={bundle} path={absolutePath!} />
+          <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
             <Tag variant={bundle.platform} />
             {!!module.data?.package && <span>{module.data.package}</span>}
@@ -47,6 +45,7 @@ export default function ModulePage() {
         <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
+          <BundleDeltaToast bundle={bundle} modulePath={module.data.absolutePath} />
           <ModuleReference className="mb-2 my-6" bundle={bundle} module={module.data} />
           <div className="mx-2 my-8">
             <h3 className="font-semibold my-2">Module content</h3>
@@ -59,7 +58,7 @@ export default function ModulePage() {
 }
 
 function getModuleType(module: AtlasModule) {
-  const type = module.path.includes('?ctx=') ? 'require.context' : 'file';
+  const type = module.relativePath.includes('?ctx=') ? 'require.context' : 'file';
   return module.package ? `package ${type}` : type;
 }
 

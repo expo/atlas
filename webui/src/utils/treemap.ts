@@ -1,6 +1,8 @@
-import type { AtlasModule } from '~core/data/types';
+import type { AtlasBundle, AtlasModule } from '~core/data/types';
 
 export type TreemapNode = {
+  /** If the current node is the root of the treemap */
+  isRoot?: true;
   /** The current path of the node */
   name: string;
   /** The size, in percentage, of all modules within this node (based on `module.size`) */
@@ -11,8 +13,10 @@ export type TreemapNode = {
   moduleSize: number;
   /** The amount of module files within this node group */
   moduleFiles: number;
-  /** The full path of this node group, based on `module.path` segments */
-  modulePath: string;
+  /** The absolute path of this node group, based on `module.path` segments */
+  moduleAbsolutePath: string;
+  /** The relative path of this node group to the bundle's `sharedRoot`, based on `module.path` segments */
+  moduleRelativePath: string;
   /** If this group is the root path of a module, the module name */
   modulePackage?: string;
   /** The treemap item style, set for individual packages */
@@ -43,8 +47,10 @@ export function traverse(
  *   - Assigning colors to package nodes and their children
  */
 export function finalizeModuleTree(node: TreemapNode): TreemapNode {
-  return assignPackageColors(
-    sortNodesByModuleSize(simplifySingleChildNodes(simplifyOrgPackageNodes(node)))
+  return ensureRootNodeHasAbsoluteName(
+    assignPackageColors(
+      sortNodesByModuleSize(simplifySingleChildNodes(simplifyOrgPackageNodes(node)))
+    )
   );
 }
 
@@ -52,31 +58,39 @@ export function finalizeModuleTree(node: TreemapNode): TreemapNode {
  * Create a nested treemap from the list of modules.
  * This will group the modules by `module.path` segments, and add metadata to each node.
  */
-export function createModuleTree(modules: AtlasModule[]): TreemapNode {
+export function createModuleTree(
+  bundle: Pick<AtlasBundle, 'sharedRoot'>,
+  modules: AtlasModule[]
+): TreemapNode {
   const totalSize = modules.reduce((total, module) => total + module.size, 0);
-  const map: TreemapNode = {
-    name: '/', // This is the root, so no prefix
+  const sharedRoot = bundle.sharedRoot.replace(/\\/g, '/'); // Format as posix path
+
+  const root: TreemapNode = {
+    isRoot: true,
+    name: sharedRoot,
     value: 100, // 100%
     moduleSize: totalSize,
     moduleFiles: modules.length,
-    // NOTE(cedric): technically, this should be the bundle's shared root,
-    // but that kind of clutters the treemap's tooltip a bit
-    modulePath: '',
+    moduleRelativePath: '',
+    moduleAbsolutePath: '',
     modulePackage: undefined,
   };
 
   for (const module of modules) {
-    module.path.split('/').reduce((node, segment, index, segments) => {
+    module.relativePath.split('/').reduce((node, segment, index, segments) => {
       let child = node.children?.find((child) => child.name === segment);
 
       if (!child) {
+        const moduleRelativePath = segments.slice(0, index + 1).join('/');
+
         // Create the child for segment paths if not found
         child = {
           name: segment,
           value: 0,
           moduleSize: 0,
           moduleFiles: 0,
-          modulePath: segments.slice(0, index + 1).join('/'),
+          moduleAbsolutePath: `${sharedRoot}/${moduleRelativePath}`,
+          moduleRelativePath,
           modulePackage: undefined,
         };
         // Add them to the current node
@@ -100,10 +114,10 @@ export function createModuleTree(modules: AtlasModule[]): TreemapNode {
 
       // Return the updated child node, for next segment path iteration
       return child;
-    }, map);
+    }, root);
   }
 
-  return map;
+  return root;
 }
 
 /**
@@ -132,14 +146,16 @@ export function simplifySingleChildNodes(tree: TreemapNode): TreemapNode {
 
         // NOTE(cedric): the `modulePath` of the root node is ignored, no need to edit
         node.name = nameSegments[nameSegments.length - 1];
-        parent.name =
-          parent.name !== '/' ? `${parent.name}/${nameForOtherSegments}` : nameForOtherSegments;
+        parent.name = !parent.isRoot
+          ? `${parent.name}/${nameForOtherSegments}`
+          : nameForOtherSegments;
       } else {
-        parent.name = parent.name !== '/' ? `${parent.name}/${node.name}` : node.name;
+        parent.name = !parent.isRoot ? `${parent.name}/${node.name}` : node.name;
         parent.value = node.value;
         parent.children = node.children;
         parent.moduleSize = node.moduleSize;
-        parent.modulePath = node.modulePath;
+        parent.moduleAbsolutePath = node.moduleAbsolutePath;
+        parent.moduleRelativePath = node.moduleRelativePath;
         parent.modulePackage = parent.modulePackage || node.modulePackage;
         parent.moduleFiles = node.moduleFiles; // This should always the same value
       }
@@ -173,7 +189,8 @@ export function simplifyOrgPackageNodes(tree: TreemapNode): TreemapNode {
           node.children.map((child) => ({
             ...child,
             name: `${node.name}/${child.name}`,
-            modulePath: `${node.modulePath}/${child.name}`,
+            moduleAbsolutePath: child.moduleAbsolutePath,
+            moduleRelativePath: child.moduleRelativePath,
           }))
         );
     }
@@ -230,4 +247,18 @@ export function assignPackageColors(tree: TreemapNode) {
   });
 
   return tree;
+}
+
+/**
+ * Ensure that the root node has the absolute module path set.
+ * This might change when filtering by search path.
+ *
+ * @TODO(cedric): resolve this during previous transformations
+ */
+function ensureRootNodeHasAbsoluteName(node: TreemapNode) {
+  if (node.isRoot && node.name !== node.moduleAbsolutePath) {
+    node.name = node.moduleAbsolutePath;
+  }
+
+  return node;
 }

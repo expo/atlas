@@ -7,7 +7,7 @@ import path from 'path';
 import type { AtlasBundle, AtlasBundleDelta, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';
 import { getPackageNameFromPath } from '../utils/package';
-import { findSharedRoot } from '../utils/paths';
+import { convertPathToPosix, findSharedRoot } from '../utils/paths';
 
 type MetroGraph = metro.Graph | metro.ReadOnlyGraph;
 type MetroModule = metro.Module;
@@ -146,6 +146,7 @@ export function convertMetroConfig(config: MetroConfig): ConvertGraphToAtlasOpti
 
 /** Convert a Metro graph instance to a JSON-serializable entry */
 export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
+  const sharedRoot = getSharedRoot(options);
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
   const platform =
@@ -154,13 +155,15 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
       : transformOptions?.platform ?? 'unknown';
 
   return {
-    id: Buffer.from(`${options.entryPoint}+${platform}`).toString('base64url'), // FIX: only use URL allowed characters
+    id: Buffer.from(`${path.relative(sharedRoot, options.entryPoint)}+${platform}`).toString(
+      'base64url'
+    ), // FIX: only use URL allowed characters
     platform,
     projectRoot: options.projectRoot,
-    sharedRoot: getSharedRoot(options),
+    sharedRoot,
     entryPoint: options.entryPoint,
-    runtimeModules: options.preModules.map((module) => convertModule(options, module)),
-    modules: collectEntryPointModules(options),
+    runtimeModules: options.preModules.map((module) => convertModule(options, module, sharedRoot)),
+    modules: collectEntryPointModules(options, sharedRoot),
     serializeOptions,
     transformOptions,
   };
@@ -171,45 +174,53 @@ export function collectEntryPointModules(
   options: Pick<
     ConvertGraphToAtlasOptions,
     'graph' | 'entryPoint' | 'serializeOptions' | 'metroConfig'
-  >
+  >,
+  sharedRoot: string
 ) {
   const modules = new Map<string, AtlasModule>();
 
+  /** Discover and collect all files related to the provided module path */
   function discover(modulePath: string) {
     const module = options.graph.dependencies.get(modulePath);
     if (module && !modules.has(modulePath) && !moduleIsVirtual(module)) {
-      modules.set(modulePath, convertModule(options, module));
+      modules.set(modulePath, convertModule(options, module, sharedRoot));
       module.dependencies.forEach((modulePath) => discover(modulePath.absolutePath));
     }
   }
 
+  // Find and collect all modules related to the entry point
   discover(options.entryPoint);
+
   return modules;
 }
 
 /** Convert a Metro module to a JSON-serializable Atlas module */
 export function convertModule(
   options: Pick<ConvertGraphToAtlasOptions, 'graph' | 'metroConfig' | 'serializeOptions'>,
-  module: MetroModule
+  module: MetroModule,
+  sharedRoot: string
 ): AtlasModule {
   const { createModuleId } = options.serializeOptions;
 
   return {
     id: createModuleId(module.path),
-    path: module.path,
+    absolutePath: module.path,
+    relativePath: convertPathToPosix(path.relative(sharedRoot, module.path)),
     package: getPackageNameFromPath(module.path),
     size: module.output.reduce((bytes, output) => bytes + Buffer.byteLength(output.data.code), 0),
     imports: Array.from(module.dependencies.values()).map((module) => ({
       id: createModuleId(module.absolutePath),
-      path: module.absolutePath,
+      absolutePath: module.absolutePath,
+      relativePath: convertPathToPosix(path.relative(sharedRoot, module.absolutePath)),
       package: getPackageNameFromPath(module.absolutePath),
     })),
     importedBy: Array.from(module.inverseDependencies)
       .filter((path) => options.graph.dependencies.has(path))
-      .map((path) => ({
-        id: createModuleId(path),
-        path,
-        package: getPackageNameFromPath(path),
+      .map((absolutePath) => ({
+        id: createModuleId(absolutePath),
+        absolutePath,
+        relativePath: convertPathToPosix(path.relative(sharedRoot, absolutePath)), // TODO
+        package: getPackageNameFromPath(absolutePath),
       })),
     source: getModuleSourceContent(options, module),
     output: module.output.map((output) => ({

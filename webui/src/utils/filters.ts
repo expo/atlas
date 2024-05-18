@@ -1,5 +1,4 @@
 import { useGlobalSearchParams, useRouter } from 'expo-router';
-import path from 'path';
 import picomatch from 'picomatch';
 
 import { type AtlasModule } from '~core/data/types';
@@ -67,17 +66,16 @@ export function useModuleFilters() {
 export function filterModules(
   modules: AtlasModule[],
   options: {
-    projectRoot: string;
     filters: ModuleFilters;
-    rootPath?: string;
+    searchPath?: string;
   }
 ) {
-  const { filters, projectRoot, rootPath } = options;
+  const { filters, searchPath } = options;
 
-  if (rootPath || filters.scope === 'project') {
+  if (searchPath || filters.scope === 'project') {
     modules = modules.filter(
       (module) =>
-        (!rootPath || module.path.startsWith(rootPath)) &&
+        (!searchPath || module.relativePath.startsWith(searchPath)) &&
         (filters.scope !== 'project' || !module.package)
     );
   }
@@ -91,7 +89,7 @@ export function filterModules(
       ignore: !options.filters.exclude ? undefined : splitPattern(options.filters.exclude),
     });
 
-    modules = modules.filter((module) => matcher(path.relative(projectRoot, module.path)));
+    modules = modules.filter((module) => matcher(module.relativePath));
   }
 
   return modules;

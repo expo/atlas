@@ -9,11 +9,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '~/ui/Breadcrumb';
-import { relativeBundlePath, rootBundlePath } from '~/utils/bundle';
 import { type PartialAtlasBundle } from '~core/data/types';
 
 type BreadcrumbLinksProps = {
+  /** The current opened bundle, used to generate the proper links */
   bundle: PartialAtlasBundle;
+  /** The relative path to generate the breadcrumb links from */
   path: string;
 };
 
@@ -62,16 +63,13 @@ type BreadcrumbLinkItem = {
 };
 
 function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
-  const rootPath = rootBundlePath(props.bundle).replace(/\/$/, '');
-  const relativePath = relativeBundlePath(props.bundle, props.path).replace(/^\//, '');
-
-  return relativePath.split('/').map((label, index, breadcrumbs) => {
+  return props.path.split('/').map((label, index, breadcrumbs) => {
     const isLastSegment = index === breadcrumbs.length - 1;
     const breadcrumb: BreadcrumbLinkItem = { key: `${index}-${label}`, label };
 
-    // NOTE(cedric): a bit of a workaround to avoid linking the module page, might need to change this
+    // NOTE(cedric): a bit of a workaround to avoid linking to the current page, might need to change this
     if (!isLastSegment || !label.includes('.')) {
-      const path = `${rootPath}/${breadcrumbs.slice(0, index + 1).join('/')}`;
+      const path = breadcrumbs.slice(0, index + 1).join('/');
       breadcrumb.key = path;
       breadcrumb.href = {
         pathname: '/(atlas)/[bundle]/folders/[path]',
