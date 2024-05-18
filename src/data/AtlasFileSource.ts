@@ -2,7 +2,7 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 
-import type { PartialAtlasBundle, AtlasBundle, AtlasSource } from './types';
+import type { PartialAtlasBundle, AtlasBundle, AtlasSource, AtlasModule } from './types';
 import { name, version } from '../../package.json';
 import { env } from '../utils/env';
 import { AtlasValidationError } from '../utils/errors';
@@ -73,7 +73,7 @@ export async function readAtlasEntry(filePath: string, id: number): Promise<Atla
     sharedRoot: atlasEntry[2],
     entryPoint: atlasEntry[3],
     runtimeModules: atlasEntry[4],
-    modules: new Map(atlasEntry[5].map((module) => [module.path, module])),
+    modules: new Map(atlasEntry[5].map((module: AtlasModule) => [module.absolutePath, module])),
     transformOptions: atlasEntry[6],
     serializeOptions: atlasEntry[7],
   };
