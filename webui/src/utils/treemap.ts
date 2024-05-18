@@ -47,8 +47,10 @@ export function traverse(
  *   - Assigning colors to package nodes and their children
  */
 export function finalizeModuleTree(node: TreemapNode): TreemapNode {
-  return assignPackageColors(
-    sortNodesByModuleSize(simplifySingleChildNodes(simplifyOrgPackageNodes(node)))
+  return ensureRootNodeHasAbsoluteName(
+    assignPackageColors(
+      sortNodesByModuleSize(simplifySingleChildNodes(simplifyOrgPackageNodes(node)))
+    )
   );
 }
 
@@ -188,7 +190,6 @@ export function simplifyOrgPackageNodes(tree: TreemapNode): TreemapNode {
             ...child,
             name: `${node.name}/${child.name}`,
             moduleAbsolutePath: child.moduleAbsolutePath,
-            // moduleRelativePath: `${node.moduleRelativePath}/${child.name}`,
             moduleRelativePath: child.moduleRelativePath,
           }))
         );
@@ -246,4 +247,18 @@ export function assignPackageColors(tree: TreemapNode) {
   });
 
   return tree;
+}
+
+/**
+ * Ensure that the root node has the absolute module path set.
+ * This might change when filtering by search path.
+ *
+ * @TODO(cedric): resolve this during previous transformations
+ */
+function ensureRootNodeHasAbsoluteName(node: TreemapNode) {
+  if (node.isRoot && node.name !== node.moduleAbsolutePath) {
+    node.name = node.moduleAbsolutePath;
+  }
+
+  return node;
 }
