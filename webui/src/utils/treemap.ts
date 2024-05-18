@@ -13,8 +13,10 @@ export type TreemapNode = {
   moduleSize: number;
   /** The amount of module files within this node group */
   moduleFiles: number;
-  /** The full path of this node group, based on `module.path` segments */
-  modulePath: string;
+  /** The absolute path of this node group, based on `module.path` segments */
+  moduleAbsolutePath: string;
+  /** The relative path of this node group to the bundle's `sharedRoot`, based on `module.path` segments */
+  moduleRelativePath: string;
   /** If this group is the root path of a module, the module name */
   modulePackage?: string;
   /** The treemap item style, set for individual packages */
@@ -67,7 +69,8 @@ export function createModuleTree(
     value: 100, // 100%
     moduleSize: totalSize,
     moduleFiles: modules.length,
-    modulePath: '',
+    moduleRelativePath: '',
+    moduleAbsolutePath: '',
     modulePackage: undefined,
   };
 
@@ -76,13 +79,16 @@ export function createModuleTree(
       let child = node.children?.find((child) => child.name === segment);
 
       if (!child) {
+        const moduleRelativePath = segments.slice(0, index + 1).join('/');
+
         // Create the child for segment paths if not found
         child = {
           name: segment,
           value: 0,
           moduleSize: 0,
           moduleFiles: 0,
-          modulePath: [sharedRoot, ...segments.slice(0, index + 1)].join('/'),
+          moduleAbsolutePath: `${sharedRoot}/${moduleRelativePath}`,
+          moduleRelativePath,
           modulePackage: undefined,
         };
         // Add them to the current node
@@ -146,7 +152,8 @@ export function simplifySingleChildNodes(tree: TreemapNode): TreemapNode {
         parent.value = node.value;
         parent.children = node.children;
         parent.moduleSize = node.moduleSize;
-        parent.modulePath = node.modulePath;
+        parent.moduleAbsolutePath = node.moduleAbsolutePath;
+        parent.moduleRelativePath = node.moduleRelativePath;
         parent.modulePackage = parent.modulePackage || node.modulePackage;
         parent.moduleFiles = node.moduleFiles; // This should always the same value
       }
@@ -180,7 +187,9 @@ export function simplifyOrgPackageNodes(tree: TreemapNode): TreemapNode {
           node.children.map((child) => ({
             ...child,
             name: `${node.name}/${child.name}`,
-            modulePath: `${node.modulePath}/${child.name}`,
+            moduleAbsolutePath: child.moduleAbsolutePath,
+            // moduleRelativePath: `${node.moduleRelativePath}/${child.name}`,
+            moduleRelativePath: child.moduleRelativePath,
           }))
         );
     }
