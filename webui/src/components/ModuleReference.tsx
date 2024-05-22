@@ -19,18 +19,18 @@ export function ModuleReference(props: ModuleReferenceProps) {
     <div className={cx('lg:grid lg:grid-cols-2', props.className)}>
       <div className="mb-6 lg:mb-0">
         <ModuleReferenceCollapsible
-          title="Modules imported"
-          emptyDescription="This module does not import other modules."
-          bundle={props.bundle}
-          moduleRefs={props.module.imports}
-        />
-      </div>
-      <div className="mt-6 lg:mt-0">
-        <ModuleReferenceCollapsible
           title="Imported by modules"
           emptyDescription="This module is not imported by other modules."
           bundle={props.bundle}
           moduleRefs={props.module.importedBy}
+        />
+      </div>
+      <div className="mt-6 lg:mt-0">
+        <ModuleReferenceCollapsible
+          title="Modules imported"
+          emptyDescription="This module does not import other modules."
+          bundle={props.bundle}
+          moduleRefs={props.module.imports}
         />
       </div>
     </div>
