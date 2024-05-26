@@ -13,11 +13,12 @@ import {
   NoDataState,
   NoDataWithFiltersState,
 } from '~/components/StateInfo';
+import { useModuleFilters } from '~/hooks/useModuleFilters';
 import { BundleDeltaToast, useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
-import { type ModuleFilters, useModuleFilters, moduleFiltersToParams } from '~/utils/filters';
+import { type ModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 import { formatFileSize } from '~/utils/formatString';
 
 export default function FolderPage() {
