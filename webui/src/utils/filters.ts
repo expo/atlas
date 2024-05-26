@@ -1,4 +1,3 @@
-import { useGlobalSearchParams, useRouter } from 'expo-router';
 import picomatch from 'picomatch';
 
 import { type AtlasModule } from '~core/data/types';
@@ -46,20 +45,6 @@ export function moduleFiltersToParams(filters: ModuleFilters) {
   if (filters.exclude) params.set('exclude', filters.exclude);
 
   return params;
-}
-
-/**
- * Get the current module filters from URL search params, using Expo Router.
- * This returns the filters, with default values, and if any of the filters has been defined.
- */
-export function useModuleFilters() {
-  const router = useRouter();
-  const filters = useGlobalSearchParams<ModuleFilters>();
-  return {
-    filters,
-    filtersEnabled: !!filters.scope || !!filters.include || !!filters.exclude,
-    resetFilters: () => router.setParams(DEFAULT_FILTERS),
-  };
 }
 
 /** Filter the modules based on the filters, and an optional (root) path. */

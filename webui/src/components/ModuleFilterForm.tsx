@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { type FormEvent, type KeyboardEvent, useState, useCallback } from 'react';
 
+import { useModuleFilters } from '~/hooks/useModuleFilters';
 import { Button } from '~/ui/Button';
 import { Checkbox } from '~/ui/Checkbox';
 import { Input } from '~/ui/Input';
@@ -14,7 +15,6 @@ import {
   SheetTrigger,
 } from '~/ui/Sheet';
 import { debounce } from '~/utils/debounce';
-import { useModuleFilters } from '~/utils/filters';
 
 type ModuleFiltersFormProps = {
   disableNodeModules?: boolean;
