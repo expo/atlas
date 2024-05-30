@@ -49,7 +49,7 @@ export function BundleGraph(props: BundleGraphProps) {
       onEvents={{
         click({ event, data }: { event: any; data: TreemapNode }) {
           if (event.event.altKey || event.event.ctrlKey || event.event.metaKey) {
-            const path = data.value === 100 ? data.name : data.moduleRelativePath;
+            const path = data.moduleRelativePath;
 
             router.push({
               pathname: !path
