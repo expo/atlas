@@ -1,13 +1,21 @@
-import { describe, expect, it, mock } from 'bun:test';
-import fs from 'fs';
-import path from 'path';
+import memfs from 'memfs';
 
 import { appendJsonLine, forEachJsonLines, parseJsonLine } from '../jsonl';
 
+jest.mock('fs');
+jest.mock('fs/promises');
+
 describe('forEachJsonLines', () => {
+  // TODO(cedric): figure out why memfs throws "EBADF: bad file descriptor"
+  // afterEach(() => {
+  //   memfs.vol.reset();
+  // });
+
   it('iterates each line of file', async () => {
+    memfs.vol.fromJSON({ '/test/iterate/lines.jsonl': createJsonlExample() });
+
     const lines: string[] = [];
-    await forEachJsonLines(fixture('specification'), (content) => {
+    await forEachJsonLines('/test/iterate/lines.jsonl', (content) => {
       lines.push(content);
     });
 
@@ -20,8 +28,10 @@ describe('forEachJsonLines', () => {
   });
 
   it('iterates each line with line numbers starting from 1', async () => {
-    const onReadLine = mock();
-    await forEachJsonLines(fixture('specification'), onReadLine);
+    memfs.vol.fromJSON({ '/test/iterate/linenumbers.jsonl': createJsonlExample() });
+
+    const onReadLine = jest.fn();
+    await forEachJsonLines('/test/iterate/linenumbers.jsonl', onReadLine);
 
     // Callback is invoked with (content, line, reader) => ...
     expect(onReadLine).not.toHaveBeenCalledWith(expect.any(String), 0, expect.any(Object));
@@ -33,29 +43,44 @@ describe('forEachJsonLines', () => {
 });
 
 describe('parseJsonLine', () => {
+  // TODO(cedric): figure out why memfs throws "EBADF: bad file descriptor"
+  // afterEach(() => {
+  //   memfs.vol.reset();
+  // });
+
   it('parses a single line from file', async () => {
-    expect(await parseJsonLine(fixture('specification'), 1)).toMatchObject({ name: 'Gilbert' });
-    expect(await parseJsonLine(fixture('specification'), 2)).toMatchObject({ name: 'Alexa' });
-    expect(await parseJsonLine(fixture('specification'), 3)).toMatchObject({ name: 'May' });
-    expect(await parseJsonLine(fixture('specification'), 4)).toMatchObject({ name: 'Deloise' });
+    memfs.vol.fromJSON({ '/test/parse/line.jsonl': createJsonlExample() });
+
+    expect(await parseJsonLine('/test/parse/line.jsonl', 1)).toMatchObject({ name: 'Gilbert' });
+    expect(await parseJsonLine('/test/parse/line.jsonl', 2)).toMatchObject({ name: 'Alexa' });
+    expect(await parseJsonLine('/test/parse/line.jsonl', 3)).toMatchObject({ name: 'May' });
+    expect(await parseJsonLine('/test/parse/line.jsonl', 4)).toMatchObject({ name: 'Deloise' });
   });
 
   it('throws if single line is not found', async () => {
-    await expect(parseJsonLine(fixture('specification'), 99999)).rejects.toThrow(
+    memfs.vol.fromJSON({ '/test/parse/outofbounds.jsonl': createJsonlExample() });
+    await expect(parseJsonLine('/test/parse/outofbounds.jsonl', 99999)).rejects.toThrow(
       'Line 99999 not found in file'
     );
   });
 });
 
 describe('appendJsonLine', () => {
+  // TODO(cedric): figure out why memfs throws "EBADF: bad file descriptor"
+  // afterEach(() => {
+  //   memfs.vol.reset();
+  // });
+
   it('appends a single line to file', async () => {
-    const file = fixture('append-single', { temporary: true });
-    await appendJsonLine(file, { name: 'Gilbert' });
-    await expect(fs.promises.readFile(file, 'utf-8')).resolves.toBe('{"name":"Gilbert"}\n');
+    memfs.vol.fromJSON({ '/test/append/line.jsonl': '' });
+    await appendJsonLine('/test/append/line.jsonl', { name: 'Gilbert' });
+    expect(memfs.vol.toJSON()).toMatchObject({
+      '/test/append/line.jsonl': '{"name":"Gilbert"}\n',
+    });
   });
 
   it('appends multiple lines to file', async () => {
-    const file = fixture('append-multiple', { temporary: true });
+    memfs.vol.fromJSON({ '/test/append/lines.jsonl': '' });
     const data = [
       { name: 'Gilbert', list: ['some-list'] },
       { name: 'Alexa', nested: { nested: true, list: ['other', 'items'] } },
@@ -64,30 +89,20 @@ describe('appendJsonLine', () => {
     ];
 
     for (const item of data) {
-      await appendJsonLine(file, item);
+      await appendJsonLine('/test/append/lines.jsonl', item);
     }
 
-    await expect(fs.promises.readFile(file, 'utf-8')).resolves.toBe(
-      data.map((item) => JSON.stringify(item) + '\n').join('')
-    );
+    expect(memfs.vol.toJSON()).toMatchObject({
+      '/test/append/lines.jsonl': data.map((item) => JSON.stringify(item) + '\n').join(''),
+    });
   });
 });
 
-/**
- * Get the file path to a fixture, by name.
- * This automatically adds the required `.jsonl` or `.temp.jsonl` extension.
- * Use `temporary: true` to keep it out of the repository, and reset the content automatically.
- */
-function fixture(name: string, { temporary = false }: { temporary?: boolean } = {}) {
-  const file = temporary
-    ? path.join(__dirname, 'fixtures/jsonl', `${name}.temp.jsonl`)
-    : path.join(__dirname, 'fixtures/jsonl', `${name}.jsonl`);
-
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-
-  if (temporary) {
-    fs.writeFileSync(file, '');
-  }
-
-  return file;
+/** See: https://jsonlines.org/examples/ */
+function createJsonlExample() {
+  return `{"name": "Gilbert", "wins": [["straight", "7♣"], ["one pair", "10♥"]]}
+{"name": "Alexa", "wins": [["two pair", "4♠"], ["two pair", "9♠"]]}
+{"name": "May", "wins": []}
+{"name": "Deloise", "wins": [["three of a kind", "5♣"]]}
+`;
 }
