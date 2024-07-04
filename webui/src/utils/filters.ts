@@ -52,10 +52,13 @@ export function filterModules(
   modules: AtlasModule[],
   options: {
     filters: ModuleFilters;
+    /** Search for all modules by path, this matches exact and other matching paths */
     searchPath?: string;
+    /** Search for all modules by exact path, this only matches exact paths */
+    exactPath?: string;
   }
 ) {
-  const { filters, searchPath } = options;
+  const { filters, exactPath, searchPath } = options;
 
   if (searchPath || filters.scope === 'project') {
     modules = modules.filter(
@@ -63,6 +66,8 @@ export function filterModules(
         (!searchPath || module.relativePath.startsWith(searchPath)) &&
         (filters.scope !== 'project' || !module.package)
     );
+  } else if (exactPath) {
+    modules = modules.filter((module) => module.relativePath.startsWith(`${exactPath}/`))
   }
 
   if (filters.include || filters.exclude) {

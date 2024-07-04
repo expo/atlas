@@ -29,7 +29,7 @@ export async function GET(request: Request, params: Record<'bundle', string>) {
   const allModules = Array.from(bundle.modules.values());
   const filteredModules = filterModules(allModules, {
     filters: moduleFiltersFromParams(query),
-    searchPath: query.get('path') || undefined,
+    exactPath: query.get('path') || undefined,
   });
 
   const response: ModuleGraphResponse = {
