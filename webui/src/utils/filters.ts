@@ -67,7 +67,7 @@ export function filterModules(
         (filters.scope !== 'project' || !module.package)
     );
   } else if (exactPath) {
-    modules = modules.filter((module) => module.relativePath.startsWith(`${exactPath}/`))
+    modules = modules.filter((module) => module.relativePath.startsWith(`${exactPath}/`));
   }
 
   if (filters.include || filters.exclude) {
