@@ -48,7 +48,7 @@ export type AtlasBundleDelta = {
 
 export type AtlasModule = {
   /** The internal module ID given by Metro */
-  id: number;
+  id: number | string;
   /** The absoluate path of this module, in the platform-original format */
   absolutePath: string;
   /** The relative path of this module, to the shared root of the bundle, in posix format */
