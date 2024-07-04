@@ -4,7 +4,7 @@ description: Prepare the project for any CI action
 inputs:
   bun-version:
     description: Version of Bun to install
-    default: 1.x
+    default: latest
 
   node-version:
     description: Version of Node to install
