@@ -133,10 +133,17 @@ export async function validateAtlasFile(filePath: string, metadata = getAtlasMet
     return;
   }
 
-  const data = await parseJsonLine(filePath, 1);
+  try {
+    const data = await parseJsonLine(filePath, 1);
+    if (data.name !== metadata.name || data.version !== metadata.version) {
+      throw new AtlasValidationError('ATLAS_FILE_INCOMPATIBLE', filePath, data.version);
+    }
+  } catch (error: any) {
+    if (error.name === 'SyntaxError') {
+      throw new AtlasValidationError('ATLAS_FILE_INVALID', filePath);
+    }
 
-  if (data.name !== metadata.name || data.version !== metadata.version) {
-    throw new AtlasValidationError('ATLAS_FILE_INCOMPATIBLE', filePath, data.version);
+    throw error;
   }
 }
 
@@ -157,7 +164,7 @@ export async function ensureAtlasFileExist(filePath: string) {
   try {
     await validateAtlasFile(filePath);
   } catch (error: any) {
-    if (error.code === 'ATLAS_FILE_NOT_FOUND' || error.code === 'ATLAS_FILE_INCOMPATIBLE') {
+    if (error instanceof AtlasValidationError) {
       await createAtlasFile(filePath);
       return false;
     }

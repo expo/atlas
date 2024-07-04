@@ -28,7 +28,7 @@ jobs:
         run: bun run typecheck
 
       - name: 🧪 Test core
-        run: bun test
+        run: bun run test
 
       - name: 👷 Build core
         run: bun run build

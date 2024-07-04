@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'bun:test';
-
 import { convertPathToPosix } from '../paths';
 
 describe('convertPathToPosix', () => {

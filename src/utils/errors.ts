@@ -15,7 +15,7 @@ export class AtlasError extends Error {
 
 export class AtlasValidationError extends AtlasError {
   constructor(
-    code: 'ATLAS_FILE_NOT_FOUND' | 'ATLAS_FILE_INCOMPATIBLE',
+    code: 'ATLAS_FILE_NOT_FOUND' | 'ATLAS_FILE_INCOMPATIBLE' | 'ATLAS_FILE_INVALID',
     public readonly filePath: string,
     public readonly incompatibleVersion?: string
   ) {
