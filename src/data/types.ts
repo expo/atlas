@@ -5,10 +5,6 @@ export interface AtlasSource {
   listBundles(): PartialAtlasBundle[] | Promise<PartialAtlasBundle[]>;
   /** Load the full entry, by reference */
   getBundle(ref: string): AtlasBundle | Promise<AtlasBundle>;
-  /** Load the entry changes since last bundle collection, if any */
-  getBundleDelta(ref: string): null | AtlasBundleDelta | Promise<null | AtlasBundleDelta>;
-  /** Determine if the source is watching for (live) changes. */
-  bundleDeltaEnabled(): boolean;
 }
 
 export type PartialAtlasBundle = Pick<
@@ -35,15 +31,6 @@ export type AtlasBundle = {
   serializeOptions?: Record<string, any>;
   /** The transformation options used for this bundle */
   transformOptions?: Record<string, any>;
-};
-
-export type AtlasBundleDelta = {
-  /** When this delta or change was created */
-  createdAt: Date;
-  /** Both added and modified module paths */
-  modifiedPaths: string[];
-  /** Deleted module paths */
-  deletedPaths: string[];
 };
 
 export type AtlasModule = {

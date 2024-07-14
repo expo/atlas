@@ -9,7 +9,6 @@ import {
   useCallback,
 } from 'react';
 
-import { type BundleDeltaResponse } from '~/app/--/bundles/[bundle]/delta+api';
 import { StateInfo } from '~/components/StateInfo';
 import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
@@ -97,7 +96,7 @@ export function BundleDeltaToast({
   const client = useQueryClient();
   const toaster = useToast();
 
-  const deltaResponse = useBundleDeltaData(bundle.id);
+  const deltaResponse: any = { data: { delta: null } };
   const bundleDelta = deltaResponse.data?.delta;
 
   const refetchBundleData = useCallback(
@@ -156,18 +155,4 @@ function toastBundleUpdate(bundleId: string, refetchBundleData: () => any): Toas
       </ToastAction>
     ),
   };
-}
-
-/** Poll the server to check for possible changes in bundles */
-function useBundleDeltaData(bundleId: string) {
-  return useQuery<BundleDeltaResponse>({
-    refetchInterval: (query) => (query.state.data?.isEnabled === false ? false : 2000),
-    queryKey: ['bundles', bundleId, 'delta'],
-    queryFn: ({ queryKey }) => {
-      const [_key, bundle] = queryKey as [string, string];
-      return fetchApi(`/bundles/${bundle}/delta`)
-        .then(handleApiError)
-        .then((response) => response?.json());
-    },
-  });
 }
