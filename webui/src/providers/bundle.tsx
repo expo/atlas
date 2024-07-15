@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
+import { useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import {
   type PropsWithChildren,
   createContext,
@@ -24,6 +24,15 @@ export const bundleContext = createContext<BundleContext>({
   bundles: [],
 });
 
+/** Get the current bundle identifier, this will always trigger an update */
+export const useBundleId = () => {
+  return useGlobalSearchParams<{ bundle?: string }>().bundle;
+};
+
+/**
+ * Get the current or all known bundle information.
+ * This method is optimized to trigger updates as little as possible.
+ */
 export const useBundle = () => {
   const { bundles } = useContext(bundleContext);
   const { bundle: bundleId } = useLocalSearchParams<{ bundle?: string }>();

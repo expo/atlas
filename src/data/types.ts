@@ -5,6 +5,9 @@ export interface AtlasSource {
   listBundles(): PartialAtlasBundle[] | Promise<PartialAtlasBundle[]>;
   /** Load the full entry, by reference */
   getBundle(ref: string): AtlasBundle | Promise<AtlasBundle>;
+
+  hasHmrSupport(): boolean;
+  getBundleHmr(ref: string): null | AtlasBundleHmr;
 }
 
 export type PartialAtlasBundle = Pick<
@@ -31,6 +34,12 @@ export type AtlasBundle = {
   serializeOptions?: Record<string, any>;
   /** The transformation options used for this bundle */
   transformOptions?: Record<string, any>;
+};
+
+export type AtlasBundleHmr = {
+  bundleId: AtlasBundle['id'];
+  socketUrl: string | URL;
+  entryPoints: string[];
 };
 
 export type AtlasModule = {

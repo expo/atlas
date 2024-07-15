@@ -4,6 +4,7 @@ import path from 'path';
 
 import type { AtlasBundle, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';
+import { getUrlFromJscSafeUrl } from '../utils/jsc';
 import { getPackageNameFromPath } from '../utils/package';
 import { convertPathToPosix, findSharedRoot } from '../utils/paths';
 
@@ -32,6 +33,31 @@ export class MetroGraphSource implements AtlasSource {
 
   constructor() {
     this.serializeGraph = this.serializeGraph.bind(this);
+  }
+
+  hasHmrSupport() {
+    return true;
+  }
+
+  getBundleHmr(id: string) {
+    // Get the required data from the bundle
+    const bundle = this.getBundle(id);
+    const bundleSourceUrl = bundle.serializeOptions?.sourceUrl;
+    if (!bundleSourceUrl) {
+      return null;
+    }
+
+    // Construct the HMR information, based on React Native
+    // See: https://github.com/facebook/react-native/blob/2eb7bcb8d9c0f239a13897e3a5d4397d81d3f627/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java#L696-L702
+    const socketUrl = new URL('/hot', bundleSourceUrl);
+    // Fix the entry point URL query parameter to be compatible with the HMR server
+    const entryPoint = getUrlFromJscSafeUrl(bundleSourceUrl);
+
+    return {
+      bundleId: bundle.id,
+      socketUrl,
+      entryPoints: [entryPoint],
+    };
   }
 
   listBundles() {
