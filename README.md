@@ -22,7 +22,7 @@ $ EXPO_UNSTABLE_ATLAS=true npx expo start
 ```
 
 > [!TIP]
-> Expo start runs in development mode by default. If you want to see a production bundle of your app, you can start the local dev server in production mode: `$ expo start --no-dev --no-minify`.
+> Expo start runs in development mode by default. If you want to see a production bundle of your app, you can start the local dev server in production mode: `$ expo start --no-dev`.
 
 ### Using `$ expo export`
 
