@@ -83,10 +83,6 @@ export class AtlasHmrClient {
   }
 
   enable(bundleHmr: AtlasBundleHmr, updateCallback: (update: HmrServerUpdate) => any) {
-    console.log('HMR ENABLED', {
-      oldBundleId: this.bundleHmr?.bundleId,
-      newBundleId: bundleHmr.bundleId,
-    });
     if (this.isConnected && this.bundleHmr?.bundleId === bundleHmr.bundleId) {
       // Avoid re-enabling the same bundle HMR connection
       return this;
@@ -116,7 +112,6 @@ export class AtlasHmrClient {
   }
 
   disable() {
-    console.log('HMR DISABLED CALLED');
     this.socket?.close(1000, 'Normal Closure');
     this.socket = null;
     this.bundleHmr = null;
