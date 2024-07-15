@@ -86,7 +86,7 @@ export class AtlasHmrClient {
     if (this.isConnected && this.bundleHmr?.bundleId === bundleHmr.bundleId) {
       // Avoid re-enabling the same bundle HMR connection
       return this;
-    } else if (this.isConnected) {
+    } else if (this.socket) {
       // Clean up the old HMR connection before enabling the new bundle HMR connection
       this.disable();
     }
