@@ -7,7 +7,7 @@ import { ModuleCode } from '~/components/ModuleCode';
 import { ModuleReference } from '~/components/ModuleReference';
 import { PropertySummary } from '~/components/PropertySummary';
 import { DataErrorState, NoDataState } from '~/components/StateInfo';
-import { BundleDeltaToast, useBundle } from '~/providers/bundle';
+import { useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
 import { Tag } from '~/ui/Tag';
@@ -45,7 +45,6 @@ export default function ModulePage() {
         <NoDataState title="Module not found." />
       ) : (
         <div className="mx-6 mb-4">
-          <BundleDeltaToast bundle={bundle} modulePath={module.data.absolutePath} />
           <ModuleReference className="mb-2 my-6" bundle={bundle} module={module.data} />
           <div className="mx-2 my-8">
             <h3 className="font-semibold my-2">Module content</h3>

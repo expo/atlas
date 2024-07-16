@@ -1,19 +1,9 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
-import {
-  type PropsWithChildren,
-  createContext,
-  useContext,
-  useMemo,
-  useEffect,
-  useCallback,
-} from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
+import { type PropsWithChildren, createContext, useContext, useMemo } from 'react';
 
-import { type BundleDeltaResponse } from '~/app/--/bundles/[bundle]/delta+api';
 import { StateInfo } from '~/components/StateInfo';
-import { Button } from '~/ui/Button';
 import { Spinner } from '~/ui/Spinner';
-import { ToastAction, type ToasterToast, useToast } from '~/ui/Toast';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type PartialAtlasBundle } from '~core/data/types';
 
@@ -25,6 +15,15 @@ export const bundleContext = createContext<BundleContext>({
   bundles: [],
 });
 
+/** Get the current bundle identifier, this will always trigger an update */
+export const useBundleId = () => {
+  return useGlobalSearchParams<{ bundle?: string }>().bundle;
+};
+
+/**
+ * Get the current or all known bundle information.
+ * This method is optimized to trigger updates as little as possible.
+ */
 export const useBundle = () => {
   const { bundles } = useContext(bundleContext);
   const { bundle: bundleId } = useLocalSearchParams<{ bundle?: string }>();
@@ -83,91 +82,5 @@ function useBundleData() {
       fetchApi('/bundles')
         .then(handleApiError)
         .then((response) => response?.json()),
-  });
-}
-
-/** A logic-component to show a toast notification when the bundle is outdated. */
-export function BundleDeltaToast({
-  bundle,
-  modulePath,
-}: {
-  bundle: Pick<PartialAtlasBundle, 'id'>;
-  modulePath?: string;
-}) {
-  const client = useQueryClient();
-  const toaster = useToast();
-
-  const deltaResponse = useBundleDeltaData(bundle.id);
-  const bundleDelta = deltaResponse.data?.delta;
-
-  const refetchBundleData = useCallback(
-    () =>
-      fetchApi(`/bundles/${bundle.id}/reload`)
-        .then(handleApiError)
-        .then((response) => response?.text())
-        .then(() => client.refetchQueries({ queryKey: ['bundles', bundle.id], type: 'active' })),
-    [bundle.id]
-  );
-
-  useEffect(() => {
-    if (!bundleDelta) return;
-
-    if (modulePath) {
-      if (bundleDelta.deletedPaths.includes(modulePath)) {
-        toaster.toast(toastModuleDeleted(bundle.id));
-      } else if (bundleDelta.modifiedPaths.includes(modulePath)) {
-        refetchBundleData().then(() => toaster.toast(toastModuleModified(bundle.id)));
-      }
-      return;
-    }
-
-    toaster.toast(toastBundleUpdate(bundle.id, refetchBundleData));
-  }, [bundle.id, bundleDelta, refetchBundleData, modulePath]);
-
-  return null;
-}
-
-function toastModuleModified(bundleId: string): ToasterToast {
-  return {
-    id: `bundle-delta-${bundleId}`,
-    title: 'Module modified',
-    description: 'This module is updated to reflect the latest changes.',
-  };
-}
-
-function toastModuleDeleted(bundleId: string): ToasterToast {
-  return {
-    id: `bundle-delta-${bundleId}`,
-    title: 'Module deleted',
-    description: 'This file is deleted since latest build, and is no longer available.',
-  };
-}
-
-function toastBundleUpdate(bundleId: string, refetchBundleData: () => any): ToasterToast {
-  return {
-    id: `bundle-delta-${bundleId}`,
-    title: 'Bundle outdated',
-    description: 'The code was changed since last build.',
-    action: (
-      <ToastAction altText="Reload bundle">
-        <Button variant="secondary" size="xs" onClick={refetchBundleData}>
-          Reload bundle
-        </Button>
-      </ToastAction>
-    ),
-  };
-}
-
-/** Poll the server to check for possible changes in bundles */
-function useBundleDeltaData(bundleId: string) {
-  return useQuery<BundleDeltaResponse>({
-    refetchInterval: (query) => (query.state.data?.isEnabled === false ? false : 2000),
-    queryKey: ['bundles', bundleId, 'delta'],
-    queryFn: ({ queryKey }) => {
-      const [_key, bundle] = queryKey as [string, string];
-      return fetchApi(`/bundles/${bundle}/delta`)
-        .then(handleApiError)
-        .then((response) => response?.json());
-    },
   });
 }

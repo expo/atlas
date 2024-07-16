@@ -25,12 +25,12 @@ export class AtlasFileSource implements AtlasSource {
     return readAtlasEntry(this.filePath, Number(id));
   }
 
-  bundleDeltaEnabled() {
-    return false; // File source does not implement the delta mechanism
+  hasHmrSupport() {
+    return false;
   }
 
-  getBundleDelta() {
-    return null; // File source does not implement the delta mechanism
+  getBundleHmr() {
+    return null;
   }
 }
 

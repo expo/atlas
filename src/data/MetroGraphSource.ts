@@ -1,11 +1,10 @@
 import type metro from 'metro';
-import type DeltaBundler from 'metro/src/DeltaBundler';
-import type MetroServer from 'metro/src/Server';
 import type { MetroConfig } from 'metro-config';
 import path from 'path';
 
-import type { AtlasBundle, AtlasBundleDelta, AtlasModule, AtlasSource } from './types';
+import type { AtlasBundle, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';
+import { getUrlFromJscSafeUrl } from '../utils/jsc';
 import { getPackageNameFromPath } from '../utils/package';
 import { convertPathToPosix, findSharedRoot } from '../utils/paths';
 
@@ -29,38 +28,52 @@ type ConvertGraphToAtlasOptions = {
 };
 
 export class MetroGraphSource implements AtlasSource {
-  /** The Metro delta listener, instantiated when the Metro server is registered */
-  protected deltaListener: MetroDeltaListener | null = null;
   /** All known entries, and detected changes, stored by ID */
-  readonly entries: Map<AtlasBundle['id'], { entry: AtlasBundle; delta?: AtlasBundleDelta }> =
-    new Map();
+  readonly entries: Map<AtlasBundle['id'], AtlasBundle> = new Map();
 
   constructor() {
     this.serializeGraph = this.serializeGraph.bind(this);
   }
 
+  hasHmrSupport() {
+    return true;
+  }
+
+  getBundleHmr(id: string) {
+    // Get the required data from the bundle
+    const bundle = this.getBundle(id);
+    const bundleSourceUrl = bundle.serializeOptions?.sourceUrl;
+    if (!bundleSourceUrl) {
+      return null;
+    }
+
+    // Construct the HMR information, based on React Native
+    // See: https://github.com/facebook/react-native/blob/2eb7bcb8d9c0f239a13897e3a5d4397d81d3f627/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java#L696-L702
+    const socketUrl = new URL('/hot', bundleSourceUrl);
+    // Fix the entry point URL query parameter to be compatible with the HMR server
+    const entryPoint = getUrlFromJscSafeUrl(bundleSourceUrl);
+
+    return {
+      bundleId: bundle.id,
+      socketUrl,
+      entryPoints: [entryPoint],
+    };
+  }
+
   listBundles() {
-    return Array.from(this.entries.values()).map((item) => ({
-      id: item.entry.id,
-      platform: item.entry.platform,
-      projectRoot: item.entry.projectRoot,
-      sharedRoot: item.entry.sharedRoot,
-      entryPoint: item.entry.entryPoint,
+    return Array.from(this.entries.values()).map((bundle) => ({
+      id: bundle.id,
+      platform: bundle.platform,
+      projectRoot: bundle.projectRoot,
+      sharedRoot: bundle.sharedRoot,
+      entryPoint: bundle.entryPoint,
     }));
   }
 
   getBundle(id: string) {
-    const item = this.entries.get(id);
-    if (!item) throw new Error(`Entry "${id}" not found.`);
-    return item.entry;
-  }
-
-  getBundleDelta(id: string) {
-    return this.entries.get(id)?.delta || null;
-  }
-
-  bundleDeltaEnabled() {
-    return !!this.deltaListener;
+    const bundle = this.entries.get(id);
+    if (!bundle) throw new Error(`Bundle "${id}" not found.`);
+    return bundle;
   }
 
   /**
@@ -69,67 +82,9 @@ export class MetroGraphSource implements AtlasSource {
    * All data is kept in memory, where stale data is overwritten by new data.
    */
   serializeGraph(options: ConvertGraphToAtlasOptions) {
-    const entry = convertGraph(options);
-    this.entries.set(entry.id, { entry });
-    this.deltaListener?.registerGraph(entry.id, options.graph);
-    return entry;
-  }
-
-  /**
-   * Register the Metro server to listen for changes in serialized graphs.
-   * Once changes are detected, the delta is generated and stored with the entry.
-   * Changes allows the client to know when to refetch data.
-   */
-  registerMetro(metro: MetroServer) {
-    if (!this.deltaListener) {
-      this.deltaListener = new MetroDeltaListener(this, metro);
-    }
-  }
-}
-
-class MetroDeltaListener {
-  private source: MetroGraphSource;
-  private bundler: DeltaBundler<void>;
-  private listeners: Map<AtlasBundle['id'], () => any> = new Map();
-
-  constructor(source: MetroGraphSource, metro: MetroServer) {
-    this.source = source;
-    this.bundler = metro.getBundler().getDeltaBundler();
-  }
-
-  registerGraph(entryId: AtlasBundle['id'], graph: MetroGraph) {
-    // Unregister the previous listener, to always have the most up-to-date graph
-    if (this.listeners.has(entryId)) {
-      this.listeners.get(entryId)!();
-    }
-
-    // Register the (new) delta listener
-    this.listeners.set(
-      entryId,
-      this.bundler.listen(graph as any, async () => {
-        const createdAt = new Date();
-        this.bundler
-          .getDelta(graph as any, { reset: false, shallow: true })
-          .then((delta) => this.onMetroChange(entryId, delta, createdAt));
-      })
-    );
-  }
-
-  /**
-   * Event handler invoked when a change is detected by Metro, using the DeltaBundler.
-   * The detected change is combined with the Atlas entry ID, and updates the source entry with the delta.
-   */
-  onMetroChange(entryId: AtlasBundle['id'], delta: metro.DeltaResult<void>, createdAt: Date) {
-    const item = this.source.entries.get(entryId);
-    const hasChanges = (delta.added.size || delta.modified.size || delta.deleted.size) > 0;
-
-    if (item && hasChanges) {
-      item.delta = {
-        createdAt,
-        modifiedPaths: Array.from(delta.added.keys()).concat(Array.from(delta.modified.keys())),
-        deletedPaths: Array.from(delta.deleted),
-      };
-    }
+    const bundle = convertGraph(options);
+    this.entries.set(bundle.id, bundle);
+    return bundle;
   }
 }
 

@@ -14,7 +14,7 @@ import {
   NoDataWithFiltersState,
 } from '~/components/StateInfo';
 import { useModuleFilters } from '~/hooks/useModuleFilters';
-import { BundleDeltaToast, useBundle } from '~/providers/bundle';
+import { useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
@@ -30,8 +30,6 @@ export default function FolderPage() {
 
   return (
     <Layout variant="viewport">
-      <BundleDeltaToast bundle={bundle} />
-
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>
