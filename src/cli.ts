@@ -39,5 +39,10 @@ export function createExpoAtlasMiddleware(config: MetroConfig) {
     return metroCustomSerializer(entryPoint, preModules, graph, serializeOptions);
   };
 
-  return { source, middleware };
+  return {
+    source,
+    middleware,
+    /** @deprecated This method does nothing and will be removed in the next major version */
+    registerMetro() {},
+  };
 }
