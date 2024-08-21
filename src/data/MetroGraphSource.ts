@@ -67,6 +67,7 @@ export class MetroGraphSource implements AtlasSource {
       projectRoot: bundle.projectRoot,
       sharedRoot: bundle.sharedRoot,
       entryPoint: bundle.entryPoint,
+      environment: bundle.environment,
     }));
   }
 
@@ -104,11 +105,7 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
   const sharedRoot = getSharedRoot(options);
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
-  const platform =
-    transformOptions?.customTransformOptions?.environment === 'node'
-      ? 'server'
-      : transformOptions?.platform ?? 'unknown';
-
+  const platform = transformOptions?.platform ?? 'unknown';
   return {
     id: Buffer.from(`${path.relative(sharedRoot, options.entryPoint)}+${platform}`).toString(
       'base64url'
@@ -120,7 +117,7 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
     runtimeModules: options.preModules.map((module) => convertModule(options, module, sharedRoot)),
     modules: collectEntryPointModules(options, sharedRoot),
     serializeOptions,
-    transformOptions,
+    environment: transformOptions?.customTransformOptions?.environment ?? 'client',
   };
 }
 

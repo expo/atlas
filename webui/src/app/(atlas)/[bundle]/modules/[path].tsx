@@ -29,7 +29,7 @@ export default function ModulePage() {
         <LayoutTitle>
           <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
-            <Tag variant={bundle.platform} />
+            <Tag variant={bundle.platform} environment={bundle.environment} />
             {!!module.data?.package && <span>{module.data.package}</span>}
             {!!module.data && <span>{getModuleType(module.data)}</span>}
             {!!module.data && <span>{formatFileSize(module.data.size)}</span>}

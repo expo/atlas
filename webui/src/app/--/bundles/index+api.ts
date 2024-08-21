@@ -21,7 +21,11 @@ export async function GET() {
 }
 
 function sortBundlesByPlatform(a: PartialAtlasBundle, b: PartialAtlasBundle) {
-  if (a.platform === 'server') return 1;
-  if (b.platform === 'server') return -1;
+  if (isNonClient(a)) return 1;
+  if (isNonClient(b)) return -1;
   return 0;
+}
+
+function isNonClient(a: PartialAtlasBundle) {
+  return a.environment && a.environment !== 'client';
 }

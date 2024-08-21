@@ -17,7 +17,12 @@ export function BundleSelectForm() {
     <Select.Root value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
       <Select.Trigger asChild>
         <Button variant="quaternary" size="sm">
-          <Tag variant={bundle.platform} size="xs" className="mr-2" />
+          <Tag
+            variant={bundle.platform}
+            environment={bundle.environment}
+            size="xs"
+            className="mr-2"
+          />
           <Select.Value placeholder="Select bundle to inspect" />
           <Select.Icon className="text-icon-default">
             <ChevronDownIcon size={16} className="m-1 mr-0 align-middle" />
@@ -39,7 +44,12 @@ export function BundleSelectForm() {
               <div key={item.id}>
                 <Select.Item value={item.id} asChild>
                   <Button variant="quaternary" size="sm" className="w-full !justify-start my-0.5">
-                    <Tag variant={item.platform} size="xs" className="mr-2" />
+                    <Tag
+                      variant={item.platform}
+                      environment={item.environment}
+                      size="xs"
+                      className="mr-2"
+                    />
                     <Select.ItemText>{relativeBundlePath(item, item.entryPoint)}</Select.ItemText>
                   </Button>
                 </Select.Item>

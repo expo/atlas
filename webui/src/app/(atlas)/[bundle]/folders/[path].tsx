@@ -37,7 +37,7 @@ export default function FolderPage() {
         <LayoutTitle>
           <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
-            <Tag variant={bundle.platform} />
+            <Tag variant={bundle.platform} environment={bundle.environment} />
             <span>folder</span>
             {!!modules.data?.filtered.moduleFiles && (
               <span>

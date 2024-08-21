@@ -38,7 +38,7 @@ export default function BundlePage() {
         <LayoutTitle>
           <h1 className="text-lg font-bold mr-8">Bundle</h1>
           <PropertySummary>
-            <Tag variant={bundle.platform} />
+            <Tag variant={bundle.platform} environment={bundle.environment} />
             {!!modules.data && <span>{modules.data.bundle.moduleFiles} modules</span>}
             {!!modules.data && <span>{formatFileSize(modules.data.bundle.moduleSize)}</span>}
             {!!modules.data && modulesAreFiltered && (
