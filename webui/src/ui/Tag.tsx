@@ -58,26 +58,14 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
     }
 
     const isDefaultEnvironment = !environment || environment === 'client';
+    if (!isDefaultEnvironment) {
+      children += ' × ' + envChildren[environment] || environment;
+    }
 
     return (
-      <>
-        {!isDefaultEnvironment && (
-          <span
-            className={tagVariants({ variant, environment, size, className })}
-            ref={ref}
-            {...props}
-          >
-            {envChildren[environment] || environment}
-          </span>
-        )}
-        <span
-          className={tagVariants({ variant, environment, size, className })}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </span>
-      </>
+      <span className={tagVariants({ variant, environment, size, className })} ref={ref} {...props}>
+        {children}
+      </span>
     );
   }
 );
