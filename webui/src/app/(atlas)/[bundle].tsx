@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ModuleGraphResponse } from '~/app/--/bundles/[bundle]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
+import { FileSize } from '~/components/FileSize';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
 import {
@@ -17,7 +18,6 @@ import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout
 import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams } from '~/utils/filters';
-import { formatFileSize } from '~/utils/formatString';
 
 export default function BundlePage() {
   const { bundle } = useBundle();
@@ -40,14 +40,14 @@ export default function BundlePage() {
           <PropertySummary>
             <Tag variant={bundle.platform} />
             {!!modules.data && <span>{modules.data.bundle.moduleFiles} modules</span>}
-            {!!modules.data && <span>{formatFileSize(modules.data.bundle.moduleSize)}</span>}
+            {!!modules.data && <FileSize byteSize={modules.data.bundle.moduleSize} />}
             {!!modules.data && modulesAreFiltered && (
               <PropertySummary
                 className="text-tertiary italic"
                 prefix={<span className="select-none mr-2">visible:</span>}
               >
                 <span>{modules.data.filtered.moduleFiles} modules</span>
-                <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
+                <FileSize byteSize={modules.data.filtered.moduleSize} />
               </PropertySummary>
             )}
           </PropertySummary>

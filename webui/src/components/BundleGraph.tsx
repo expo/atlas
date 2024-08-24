@@ -8,7 +8,7 @@ import EchartsReact from 'echarts-for-react/lib/core';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 
-import { formatFileSize } from '~/utils/formatString';
+import { formatByteSize } from '~/components/FileSize';
 import type { TreemapNode } from '~/utils/treemap';
 import type { PartialAtlasBundle } from '~core/data/types';
 
@@ -195,7 +195,7 @@ function getBundleGraphTooltip(
           <span>${formatNodeValue(node)}</span>
         </div>
         <hr class="border-t border-t-secondary my-2 mx-2" />
-        <span class="mx-3"><b>Size:</b> ${formatFileSize(size)}</span>
+        <span class="mx-3"><b>Size:</b> ${formatByteSize(size)}</span>
         ${
           files === 1
             ? `<span class="mx-3 text-quaternary">Files: ${files}</span>`
