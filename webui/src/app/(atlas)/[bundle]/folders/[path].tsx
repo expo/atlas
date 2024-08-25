@@ -5,6 +5,7 @@ import type { ModuleGraphResponse } from '~/app/--/bundles/[bundle]/modules/grap
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
+import { FileSize } from '~/components/FileSize';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
 import {
@@ -19,7 +20,6 @@ import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout
 import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams } from '~/utils/filters';
-import { formatFileSize } from '~/utils/formatString';
 
 export default function FolderPage() {
   const { path: relativePath } = useLocalSearchParams<{ path: string }>();
@@ -47,7 +47,7 @@ export default function FolderPage() {
               </span>
             )}
             {!!modules.data?.filtered.moduleSize && (
-              <span>{formatFileSize(modules.data.filtered.moduleSize)}</span>
+              <FileSize byteSize={modules.data.filtered.moduleSize} />
             )}
           </PropertySummary>
         </LayoutTitle>
