@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
@@ -65,6 +65,7 @@ function getModuleType(module: AtlasModule) {
 function useModuleData(bundleId: string, path: string) {
   return useQuery<AtlasModule>({
     refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
     queryKey: [`bundles`, bundleId, `module`, path],
     queryFn: async ({ queryKey }) => {
       const [_key, bundle, _module, path] = queryKey as [string, string, string, string];
