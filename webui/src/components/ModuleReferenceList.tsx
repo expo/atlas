@@ -5,6 +5,7 @@ import PackageIcon from 'lucide-react/dist/esm/icons/box';
 import FileIcon from 'lucide-react/dist/esm/icons/file';
 import { PropsWithChildren } from 'react';
 
+import { FilePathMenu } from '~/components/FilePathMenu';
 import type { AtlasModuleRef, PartialAtlasBundle } from '~core/data/types';
 
 type ModuleReferenceListProps = PropsWithChildren<{
@@ -37,27 +38,32 @@ function ModuleImportLink(props: ModuleImportLinkProps) {
   const Icon = props.reference.package ? PackageIcon : FileIcon;
 
   return (
-    <Link
-      asChild
-      href={{
-        pathname: '/(atlas)/[bundle]/modules/[path]',
-        params: {
-          bundle: props.bundle.id,
-          path: props.reference.relativePath,
-        },
-      }}
+    <FilePathMenu
+      absolute={{ path: props.reference.absolutePath, label: 'Copy absolute import path' }}
+      relative={{ path: props.reference.relativePath, label: 'Copy relative import path' }}
     >
-      <a
-        className="px-3 py-2 text-2xs border border-secondary rounded-md bg-default text-default inline-flex flex-row items-center group hover:bg-subtle transition-colors"
-        aria-label={props.reference.absolutePath}
-        title={props.reference.absolutePath}
+      <Link
+        asChild
+        href={{
+          pathname: '/(atlas)/[bundle]/modules/[path]',
+          params: {
+            bundle: props.bundle.id,
+            path: props.reference.relativePath,
+          },
+        }}
       >
-        <Icon size={14} />
-        <span className="mx-2 whitespace-nowrap overflow-hidden text-ellipsis group-hover:underline underline-offset-2">
-          {props.reference.relativePath}
-        </span>
-        <span className="ml-2">→</span>
-      </a>
-    </Link>
+        <a
+          className="px-3 py-2 text-2xs border border-secondary rounded-md bg-default text-default inline-flex flex-row items-center group hover:bg-subtle transition-colors"
+          aria-label={props.reference.absolutePath}
+          title={props.reference.absolutePath}
+        >
+          <Icon size={14} />
+          <span className="mx-2 whitespace-nowrap overflow-hidden text-ellipsis group-hover:underline underline-offset-2">
+            {props.reference.relativePath}
+          </span>
+          <span className="ml-2">→</span>
+        </a>
+      </Link>
+    </FilePathMenu>
   );
 }

@@ -20,7 +20,7 @@ export function FileSize(props: BundleFileSizeProps) {
               size={12}
             />
           </TooltipTrigger>
-          <TooltipContent className="py-2 px-3 max-w-80 bg-screen border-2 border-info rounded-md text-quaternary leading-6 shadow-md">
+          <TooltipContent className="border-info text-quaternary shadow-md">
             <p className="mb-2">
               All file sizes are calculated based on the transpiled JavaScript byte size.
             </p>
