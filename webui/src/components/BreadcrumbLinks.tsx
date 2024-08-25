@@ -1,5 +1,7 @@
 import { Link } from 'expo-router';
-import { ComponentProps, Fragment, PropsWithChildren, useCallback, useMemo } from 'react';
+// @ts-expect-error
+import CheckIcon from 'lucide-react/dist/esm/icons/check';
+import { ComponentProps, Fragment, PropsWithChildren, useCallback, useMemo, useState } from 'react';
 
 import {
   Breadcrumb,
@@ -10,6 +12,7 @@ import {
   BreadcrumbSeparator,
 } from '~/ui/Breadcrumb';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '~/ui/Menu';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '~/ui/Tooltip';
 import { type PartialAtlasBundle } from '~core/data/types';
 
 type BreadcrumbLinksProps = {
@@ -67,26 +70,50 @@ type BreadcrumbLinkMenuProps = PropsWithChildren<{
 }>;
 
 function BreadcrumbLinkMenu(props: BreadcrumbLinkMenuProps) {
+  const [tooltipContent, setTooltipContent] = useState<string | null>(null);
+
+  const showCopyTooltip = useCallback((content: string) => {
+    setTooltipContent(content);
+    setTimeout(() => setTooltipContent(null), 2000);
+  }, []);
+
   const onCopyRelativePath = useCallback(() => {
     navigator.clipboard.writeText(props.link.filePath);
-  }, [props.link.filePath]);
+    showCopyTooltip(`Relative ${props.link.type} path copied`);
+  }, [props.link.type, props.link.filePath, showCopyTooltip]);
 
   const onCopyAbsolutePath = useCallback(() => {
     navigator.clipboard.writeText(`${props.bundle.sharedRoot}/${props.link.filePath}`);
-  }, [props.link.filePath, props.bundle.sharedRoot]);
+    showCopyTooltip(`Absolute ${props.link.type} path copied`);
+  }, [props.link.type, props.link.filePath, props.bundle.sharedRoot, showCopyTooltip]);
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>{props.children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-64">
-        <ContextMenuItem onClick={onCopyRelativePath}>Copy relative path</ContextMenuItem>
-        <ContextMenuItem onClick={onCopyAbsolutePath}>Copy absolute path</ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <TooltipProvider>
+      <Tooltip open={!!tooltipContent}>
+        <ContextMenu>
+          <TooltipTrigger asChild>
+            <ContextMenuTrigger>{props.children}</ContextMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent className="inline-flex flex-row items-center">
+            {tooltipContent}
+            <CheckIcon size={14} className="ml-2" />
+          </TooltipContent>
+          <ContextMenuContent className="w-64">
+            <ContextMenuItem onClick={onCopyRelativePath}>
+              Copy relative {props.link.type} path
+            </ContextMenuItem>
+            <ContextMenuItem onClick={onCopyAbsolutePath}>
+              Copy absolute {props.link.type} path
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
 type BreadcrumbLinkItem = {
+  type: 'folder' | 'file';
   key: string;
   label: string;
   filePath: string;
@@ -98,12 +125,14 @@ function getBreadcrumbLinks(props: BreadcrumbLinksProps): BreadcrumbLinkItem[] {
     const isLastSegment = index === breadcrumbs.length - 1;
     const breadcrumb: BreadcrumbLinkItem = {
       label,
+      type: 'file',
       key: `${index}-${label}`,
       filePath: breadcrumbs.slice(0, index + 1).join('/'),
     };
 
     // NOTE(cedric): a bit of a workaround to avoid linking to the current page, might need to change this
     if (!isLastSegment || !label.includes('.')) {
+      breadcrumb.type = 'folder';
       breadcrumb.href = {
         pathname: '/(atlas)/[bundle]/folders/[path]',
         params: { bundle: props.bundle.id, path: breadcrumb.filePath },
