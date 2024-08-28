@@ -1,63 +1,88 @@
-import * as Select from '@radix-ui/react-select';
-import { cx } from 'class-variance-authority';
 import { useRouter } from 'expo-router';
-// @ts-expect-error
-import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
+import { useMemo } from 'react';
 
-import { BundleTag } from '~/components/BundleTag';
+import { EnvironmentIcon } from '~/components/EnvironmentIcon';
+import { PlatformName } from '~/components/PlatformName';
 import { useBundle } from '~/providers/bundle';
-import { Button } from '~/ui/Button';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '~/ui/Select';
 import { relativeBundlePath } from '~/utils/bundle';
+import type { PartialAtlasBundle } from '~core/data/types';
 
 export function BundleSelectForm() {
   const router = useRouter();
   const { bundle, bundles } = useBundle();
+  const bundlesByPlatform = useMemo(() => groupBundlesByPlatform(bundles), [bundles]);
 
   return (
-    <Select.Root value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
-      <Select.Trigger asChild>
-        <Button variant="quaternary" size="sm">
-          <BundleTag
-            className="mr-2"
-            size="xs"
-            platform={bundle.platform}
-            environment={bundle.environment}
-          />
-          <Select.Value placeholder="Select bundle to inspect" />
-          <Select.Icon className="text-icon-default">
-            <ChevronDownIcon size={16} className="m-1 mr-0 align-middle" />
-          </Select.Icon>
-        </Button>
-      </Select.Trigger>
-      <Select.Portal>
-        <Select.Content
-          side="bottom"
-          collisionPadding={{ left: 16, right: 16 }}
-          className={cx(
-            'flex min-w-[220px] flex-col gap-0.5 rounded-md border border-default bg-default p-1 shadow-md',
-            'transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=open]:duration-300',
-            'data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-1/3 data-[state=open]:fade-in data-[state=open]:slide-in-from-top-1/3'
-          )}
-        >
-          <Select.Viewport className="py-2">
-            {bundles.map((item) => (
-              <div key={item.id}>
-                <Select.Item value={item.id} asChild>
-                  <Button variant="quaternary" size="sm" className="w-full !justify-start my-0.5">
-                    <BundleTag
-                      className="mr-2"
-                      size="xs"
-                      platform={item.platform}
-                      environment={item.environment}
-                    />
-                    <Select.ItemText>{relativeBundlePath(item, item.entryPoint)}</Select.ItemText>
-                  </Button>
-                </Select.Item>
-              </div>
-            ))}
-          </Select.Viewport>
-        </Select.Content>
-      </Select.Portal>
-    </Select.Root>
+    <Select value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
+      <SelectTrigger className="!w-auto">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent side="bottom" collisionPadding={{ left: 16, right: 16 }}>
+        {bundlesByPlatform.map(([platform, bundles]) => {
+          // Hide empty `unknown` platforms. If there are unknown platforms, render them.
+          if (platform === 'unknown' && bundles.length === 0) {
+            return null;
+          }
+
+          return (
+            <SelectGroup key={platform}>
+              <SelectLabel className="m-0.5 capitalize">
+                <PlatformName platform={platform} />
+              </SelectLabel>
+              {bundles.length === 0 ? (
+                <SelectItem disabled value="none" className="italic mb-1">
+                  No bundle available for this platform
+                </SelectItem>
+              ) : (
+                bundles.map((item) => (
+                  <SelectItem key={item.id} value={item.id}>
+                    <span className="inline-flex items-center select-none mb-0.5">
+                      <PlatformName platform={item.platform}>
+                        <EnvironmentIcon environment={item.environment} size={16} />
+                      </PlatformName>
+                      <span className="ml-2 mr-1">{relativeBundlePath(item, item.entryPoint)}</span>
+                    </span>
+                  </SelectItem>
+                ))
+              )}
+            </SelectGroup>
+          );
+        })}
+      </SelectContent>
+    </Select>
   );
+}
+
+function groupBundlesByPlatform(bundles: PartialAtlasBundle[]) {
+  const groups: Record<PartialAtlasBundle['platform'], PartialAtlasBundle[]> = {
+    android: [],
+    ios: [],
+    web: [],
+    unknown: [],
+  };
+
+  for (const bundle of bundles) {
+    if (groups[bundle.platform]) {
+      groups[bundle.platform]!.push(bundle);
+    }
+  }
+
+  return Object.entries(groups).map(
+    ([platform, bundles]) =>
+      [platform as PartialAtlasBundle['platform'], bundles.sort(sortBundlesByEnvironment)] as const
+  );
+}
+
+/** Sort all bundles by environment, in alphabetical order "client -> node -> react-server" */
+function sortBundlesByEnvironment(a: PartialAtlasBundle, b: PartialAtlasBundle) {
+  return a.environment.localeCompare(b.environment);
 }
