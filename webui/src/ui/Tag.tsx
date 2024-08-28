@@ -6,15 +6,11 @@ const tagVariants = cva(
   {
     variants: {
       variant: {
+        none: '',
         neutral: 'bg-element text-secondary',
         info: 'bg-info text-info',
         warning: 'bg-warning text-warning',
         danger: 'bg-danger text-danger',
-        // Platform-specific variants
-        web: 'bg-palette-orange3 text-palette-orange11',
-        server: 'bg-palette-orange3 text-palette-orange11',
-        ios: 'bg-palette-blue3 text-palette-blue11',
-        android: 'bg-palette-green3 text-palette-green11',
       },
       size: {
         xs: 'px-3 py-1 text-3xs/4',
@@ -32,26 +28,14 @@ const tagVariants = cva(
   }
 );
 
-const platformChildren: Record<'android' | 'ios' | 'server' | 'web', string> = {
-  android: 'Android',
-  ios: 'iOS',
-  server: 'Server',
-  web: 'Web',
-};
-
 type TagProps = ComponentProps<'span'> & VariantProps<typeof tagVariants>;
 
 export const Tag = forwardRef<HTMLSpanElement, TagProps>(
-  ({ className, variant, size, children, ...props }, ref) => {
-    if (variant && variant in platformChildren) {
-      children = platformChildren[variant as keyof typeof platformChildren];
-    }
-
-    return (
-      <span className={tagVariants({ variant, size, className })} ref={ref} {...props}>
-        {children}
-      </span>
-    );
-  }
+  ({ className, variant, size, children, ...props }, ref) => (
+    <span className={tagVariants({ variant, size, className })} ref={ref} {...props}>
+      {children}
+    </span>
+  )
 );
+
 Tag.displayName = 'Tag';
