@@ -10,14 +10,13 @@ const bundleTagVariants = cva('', {
       android: 'bg-palette-green3 text-palette-green11',
       ios: 'bg-palette-blue3 text-palette-blue11',
       web: 'bg-palette-orange3 text-palette-orange11',
-      server: 'bg-palette-orange3 text-palette-orange11',
       unknown: '',
-    },
+    } satisfies typeof platformChildren,
     environment: {
       client: '',
       node: 'bg-palette-orange3 text-palette-orange11',
       'react-server': 'bg-palette-green3 text-palette-green11',
-    },
+    } satisfies typeof environmentChildren,
   },
   defaultVariants: {
     platform: 'unknown', // Default platform value, see MetroGraphSource
@@ -28,7 +27,6 @@ const bundleTagVariants = cva('', {
 const platformChildren: Record<AtlasBundle['platform'], string> = {
   android: 'Android',
   ios: 'iOS',
-  server: 'Server',
   web: 'Web',
   unknown: '???',
 };
