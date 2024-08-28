@@ -3,6 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
+import { BundleTag } from '~/components/BundleTag';
 import { FileSize } from '~/components/FileSize';
 import { ModuleCode } from '~/components/ModuleCode';
 import { ModuleReference } from '~/components/ModuleReference';
@@ -11,7 +12,6 @@ import { DataErrorState, NoDataState } from '~/components/StateInfo';
 import { useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
 import { Skeleton } from '~/ui/Skeleton';
-import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type AtlasModule } from '~core/data/types';
 
@@ -29,7 +29,7 @@ export default function ModulePage() {
         <LayoutTitle>
           <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
-            <Tag variant={bundle.platform} />
+            <BundleTag platform={bundle.platform} environment={bundle.environment} />
             {!!module.data?.package && <span>{module.data.package}</span>}
             {!!module.data && <span>{getModuleType(module.data)}</span>}
             {!!module.data && <FileSize byteSize={module.data.size} />}

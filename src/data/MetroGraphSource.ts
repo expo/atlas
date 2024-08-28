@@ -64,6 +64,7 @@ export class MetroGraphSource implements AtlasSource {
     return Array.from(this.entries.values()).map((bundle) => ({
       id: bundle.id,
       platform: bundle.platform,
+      environment: bundle.environment,
       projectRoot: bundle.projectRoot,
       sharedRoot: bundle.sharedRoot,
       entryPoint: bundle.entryPoint,
@@ -102,18 +103,17 @@ export function convertMetroConfig(config: MetroConfig): ConvertGraphToAtlasOpti
 /** Convert a Metro graph instance to a JSON-serializable entry */
 export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
   const sharedRoot = getSharedRoot(options);
+  const platform = getPlatform(options) ?? 'unknown';
+  const environment = getEnvironment(options) ?? 'client';
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
-  const platform =
-    transformOptions?.customTransformOptions?.environment === 'node'
-      ? 'server'
-      : transformOptions?.platform ?? 'unknown';
 
   return {
-    id: Buffer.from(`${path.relative(sharedRoot, options.entryPoint)}+${platform}`).toString(
-      'base64url'
-    ), // FIX: only use URL allowed characters
+    id: Buffer.from(
+      `${path.relative(sharedRoot, options.entryPoint)}+${platform}+${environment}`
+    ).toString('base64url'),
     platform,
+    environment,
     projectRoot: options.projectRoot,
     sharedRoot,
     entryPoint: options.entryPoint,
@@ -247,4 +247,26 @@ function getSharedRoot(options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' |
 /** Determine if the module is a virtual module, like shims or canaries, which should be excluded from results */
 function moduleIsVirtual(module: MetroModule) {
   return module.path.startsWith('\0');
+}
+
+/** Determine the bundle target environment based on the `transformOptions.customTransformOptions` */
+function getEnvironment(options: Pick<ConvertGraphToAtlasOptions, 'graph'>) {
+  const environment = options.graph.transformOptions?.customTransformOptions?.environment;
+
+  if (typeof environment === 'string') {
+    return environment as AtlasBundle['environment'];
+  }
+
+  return null;
+}
+
+/** Determine the bundle target platform based on the `transformOptions` */
+function getPlatform(options: Pick<ConvertGraphToAtlasOptions, 'graph'>) {
+  const platform = options.graph.transformOptions?.platform;
+
+  if (typeof platform === 'string') {
+    return platform as AtlasBundle['platform'];
+  }
+
+  return null;
 }

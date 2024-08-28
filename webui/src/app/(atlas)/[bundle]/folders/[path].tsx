@@ -5,6 +5,7 @@ import type { ModuleGraphResponse } from '~/app/--/bundles/[bundle]/modules/grap
 import { BreadcrumbLinks } from '~/components/BreadcrumbLinks';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
+import { BundleTag } from '~/components/BundleTag';
 import { FileSize } from '~/components/FileSize';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
@@ -17,7 +18,6 @@ import {
 import { useModuleFilters } from '~/hooks/useModuleFilters';
 import { useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
-import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 
@@ -37,7 +37,7 @@ export default function FolderPage() {
         <LayoutTitle>
           <BreadcrumbLinks bundle={bundle} path={relativePath!} />
           <PropertySummary>
-            <Tag variant={bundle.platform} />
+            <BundleTag platform={bundle.platform} environment={bundle.environment} />
             <span>folder</span>
             {!!modules.data?.filtered.moduleFiles && (
               <span>

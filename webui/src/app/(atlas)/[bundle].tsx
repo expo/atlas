@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ModuleGraphResponse } from '~/app/--/bundles/[bundle]/modules/graph+api';
 import { BundleGraph } from '~/components/BundleGraph';
 import { BundleSelectForm } from '~/components/BundleSelectForm';
+import { BundleTag } from '~/components/BundleTag';
 import { FileSize } from '~/components/FileSize';
 import { ModuleFiltersForm } from '~/components/ModuleFilterForm';
 import { PropertySummary } from '~/components/PropertySummary';
@@ -15,7 +16,6 @@ import {
 import { useModuleFilters } from '~/hooks/useModuleFilters';
 import { useBundle } from '~/providers/bundle';
 import { Layout, LayoutHeader, LayoutNavigation, LayoutTitle } from '~/ui/Layout';
-import { Tag } from '~/ui/Tag';
 import { fetchApi, handleApiError } from '~/utils/api';
 import { type ModuleFilters, moduleFiltersToParams } from '~/utils/filters';
 
@@ -38,7 +38,7 @@ export default function BundlePage() {
         <LayoutTitle>
           <h1 className="text-lg font-bold mr-8">Bundle</h1>
           <PropertySummary>
-            <Tag variant={bundle.platform} />
+            <BundleTag platform={bundle.platform} environment={bundle.environment} />
             {!!modules.data && <span>{modules.data.bundle.moduleFiles} modules</span>}
             {!!modules.data && <FileSize byteSize={modules.data.bundle.moduleSize} />}
             {!!modules.data && modulesAreFiltered && (

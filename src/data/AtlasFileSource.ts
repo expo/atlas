@@ -37,20 +37,24 @@ export class AtlasFileSource implements AtlasSource {
 /**
  * List all entries without parsing the data.
  * This only reads the bundle name, and adds a line number as ID.
+ *
+ * @note Ensure the (de)serialization is in sync with both {@link readAtlasEntry} and {@link writeAtlasEntry}.
  */
 export async function listAtlasEntries(filePath: string) {
-  const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"/;
+  const bundlePattern = /^\["([^"]+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)"/;
   const entries: PartialAtlasBundle[] = [];
 
   await forEachJsonLines(filePath, (contents, line) => {
     // Skip the metadata line
     if (line === 1) return;
 
-    const [_, platform, projectRoot, sharedRoot, entryPoint] = contents.match(bundlePattern) ?? [];
-    if (platform && projectRoot && sharedRoot && entryPoint) {
+    const [_, platform, projectRoot, sharedRoot, entryPoint, environment] =
+      contents.match(bundlePattern) ?? [];
+    if (platform && projectRoot && sharedRoot && entryPoint && environment) {
       entries.push({
         id: String(line),
         platform: platform as any,
+        environment: environment as any,
         projectRoot,
         sharedRoot,
         entryPoint,
@@ -63,19 +67,24 @@ export async function listAtlasEntries(filePath: string) {
 
 /**
  * Get the entry by id or line number, and parse the data.
+ *
+ * @note Ensure the (de)serialization is in sync with both {@link listAtlasEntries} and {@link writeAtlasEntry}.
  */
 export async function readAtlasEntry(filePath: string, id: number): Promise<AtlasBundle> {
   const atlasEntry = await parseJsonLine<any[]>(filePath, id);
   return {
     id: String(id),
+    // These values are all strings
     platform: atlasEntry[0],
     projectRoot: atlasEntry[1],
     sharedRoot: atlasEntry[2],
     entryPoint: atlasEntry[3],
-    runtimeModules: atlasEntry[4],
-    modules: new Map(atlasEntry[5].map((module: AtlasModule) => [module.absolutePath, module])),
-    transformOptions: atlasEntry[6],
-    serializeOptions: atlasEntry[7],
+    environment: atlasEntry[4],
+    // These values are more complex
+    runtimeModules: atlasEntry[5],
+    modules: new Map(atlasEntry[6].map((module: AtlasModule) => [module.absolutePath, module])),
+    transformOptions: atlasEntry[7],
+    serializeOptions: atlasEntry[8],
   };
 }
 
@@ -95,13 +104,18 @@ export function waitUntilAtlasFileReady() {
  * Add a new entry to the Atlas file.
  * This function also ensures the Atlas file is ready to be written to, due to complications with Expo CLI.
  * Eventually, the entry is appended on a new line, so we can load them selectively.
+ *
+ * @note Ensure the (de)serialization is in sync with both {@link listAtlasEntries} and {@link readAtlasEntry}.
  */
 export function writeAtlasEntry(filePath: string, entry: AtlasBundle) {
   const line = [
+    // These values must all be strings, and are available in PartialAtlasBundle type when listing bundles
     entry.platform,
     entry.projectRoot,
     entry.sharedRoot,
     entry.entryPoint,
+    entry.environment,
+    // These values can be more complex, but are not available in PartialAtlasBundle type when listing bundles
     entry.runtimeModules,
     Array.from(entry.modules.values()),
     entry.transformOptions,

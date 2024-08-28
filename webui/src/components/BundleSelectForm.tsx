@@ -4,9 +4,9 @@ import { useRouter } from 'expo-router';
 // @ts-expect-error
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 
+import { BundleTag } from '~/components/BundleTag';
 import { useBundle } from '~/providers/bundle';
 import { Button } from '~/ui/Button';
-import { Tag } from '~/ui/Tag';
 import { relativeBundlePath } from '~/utils/bundle';
 
 export function BundleSelectForm() {
@@ -17,7 +17,12 @@ export function BundleSelectForm() {
     <Select.Root value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
       <Select.Trigger asChild>
         <Button variant="quaternary" size="sm">
-          <Tag variant={bundle.platform} size="xs" className="mr-2" />
+          <BundleTag
+            className="mr-2"
+            size="xs"
+            platform={bundle.platform}
+            environment={bundle.environment}
+          />
           <Select.Value placeholder="Select bundle to inspect" />
           <Select.Icon className="text-icon-default">
             <ChevronDownIcon size={16} className="m-1 mr-0 align-middle" />
@@ -39,7 +44,12 @@ export function BundleSelectForm() {
               <div key={item.id}>
                 <Select.Item value={item.id} asChild>
                   <Button variant="quaternary" size="sm" className="w-full !justify-start my-0.5">
-                    <Tag variant={item.platform} size="xs" className="mr-2" />
+                    <BundleTag
+                      className="mr-2"
+                      size="xs"
+                      platform={item.platform}
+                      environment={item.environment}
+                    />
                     <Select.ItemText>{relativeBundlePath(item, item.entryPoint)}</Select.ItemText>
                   </Button>
                 </Select.Item>
