@@ -12,14 +12,16 @@ export interface AtlasSource {
 
 export type PartialAtlasBundle = Pick<
   AtlasBundle,
-  'id' | 'platform' | 'projectRoot' | 'sharedRoot' | 'entryPoint'
+  'id' | 'platform' | 'projectRoot' | 'sharedRoot' | 'entryPoint' | 'environment'
 >;
 
 export type AtlasBundle = {
   /** The unique reference or ID to this entry */
   id: string;
   /** The platform for which the bundle was created */
-  platform: 'android' | 'ios' | 'web' | 'server';
+  platform: 'android' | 'ios' | 'web' | 'server' | 'unknown';
+  /** The environment this bundle is compiled for */
+  environment: 'client' | 'node' | 'react-server';
   /** The absolute path to the root of the project */
   projectRoot: string;
   /** The absolute path to the shared root of all imported modules */
