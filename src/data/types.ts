@@ -19,7 +19,7 @@ export type AtlasBundle = {
   /** The unique reference or ID to this entry */
   id: string;
   /** The platform for which the bundle was created */
-  platform: 'android' | 'ios' | 'web' | 'server' | 'unknown';
+  platform: 'android' | 'ios' | 'web' | 'unknown';
   /** The environment this bundle is compiled for */
   environment: 'client' | 'node' | 'react-server';
   /** The absolute path to the root of the project */
