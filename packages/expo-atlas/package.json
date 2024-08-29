@@ -39,7 +39,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@expo/server": "^0.4.2",
+    "@expo/server": "^0.4.4",
     "arg": "^5.0.2",
     "chalk": "^4.1.2",
     "compression": "^1.7.4",
@@ -59,16 +59,15 @@
     "@types/node": "^20.11.26",
     "@types/stream-json": "^1.7.7",
     "chai": "^4.3.10",
-    "expo": "~50.0.1",
+    "expo": "~51.0.8",
     "metro": "^0.80.6",
-    "prettier": "^3.2.5",
     "typescript": "^5.1.3"
   },
   "peerDependencies": {
     "expo": "*"
   },
   "eslintConfig": {
-    "extends": "universe",
+    "extends": "universe/node",
     "ignorePatterns": [
       "build",
       "node_modules"
