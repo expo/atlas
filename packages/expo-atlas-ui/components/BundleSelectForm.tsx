@@ -22,7 +22,7 @@ export function BundleSelectForm() {
   const bundlesByPlatform = useMemo(() => groupBundlesByPlatform(bundles), [bundles]);
 
   return (
-    <Select open value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
+    <Select value={bundle.id} onValueChange={(bundle) => router.setParams({ bundle })}>
       <SelectTrigger className="!w-auto">
         <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>
@@ -35,7 +35,7 @@ export function BundleSelectForm() {
 
           return (
             <SelectGroup key={platform} className="my-1">
-              <SelectLabel className="mx-1 capitalize">
+              <SelectLabel className="mx-0.5 capitalize">
                 <PlatformName platform={platform} />
               </SelectLabel>
               {bundles.length === 0 ? (
