@@ -1,4 +1,4 @@
-import '~/styles.css';
+import '~/global.css';
 
 import { Slot } from 'expo-router';
 
