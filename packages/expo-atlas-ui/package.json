@@ -52,8 +52,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/picomatch": "^2.3.3",
-    "@types/react": "~18.2.79",
-    "typescript": "~5.3.3"
+    "@types/react": "~18.2.79"
   },
   "eslintConfig": {
     "extends": "universe",
