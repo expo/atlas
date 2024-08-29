@@ -8,12 +8,12 @@
   ],
   "scripts": {
     "postinstall": "bun run --filter expo-atlas build",
-    "build": "bun run --filter expo-atlas* build",
-    "clean": "bun run --filter expo-atlas* clean",
-    "lint": "bun run --filter expo-atlas* lint",
-    "start": "bun run --filter expo-atlas* start",
-    "test": "bun run --filter expo-atlas* test",
-    "typecheck": "bun run --filter expo-atlas* typecheck"
+    "build": "bun run --filter 'expo-atlas*' build",
+    "clean": "bun run --filter 'expo-atlas*' clean",
+    "lint": "bun run --filter 'expo-atlas*' lint",
+    "start": "bun run --filter 'expo-atlas*' start",
+    "test": "bun run --filter 'expo-atlas*' test",
+    "typecheck": "bun run --filter 'expo-atlas*' typecheck"
   },
   "dependencies": {
     "eslint": "^8.57.0",
