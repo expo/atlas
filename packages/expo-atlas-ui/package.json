@@ -1,0 +1,130 @@
+{
+  "private": true,
+  "name": "expo-atlas-ui",
+  "version": "0.0.1-private",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build": "expo export --platform web",
+    "typecheck": "expo-module typecheck",
+    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl",
+    "lint": "eslint . --ext js,ts,tsx"
+  },
+  "dependencies": {
+    "@expo/styleguide": "^8.2.2",
+    "@expo/styleguide-native": "^7.0.1",
+    "@radix-ui/react-checkbox": "^1.0.4",
+    "@radix-ui/react-collapsible": "^1.0.3",
+    "@radix-ui/react-context-menu": "^2.2.1",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-toast": "^1.1.5",
+    "@radix-ui/react-tooltip": "^1.1.2",
+    "@tailwindcss/typography": "^0.5.10",
+    "@tanstack/react-query": "^5.22.2",
+    "class-variance-authority": "^0.7.0",
+    "echarts": "^5.5.0",
+    "echarts-for-react": "^3.0.2",
+    "expo": "~51.0.8",
+    "expo-atlas": "workspace:*",
+    "expo-linking": "~6.3.1",
+    "expo-router": "~3.5.14",
+    "expo-status-bar": "~1.12.1",
+    "lucide-react": "^0.336.0",
+    "nativewind": "^4.0.36",
+    "picomatch": "^4.0.1",
+    "prettier": "^3.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.74.1",
+    "react-native-reanimated": "~3.10.1",
+    "react-native-safe-area-context": "4.10.1",
+    "react-native-svg": "15.2.0",
+    "react-native-web": "~0.19.6",
+    "shiki": "^1.2.4",
+    "tailwind-gradient-mask-image": "^1.2.0",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/picomatch": "^2.3.3",
+    "@types/react": "~18.2.79",
+    "typescript": "~5.3.3"
+  },
+  "eslintConfig": {
+    "extends": "universe",
+    "ignorePatterns": [
+      "build",
+      "dist",
+      "node_modules",
+      "expo-env.d.ts"
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "args": "all",
+          "argsIgnorePattern": "^_",
+          "caughtErrors": "all",
+          "caughtErrorsIgnorePattern": "^_",
+          "destructuredArrayIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "ignoreRestSiblings": true
+        }
+      ]
+    },
+    "overrides": [
+      {
+        "files": [
+          "src/app/**/*.ts",
+          "!src/app/**/*+api.ts"
+        ],
+        "extends": [
+          "universe/web"
+        ],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+              "args": "all",
+              "argsIgnorePattern": "^_",
+              "caughtErrors": "all",
+              "caughtErrorsIgnorePattern": "^_",
+              "destructuredArrayIgnorePattern": "^_",
+              "varsIgnorePattern": "^_",
+              "ignoreRestSiblings": true
+            }
+          ]
+        }
+      },
+      {
+        "files": [
+          "*.config.js",
+          "webui/src/app/**/*+api.ts"
+        ],
+        "extends": [
+          "universe/node"
+        ],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+              "args": "all",
+              "argsIgnorePattern": "^_",
+              "caughtErrors": "all",
+              "caughtErrorsIgnorePattern": "^_",
+              "destructuredArrayIgnorePattern": "^_",
+              "varsIgnorePattern": "^_",
+              "ignoreRestSiblings": true
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
