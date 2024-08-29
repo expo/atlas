@@ -7,10 +7,7 @@ import serveStaticHandler from 'serve-static';
 import { env } from './env';
 import { type AtlasSource } from '../data/types';
 
-const WEBUI_ROOT = path.resolve(__dirname, '../../../webui');
-
-const CLIENT_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/client');
-const SERVER_BUILD_DIR = path.join(WEBUI_ROOT, 'dist/server');
+const ATLAS_UI_PATH = path.resolve(__dirname, '../../../build/atlas-ui');
 
 /**
  * Initialize Expo Atlas to gather statistics from Metro during development.
@@ -37,7 +34,7 @@ export function createAtlasMiddleware(source: AtlasSource) {
   }
 
   middleware.use(
-    serveStaticHandler(CLIENT_BUILD_DIR, {
+    serveStaticHandler(path.join(ATLAS_UI_PATH, 'client'), {
       maxAge: '1h',
       extensions: ['html'],
     })
@@ -45,7 +42,7 @@ export function createAtlasMiddleware(source: AtlasSource) {
 
   middleware.use(
     createRequestHandler({
-      build: SERVER_BUILD_DIR,
+      build: path.join(ATLAS_UI_PATH, 'server'),
     })
   );
 

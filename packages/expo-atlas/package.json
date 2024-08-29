@@ -13,7 +13,6 @@
   "types": "build/src/index.d.ts",
   "files": [
     "build",
-    "!build/tsconfig.tsbuildinfo",
     "expo-module.config.json",
     "cli.js",
     "cli.d.ts",

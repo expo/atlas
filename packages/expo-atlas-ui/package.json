@@ -4,7 +4,7 @@
   "version": "0.0.1-private",
   "main": "src/index.ts",
   "scripts": {
-    "build": "expo export --platform web",
+    "build": "expo export --platform web --output-dir ../expo-atlas/build/atlas-ui",
     "clean": "git clean -xdf build",
     "lint": "eslint . --ext js,ts,tsx",
     "start": "expo start",
