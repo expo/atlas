@@ -4,14 +4,15 @@
   "version": "0.0.1-private",
   "main": "src/index.ts",
   "scripts": {
+    "build": "expo export --platform web",
+    "clean": "git clean -xdf build",
+    "lint": "eslint . --ext js,ts,tsx",
     "start": "expo start",
+    "typecheck": "tsc --noEmit",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web",
-    "typecheck": "expo-module typecheck",
-    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl",
-    "lint": "eslint . --ext js,ts,tsx"
+    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.2",

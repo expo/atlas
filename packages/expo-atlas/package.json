@@ -31,10 +31,12 @@
     "url": "https://github.com/expo/expo-atlas"
   },
   "scripts": {
-    "build": "expo-module build",
-    "clean": "expo-module clean",
+    "build": "tsc",
+    "clean": "git clean -xdf build",
     "lint": "eslint . --ext js,ts,tsx",
-    "typecheck": "expo-module typecheck"
+    "start": "tsc --watch",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
   },
   "license": "MIT",
   "dependencies": {
