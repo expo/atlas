@@ -10,15 +10,11 @@ inputs:
     description: Version of Node to install
     default: 20.x
 
-  with-webui:
-    description: If the setup should prepare the web UI
-    type: boolean
-
 runs:
   using: composite
   steps:
     - name: 🏗 Setup Node
-      uses: oven-sh/setup-bun@v1
+      uses: oven-sh/setup-bun@v2
       with:
         bun-version: ${{ inputs.bun-version }}
 
@@ -31,18 +27,12 @@ runs:
       run: bun install
       shell: bash
 
-    - name: 📦 Install webui dependencies
-      if: ${{ inputs.with-webui == 'true' }}
-      run: bun install
-      working-directory: webui
-      shell: bash
-
-    - name: ♻️ Restore webui cache
+    - name: ♻️ Restore Metro cache
       if: ${{ inputs.with-webui == 'true' }}
       uses: actions/cache@v4
       with:
-        key: webui-metro-${{ runner.os }}-${{ github.sha }}
+        key: metro-${{ runner.os }}-${{ github.sha }}
         restore-keys: |
-          webui-metro-${{ runner.os }}
+          metro-${{ runner.os }}
         path: |
-          webui/node_modules/.cache/metro
+          packages/expo-atlas-ui/node_modules/.cache/metro

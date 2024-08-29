@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  core:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
@@ -21,19 +21,16 @@ jobs:
       - name: 🏗 Setup project
         uses: ./.github/actions/setup-project
 
-      - name: 🚨 Lint core
-        run: bun run lint -- --max-warnings 0
+      - name: 🚨 Lint project
+        run: bun run lint
 
-      - name: 📋 Typecheck core
+      - name: 📋 Typecheck project
         run: bun run typecheck
 
-      - name: 🧪 Test core
-        run: bun test
+      - name: 🧪 Test project
+        run: bun run test
 
-      - name: 👷 Build core
-        run: bun run build
-
-  webui:
+  ui:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
@@ -41,19 +38,7 @@ jobs:
 
       - name: 🏗 Setup project
         uses: ./.github/actions/setup-project
-        with:
-          with-webui: true
 
-      # Required for typechecking webui
-      - name: 👷 Build core
+      - name: 👷 Build expo-atlas-ui
         run: bun run build
-
-      - name: 📋 Typecheck webui
-        run: bun run typecheck
-        working-directory: webui
-
-      - name: 👷 Build webui
-        run: bun run build
-        working-directory: webui
-        env:
-          EXPO_USE_FAST_RESOLVER: true # Use the faster Metro resolver in SDK 51
+        working-directory: packages/expo-atlas-ui
