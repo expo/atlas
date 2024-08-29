@@ -11,8 +11,7 @@
     "typecheck": "tsc --noEmit",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "production": "EXPO_ATLAS_NO_VALIDATION=true node ../build/src/cli/bin.js ./fixture/atlas-tabs-50.jsonl"
+    "web": "expo start --web"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.2",
