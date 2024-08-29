@@ -1,5 +1,5 @@
-import { createRequestHandler } from '@expo/server/build/vendor/http';
 import connect from 'connect';
+import { createRequestHandler } from 'expo-atlas-server/vendor/http';
 import morgan from 'morgan';
 import path from 'path';
 import serveStaticHandler from 'serve-static';
