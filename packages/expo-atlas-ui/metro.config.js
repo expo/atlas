@@ -3,12 +3,10 @@ const { FileStore } = require('metro-cache');
 const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
-const config = withNativeWind(getDefaultConfig(__dirname), {
+// Load Expo's default config, with NativeWind support
+const config = withNativeWind(getDefaultConfig(__dirname, { isCSSEnabled: true }), {
   input: './src/styles.css',
 });
-
-// Allow Metro to access the `~plugin/**` files
-config.watchFolders = [__dirname, path.resolve(__dirname, '..')];
 
 // Move the Metro cache to `node_modules/.cache`
 config.cacheStores = [
@@ -39,7 +37,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 
 // Initialize the Expo Atlas global data source in development
 if (process.env.NODE_ENV === 'development') {
-  const { AtlasFileSource } = require('../build/src/data/AtlasFileSource');
+  const { AtlasFileSource } = require('expo-atlas/build/src/data/AtlasFileSource');
   const filePath = path.resolve(__dirname, './fixture/expo-51-default.jsonl');
 
   global.EXPO_ATLAS_SOURCE = new AtlasFileSource(filePath);

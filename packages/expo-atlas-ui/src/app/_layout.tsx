@@ -1,3 +1,6 @@
+import '~/styles-expo.css';
+import '~/styles.css';
+
 import { Slot } from 'expo-router';
 
 import { BundleProvider } from '~/providers/bundle';
@@ -27,9 +30,6 @@ import '@radix-ui/colors/slateDark.css';
 // NOTE(cedric): these are not imported by `@expo/styleguide/dist/expo-theme.css`, but they are required for the syntax highlighting
 import '@radix-ui/colors/gray.css';
 import '@radix-ui/colors/grayDark.css';
-
-import '~/styles-expo.css';
-import '~/styles.css';
 
 export default function RootLayout() {
   return (
