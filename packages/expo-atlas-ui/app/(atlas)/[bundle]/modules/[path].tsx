@@ -44,7 +44,7 @@ export default function ModulePage() {
       ) : !module.data ? (
         <NoDataState title="Module not found." />
       ) : (
-        <div className="mx-6 mb-4">
+        <div className="px-6 pb-4">
           <ModuleReference className="mb-2 my-6" bundle={bundle} module={module.data} />
           <div className="mx-2 my-8">
             <h3 className="font-semibold my-2">Module content</h3>
