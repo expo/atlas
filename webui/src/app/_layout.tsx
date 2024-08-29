@@ -5,6 +5,7 @@ import { HmrProvider } from '~/providers/hmr';
 import { QueryProvider } from '~/providers/query';
 import { ThemeProvider } from '~/providers/theme';
 import { ToastProvider } from '~/ui/Toast';
+import { TooltipProvider } from '~/ui/Tooltip';
 
 // Import the Expo-required radix styles
 import '@radix-ui/colors/green.css';
@@ -34,12 +35,14 @@ export default function RootLayout() {
   return (
     <QueryProvider>
       <ThemeProvider>
-        <BundleProvider>
-          <ToastProvider />
-          <HmrProvider>
-            <Slot />
-          </HmrProvider>
-        </BundleProvider>
+        <TooltipProvider delayDuration={200}>
+          <BundleProvider>
+            <ToastProvider />
+            <HmrProvider>
+              <Slot />
+            </HmrProvider>
+          </BundleProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </QueryProvider>
   );
