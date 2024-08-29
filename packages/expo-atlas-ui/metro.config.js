@@ -40,6 +40,9 @@ if (process.env.NODE_ENV === 'development') {
   const { AtlasFileSource } = require('expo-atlas/build/src/data/AtlasFileSource');
   const filePath = path.resolve(__dirname, './fixture/expo-51-default.jsonl');
 
+  // To test the example app, use this instead after exporting the apps/example
+  // const filePath = path.resolve(__dirname, '../../apps/example/.expo/atlas.jsonl');
+
   global.EXPO_ATLAS_SOURCE = new AtlasFileSource(filePath);
 }
 
