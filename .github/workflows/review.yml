@@ -30,6 +30,15 @@ jobs:
       - name: 🧪 Test project
         run: bun run test
 
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup project
+        uses: ./.github/actions/setup-project
+
       - name: 👷 Build expo-atlas-ui
         run: bun run build
         working-directory: packages/expo-atlas-ui
