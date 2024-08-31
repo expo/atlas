@@ -15,12 +15,12 @@
   "types": "build/src/index.d.ts",
   "files": [
     "build",
+    "static",
     "expo-module.config.json",
     "cli.js",
     "cli.d.ts",
     "metro.js",
-    "metro.d.ts",
-    "static"
+    "metro.d.ts"
   ],
   "homepage": "https://github.com/expo/expo-atlas#readme",
   "bugs": {
