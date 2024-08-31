@@ -38,22 +38,22 @@ $ npx expo-atlas
 $ npx expo-atlas ./path/to/atlas.jsonl
 ```
 
+## 🏛️ Project structure
+
+- [`apps/example`](./apps/example) — A default Expo project, with Atlas enabled by default
+- [`packages/expo-atlas`](./packages/expo-atlas) — The core package of Atlas, including Metro data handling and the CLI command
+- [`packages/expo-atlas-ui`](./packages/expo-atlas-ui) — The web-only Expo project representing the UI of Atlas
+
 ## 🧑‍💻 Contributing to Atlas
 
 Expo Atlas is open source and contributions are welcome.
 
-### Project structure
-
-- `apps/example` — A default Expo project, with Atlas enabled by default
-- `packages/expo-atlas` — The core package of Atlas, including Metro data handling and the CLI command
-- `packages/expo-atlas-ui` — The web-only Expo project representing the UI of Atlas
-
 ### Preparing the repository
 
 - Clone this repository
-- `$ bun install` — Atlas uses [Bun](https://bun.sh/)'s package manager
+- `$ bun install` — Atlas uses [Bun](https://bun.sh/)'s package manager, ensure you have it installed
 
-### Changing the Atlas UI
+### 🎨 Changing the Atlas UI
 
 If you need to change anything related to the Atlas UI, you need to:
 
@@ -61,7 +61,7 @@ If you need to change anything related to the Atlas UI, you need to:
 - `$ open http://localhost:8081` — To view **packages/expo-atlas-ui**
 - Make any change in **packages/expo-atlas-ui**
 
-### Changing the Atlas data
+### 📊 Changing the Atlas data
 
 If you need to change anything related to extracting data from Metro, you need to:
 
@@ -73,7 +73,7 @@ If you need to change anything related to extracting data from Metro, you need t
   - `$ bun expo export` — The example project can also export an **.expo/atlas.jsonl** file
   - `$ bun expo-atlas` — When exporting an **.expo/atlas.jsonl** file, you can open Atlas using this export
 
-### Releasing a new version
+### 📦 Releasing a new version
 
 If you need to release a new version of Atlas, you need to:
 
