@@ -38,6 +38,52 @@ $ npx expo-atlas
 $ npx expo-atlas ./path/to/atlas.jsonl
 ```
 
+## 🏛️ Project structure
+
+- [`apps/example`](./apps/example) — A default Expo project, with Atlas enabled by default
+- [`packages/expo-atlas`](./packages/expo-atlas) — The core package of Atlas, including Metro data handling and the CLI command
+- [`packages/expo-atlas-ui`](./packages/expo-atlas-ui) — The web-only Expo project representing the UI of Atlas
+
+## 🧑‍💻 Contributing to Atlas
+
+Atlas is open source and contributions are welcome.
+
+### 🏗️ Preparing the repository
+
+- Clone this repository
+- `$ bun install` — Atlas uses [Bun](https://bun.sh/)'s package manager, ensure you have it installed
+
+### 🎨 Changing the Atlas UI
+
+If you need to change anything related to the Atlas UI, you need to:
+
+- `$ bun start` — This builds [**expo-atlas**](./packages/expo-atlas) and starts [**expo-atlas-ui**](./packages/expo-atlas-ui) with a [default fixture](./packages/expo-atlas-ui/_fixtures)
+- `$ open http://localhost:8081` — To view [**expo-atlas-ui**](./packages/expo-atlas-ui) in your browser
+- Make any change in [**expo-atlas-ui**](./packages/expo-atlas-ui)
+
+### 📊 Changing the Atlas data
+
+If you need to change anything related to extracting data from Metro, you need to:
+
+- `$ cd packages/expo-atlas` — Make the changes in [**expo-atlas**](./packages/expo-atlas)
+- `$ bun start` — Build [**expo-atlas**](./packages/expo-atlas) on any change
+- Open another terminal
+- `$ cd apps/example` — Atlas has a default Expo project to experiment with
+- `$ bun start` — The example project automatically enables Atlas through [**apps/example/.env**](./apps/example/.env)
+  - `$ bun expo export` — The example project can also export an **.expo/atlas.jsonl** file
+  - `$ bun expo-atlas` — When exporting an **.expo/atlas.jsonl** file, you can open Atlas using this export
+
+### 📦 Releasing a new version
+
+If you need to release a new version of Atlas, you need to:
+
+- Make sure you have no uncomitted changes and have checked out **main**
+- Update the package version in [**expo-atlas/package.json**](./packages/expo-atlas/package.json)
+- Commit the new version to **main**
+- `$ bun install` — Make sure to install all dependencies
+- `$ bun run build` — Build both [**expo-atlas**](./packages/expo-atlas) and [**expo-atlas-ui**](./packages/expo-atlas-ui)
+- `$ cd packages/expo-atlas && npm publish` — Release a new version of Atlas
+
 <div align="center">
   <br />
   with&nbsp;❤️&nbsp;&nbsp;<strong>Expo</strong>
