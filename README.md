@@ -73,6 +73,17 @@ If you need to change anything related to extracting data from Metro, you need t
   - `$ bun expo export` — The example project can also export an **.expo/atlas.jsonl** file
   - `$ bun expo-atlas` — When exporting an **.expo/atlas.jsonl** file, you can open Atlas using this export
 
+### Releasing a new version
+
+If you need to release a new version of Atlas, you need to:
+
+- `$ git clean . -xdf && git checkout` — Make sure you have no uncomitted changes
+- Update the package version in **packages/expo-atlas/package.json**
+- `$ git add . && git commit -m 'chore: release new version `x.x.x`'` — Commit the new version to **main**
+- `$ bun install` — Make sure to install all dependencies
+- `$ bun run build` — Build both **packages/expo-atlas** and **packages/expo-atlas-ui**
+- `$ cd packages/expo-atlas && npm publish` — Release a new version of Atlas
+
 <div align="center">
   <br />
   with&nbsp;❤️&nbsp;&nbsp;<strong>Expo</strong>
