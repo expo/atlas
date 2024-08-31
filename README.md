@@ -38,6 +38,41 @@ $ npx expo-atlas
 $ npx expo-atlas ./path/to/atlas.jsonl
 ```
 
+## 🧑‍💻 Contributing to Atlas
+
+Expo Atlas is open source and contributions are welcome.
+
+### Project structure
+
+- `apps/example` — A default Expo project, with Atlas enabled by default
+- `packages/expo-atlas` — The core package of Atlas, including Metro data handling and the CLI command
+- `packages/expo-atlas-ui` — The web-only Expo project representing the UI of Atlas
+
+### Preparing the repository
+
+- Clone this repository
+- `$ bun install` — Atlas uses [Bun](https://bun.sh/)'s package manager
+
+### Changing the Atlas UI
+
+If you need to change anything related to the Atlas UI, you need to:
+
+- `$ bun start` — This builds **packages/expo-atlas** and starts **packages/expo-atlas-ui** with a default fixture
+- `$ open http://localhost:8081` — To view **packages/expo-atlas-ui**
+- Make any change in **packages/expo-atlas-ui**
+
+### Changing the Atlas data
+
+If you need to change anything related to extracting data from Metro, you need to:
+
+- `$ cd packages/expo-atlas` — Make the changes in **packages/expo-atlas**
+- `$ bun start` — Build **packages/expo-atlas** on any change
+- Open another terminal
+- `$ cd apps/example` — Atlas has a default Expo project to experiment with
+- `$ bun start` — The example project automatically enables Atlas through **apps/examples/.env**
+  - `$ bun expo export` — The example project can also export an **.expo/atlas.jsonl** file
+  - `$ bun expo-atlas` — When exporting an **.expo/atlas.jsonl** file, you can open Atlas using this export
+
 <div align="center">
   <br />
   with&nbsp;❤️&nbsp;&nbsp;<strong>Expo</strong>
