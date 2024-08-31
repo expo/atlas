@@ -46,9 +46,9 @@ $ npx expo-atlas ./path/to/atlas.jsonl
 
 ## 🧑‍💻 Contributing to Atlas
 
-Expo Atlas is open source and contributions are welcome.
+Atlas is open source and contributions are welcome.
 
-### Preparing the repository
+### 🏗️ Preparing the repository
 
 - Clone this repository
 - `$ bun install` — Atlas uses [Bun](https://bun.sh/)'s package manager, ensure you have it installed
