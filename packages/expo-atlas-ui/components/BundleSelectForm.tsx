@@ -27,36 +27,29 @@ export function BundleSelectForm() {
         <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>
       <SelectContent side="bottom" collisionPadding={{ left: 16, right: 16 }}>
-        {bundlesByPlatform.map(([platform, bundles]) => {
-          // Hide empty `unknown` platforms. If there are unknown platforms, render them.
-          if (platform === 'unknown' && bundles.length === 0) {
-            return null;
-          }
-
-          return (
-            <SelectGroup key={platform} className="my-1">
-              <SelectLabel className="mx-0.5 capitalize">
-                <PlatformName platform={platform} />
-              </SelectLabel>
-              {bundles.length === 0 ? (
-                <SelectItem disabled value="none" className="italic" style={{ paddingTop: 0 }}>
-                  No bundle available for this platform
+        {bundlesByPlatform.map(([platform, bundles]) => (
+          <SelectGroup key={platform} className="my-1">
+            <SelectLabel className="mx-0.5 capitalize">
+              <PlatformName platform={platform} />
+            </SelectLabel>
+            {bundles.length === 0 ? (
+              <SelectItem disabled value="none" className="italic" style={{ paddingTop: 0 }}>
+                No bundle available for this platform
+              </SelectItem>
+            ) : (
+              bundles.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  <span className="inline-flex items-center select-none mb-0.5">
+                    <PlatformName platform={item.platform}>
+                      <EnvironmentIcon environment={item.environment} size={16} />
+                    </PlatformName>
+                    <span className="ml-2 mr-1">{relativeBundlePath(item, item.entryPoint)}</span>
+                  </span>
                 </SelectItem>
-              ) : (
-                bundles.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    <span className="inline-flex items-center select-none mb-0.5">
-                      <PlatformName platform={item.platform}>
-                        <EnvironmentIcon environment={item.environment} size={16} />
-                      </PlatformName>
-                      <span className="ml-2 mr-1">{relativeBundlePath(item, item.entryPoint)}</span>
-                    </span>
-                  </SelectItem>
-                ))
-              )}
-            </SelectGroup>
-          );
-        })}
+              ))
+            )}
+          </SelectGroup>
+        ))}
       </SelectContent>
     </Select>
   );
@@ -76,10 +69,15 @@ function groupBundlesByPlatform(bundles: PartialAtlasBundle[]) {
     }
   }
 
-  return Object.entries(groups).map(
-    ([platform, bundles]) =>
-      [platform as PartialAtlasBundle['platform'], bundles.sort(sortBundlesByEnvironment)] as const
-  );
+  return Object.entries(groups)
+    .filter(([_, bundles]) => !!bundles.length)
+    .map(
+      ([platform, bundles]) =>
+        [
+          platform as PartialAtlasBundle['platform'],
+          bundles.sort(sortBundlesByEnvironment),
+        ] as const
+    );
 }
 
 /** Sort all bundles by environment, in alphabetical order "client -> node -> react-server" */
