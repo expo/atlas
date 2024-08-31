@@ -20,8 +20,7 @@
     "cli.d.ts",
     "metro.js",
     "metro.d.ts",
-    "static",
-    "webui/dist"
+    "static"
   ],
   "homepage": "https://github.com/expo/expo-atlas#readme",
   "bugs": {
