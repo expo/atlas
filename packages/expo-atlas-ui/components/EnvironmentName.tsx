@@ -8,6 +8,7 @@ type EnvironmentNameProps = PropsWithChildren<{
 
 export const environmentNames: Record<AtlasBundle['environment'], string> = {
   client: 'Client',
+  dom: 'DOM',
   node: 'SSR',
   'react-server': 'RSC',
 };
