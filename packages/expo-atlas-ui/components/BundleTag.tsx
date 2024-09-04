@@ -18,6 +18,7 @@ const bundleTagVariants = cva('', {
     } satisfies Record<AtlasBundle['platform'], string>,
     environment: {
       client: '',
+      dom: 'bg-palette-blue3',
       node: 'bg-palette-orange3',
       'react-server': 'bg-palette-orange3',
     } satisfies Record<AtlasBundle['environment'], string>,
@@ -71,6 +72,9 @@ export function BundleTag({ className, platform, environment, ...props }: Bundel
             <li className="inline-flex items-center gap-1">
               <EnvironmentIcon environment="client" size={14} /> Client — Bundles that run on
               device.
+            </li>
+            <li className="inline-flex items-center gap-1">
+              <EnvironmentIcon environment="dom" size={14} /> DOM — Webview embedded components.
             </li>
             <li className="inline-flex items-center gap-1">
               <EnvironmentIcon environment="node" size={14} /> SSR — Bundles that only run on

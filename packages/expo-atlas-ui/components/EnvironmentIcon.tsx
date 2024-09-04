@@ -10,6 +10,7 @@ type EnvironmentIconProps = Omit<
 
 const iconsByEnvironment: Record<AtlasBundle['environment'], any> = {
   client: require('lucide-react/dist/esm/icons/tablet-smartphone').default,
+  dom: require('lucide-react/dist/esm/icons/panel-top').default,
   node: require('lucide-react/dist/esm/icons/hexagon').default,
   'react-server': require('lucide-react/dist/esm/icons/server').default,
 };

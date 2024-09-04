@@ -107,16 +107,17 @@ export function convertGraph(options: ConvertGraphToAtlasOptions): AtlasBundle {
   const environment = getEnvironment(options) ?? 'client';
   const serializeOptions = convertSerializeOptions(options);
   const transformOptions = convertTransformOptions(options);
+  const entryPoint = getEntryPoint(options, environment);
 
   return {
-    id: Buffer.from(
-      `${path.relative(sharedRoot, options.entryPoint)}+${platform}+${environment}`
-    ).toString('base64url'),
+    id: Buffer.from(`${path.relative(sharedRoot, entryPoint)}+${platform}+${environment}`).toString(
+      'base64url'
+    ),
     platform,
     environment,
     projectRoot: options.projectRoot,
     sharedRoot,
-    entryPoint: options.entryPoint,
+    entryPoint,
     runtimeModules: options.preModules.map((module) => convertModule(options, module, sharedRoot)),
     modules: collectEntryPointModules(options, sharedRoot),
     serializeOptions,
@@ -253,6 +254,15 @@ function moduleIsVirtual(module: MetroModule) {
 function getEnvironment(options: Pick<ConvertGraphToAtlasOptions, 'graph'>) {
   const environment = options.graph.transformOptions?.customTransformOptions?.environment;
 
+  // Check if this graph is related to a DOM component
+  // NOTE(cedric): this is early/alpha support and may change in the future
+  if (
+    options.graph.transformOptions.platform === 'web' &&
+    !!options.graph.transformOptions.customTransformOptions?.dom
+  ) {
+    return 'dom' as AtlasBundle['environment'];
+  }
+
   if (typeof environment === 'string') {
     return environment as AtlasBundle['environment'];
   }
@@ -269,4 +279,31 @@ function getPlatform(options: Pick<ConvertGraphToAtlasOptions, 'graph'>) {
   }
 
   return null;
+}
+
+/**
+ * Determine if this graph is related to a DOM component, using the (custom) transform options.
+ * @remarks - This is preliminary support, and may change in the future
+ */
+function getEntryPoint(
+  options: ConvertGraphToAtlasOptions,
+  environment: AtlasBundle['environment'] = 'client'
+) {
+  if (environment === 'dom') {
+    console.log({
+      entryPoint: options.entryPoint,
+      dom: options.graph.transformOptions.customTransformOptions?.dom,
+      _result: path.join(
+        options.entryPoint,
+        options.graph.transformOptions.customTransformOptions!.dom as string
+      ),
+    });
+  }
+
+  return environment !== 'dom'
+    ? options.entryPoint
+    : path.join(
+        options.entryPoint,
+        options.graph.transformOptions.customTransformOptions!.dom as string
+      );
 }
