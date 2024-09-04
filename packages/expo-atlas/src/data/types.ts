@@ -21,7 +21,7 @@ export type AtlasBundle = {
   /** The platform for which the bundle was created */
   platform: 'android' | 'ios' | 'web' | 'unknown';
   /** The environment this bundle is compiled for */
-  environment: 'client' | 'node' | 'react-server';
+  environment: 'client' | 'dom' | 'node' | 'react-server';
   /** The absolute path to the root of the project */
   projectRoot: string;
   /** The absolute path to the shared root of all imported modules */
