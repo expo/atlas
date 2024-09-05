@@ -289,17 +289,6 @@ function getEntryPoint(
   options: ConvertGraphToAtlasOptions,
   environment: AtlasBundle['environment'] = 'client'
 ) {
-  if (environment === 'dom') {
-    console.log({
-      entryPoint: options.entryPoint,
-      dom: options.graph.transformOptions.customTransformOptions?.dom,
-      _result: path.join(
-        options.entryPoint,
-        options.graph.transformOptions.customTransformOptions!.dom as string
-      ),
-    });
-  }
-
   return environment !== 'dom'
     ? options.entryPoint
     : path.join(
