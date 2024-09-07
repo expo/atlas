@@ -292,7 +292,7 @@ function getEntryPoint(
   return environment !== 'dom'
     ? options.entryPoint
     : path.join(
-        options.entryPoint,
+        path.dirname(options.entryPoint),
         options.graph.transformOptions.customTransformOptions!.dom as string
       );
 }
