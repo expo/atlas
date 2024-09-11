@@ -2,10 +2,12 @@
 {
   "extends": "expo-module-scripts/tsconfig.base",
   "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable","ESNext"],
     "outDir": "./build",
     "resolveJsonModule": true,
     "module": "CommonJS",
-    "target": "es5"
+    "target": "es5",
+    "downlevelIteration": true
   },
   "include": ["./src", "./package.json"],
   "exclude": ["**/__mocks__/*", "**/__tests__/*"]

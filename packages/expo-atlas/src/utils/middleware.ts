@@ -1,10 +1,10 @@
-import { createRequestHandler } from '@expo/server/build/vendor/http';
 import connect from 'connect';
 import morgan from 'morgan';
 import path from 'path';
 import serveStaticHandler from 'serve-static';
 
 import { env } from './env';
+import { createHttpRequestHandler } from './server';
 import { type AtlasSource } from '../data/types';
 
 const ATLAS_UI_PATH = path.resolve(__dirname, '../../../build/atlas-ui');
@@ -41,7 +41,7 @@ export function createAtlasMiddleware(source: AtlasSource) {
   );
 
   middleware.use(
-    createRequestHandler({
+    createHttpRequestHandler({
       build: path.join(ATLAS_UI_PATH, 'server'),
     })
   );
