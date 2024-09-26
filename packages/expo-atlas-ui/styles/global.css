@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: var(--expo-theme-background-screen);
+  color: var(--expo-theme-text-default);
+}
+
+html, body, #root {
+  height: auto;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+}
+
+@layer components {
+  .shiki code {
+    @apply grid grid-cols-[auto,1fr];
+  }
+
+  .shiki .line-number {
+    @apply px-4 text-right select-none;
+  }
+
+  .shiki .line {
+    @apply pr-4;
+  }
+}

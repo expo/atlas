@@ -1,16 +1,25 @@
+import '~/styles/global.css';
+import '~/styles/expo-dark.css';
+
+// Import the Expo-required radix styles from `@expo/style-guide/dist/expo-theme.css`
+import '@radix-ui/colors/greenDark.css';
+import '@radix-ui/colors/yellowDark.css';
+import '@radix-ui/colors/redDark.css';
+import '@radix-ui/colors/blueDark.css';
+import '@radix-ui/colors/orangeDark.css';
+import '@radix-ui/colors/purpleDark.css';
+import '@radix-ui/colors/pinkDark.css';
+import '@radix-ui/colors/slateDark.css';
+import '@radix-ui/colors/grayDark.css'; // NOTE(cedric): this is required for syntax highlighting
+
 import { useColorScheme } from 'nativewind';
-import { useEffect, type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 
 export function ThemeProvider({ children }: PropsWithChildren) {
-  const { colorScheme } = useColorScheme();
+  const { setColorScheme } = useColorScheme();
 
-  useEffect(() => {
-    // Keep the prefered color scheme synced with the `body` class name
-    if (document.body && colorScheme) {
-      document.body.classList.remove('light-theme', 'dark-theme');
-      document.body.className = `${colorScheme}-theme`;
-    }
-  }, [colorScheme]);
+  // Force Atlas into dark mode
+  setColorScheme('dark');
 
   return children;
 }
