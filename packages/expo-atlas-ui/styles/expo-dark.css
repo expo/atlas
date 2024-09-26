@@ -1,4 +1,4 @@
-:root {
+:root, .dark-theme {
   --expo-color-white: #fff;
   --expo-color-black: #000;
 
@@ -17,13 +17,13 @@
   --expo-color-app-dark-green: #3a8e39;
 
   /* Backgrounds */
-  --expo-theme-background-default: var(--expo-color-white);
-  --expo-theme-background-screen: var(--slate1);
+  --expo-theme-background-default: var(--slate1);
+  --expo-theme-background-screen: #0C0D0E;
   --expo-theme-background-subtle: var(--slate2);
   --expo-theme-background-element: var(--slate3);
   --expo-theme-background-hover: var(--slate4);
   --expo-theme-background-selected: var(--slate5);
-  --expo-theme-background-overlay: var(--expo-color-white);
+  --expo-theme-background-overlay: var(--slate2);
   --expo-theme-background-success: var(--green3);
   --expo-theme-background-warning: var(--yellow3);
   --expo-theme-background-danger: var(--red3);

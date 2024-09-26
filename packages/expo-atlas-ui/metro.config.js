@@ -5,7 +5,7 @@ const path = require('path');
 
 // Load Expo's default config, with NativeWind support
 const config = withNativeWind(getDefaultConfig(__dirname, { isCSSEnabled: true }), {
-  input: './global.css',
+  input: './styles/global.css',
 });
 
 // Move the Metro cache to `node_modules/.cache`
