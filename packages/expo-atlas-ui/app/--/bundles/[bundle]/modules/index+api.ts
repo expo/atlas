@@ -44,8 +44,10 @@ export async function GET(request: Request, params: Record<'bundle', string>) {
     })),
     bundle: {
       platform: bundle.platform as any,
-      moduleSize: allModules.reduce((size, module) => size + module.size, 0),
-      moduleFiles: bundle.modules.size,
+      moduleFiles: bundle.modules.size + bundle.runtimeModules.length,
+      moduleSize: allModules
+        .concat(bundle.runtimeModules)
+        .reduce((size, module) => size + module.size, 0),
     },
     filtered: {
       moduleSize: filteredModules.reduce((size, module) => size + module.size, 0),
