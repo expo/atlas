@@ -51,7 +51,7 @@ export function BundleTag({ className, platform, environment, ...props }: Bundel
           </PlatformName>
         </Tag>
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent className="text-wrap">
         <p>
           Expo creates bundles for every platform containing only{' '}
           <a
