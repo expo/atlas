@@ -25,9 +25,6 @@ export default function BundlePage() {
   const modules = useModuleGraphData(bundle.id, filters);
 
   const treeHasData = !!modules.data?.data?.children?.length;
-  const modulesAreFiltered = modules.data
-    ? modules.data.filtered.moduleFiles !== modules.data.bundle.moduleFiles
-    : null;
 
   return (
     <Layout variant="viewport">
@@ -41,16 +38,16 @@ export default function BundlePage() {
             <BundleTag platform={bundle.platform} environment={bundle.environment} />
             {!!modules.data && <span>{modules.data.bundle.moduleFiles} modules</span>}
             {!!modules.data && <FileSize byteSize={modules.data.bundle.moduleSize} />}
-            {!!modules.data && modulesAreFiltered && (
-              <PropertySummary
-                className="text-tertiary italic"
-                prefix={<span className="select-none mr-2">visible:</span>}
-              >
-                <span>{modules.data.filtered.moduleFiles} modules</span>
-                <FileSize byteSize={modules.data.filtered.moduleSize} />
-              </PropertySummary>
-            )}
           </PropertySummary>
+          {!!modules.data && filtersEnabled && (
+            <PropertySummary
+              className="text-tertiary italic"
+              prefix={<span className="select-none mr-2">visible:</span>}
+            >
+              <span>{modules.data.filtered.moduleFiles} modules</span>
+              <FileSize byteSize={modules.data.filtered.moduleSize} />
+            </PropertySummary>
+          )}
         </LayoutTitle>
         <ModuleFiltersForm />
       </LayoutHeader>

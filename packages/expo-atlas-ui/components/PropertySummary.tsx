@@ -9,14 +9,19 @@ export function PropertySummary(
   props: PropsWithChildren<{ className?: string; prefix?: ReactNode }>
 ) {
   return (
-    <div className={cx('inline font-sm text-secondary', props.className)}>
+    <div
+      className={cx(
+        'inline-flex items-center font-sm text-secondary gap-2 text-nowrap',
+        props.className
+      )}
+    >
       {props.prefix}
       {Children.map(props.children, (child, index) => {
         if (index === 0) return child;
         if (!child) return null;
         return (
           <>
-            <span className="text-tertiary mx-2 select-none">-</span>
+            <span className="text-tertiary select-none">-</span>
             {child}
           </>
         );
