@@ -40,13 +40,16 @@ export function FileSize(props: BundleFileSizeProps) {
   );
 }
 
-/** Format files or bundle size, from bytes to the nearest unit */
-export function formatByteSize(size: number) {
-  if (size < 1024) {
-    return size + 'B';
-  } else if (size < 1024 * 1024) {
-    return (size / 1024).toFixed(1) + 'KB';
+/**
+ * Format files or bundle size, from bytes to the nearest unit.
+ * This uses the decimal system with a scaling factor of `1000`.
+ */
+export function formatByteSize(byteSize: number, scalingFactor = 1000) {
+  if (byteSize < scalingFactor) {
+    return byteSize + 'B';
+  } else if (byteSize < scalingFactor * scalingFactor) {
+    return (byteSize / scalingFactor).toFixed(1) + 'KB';
   } else {
-    return (size / 1024 / 1024).toFixed(1) + 'MB';
+    return (byteSize / scalingFactor / scalingFactor).toFixed(1) + 'MB';
   }
 }
