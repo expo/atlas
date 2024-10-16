@@ -10,7 +10,7 @@ type BundleFileSizeProps = {
 
 export function FileSize(props: BundleFileSizeProps) {
   return (
-    <div className="inline-flex flex-row items-start">
+    <div className="inline-flex flex-row items-start text-wrap">
       {formatByteSize(props.byteSize)}
       <Tooltip>
         <TooltipTrigger className="group">
