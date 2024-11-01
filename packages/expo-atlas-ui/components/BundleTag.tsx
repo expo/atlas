@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import type { AtlasBundle } from 'expo-atlas';
 import { type ComponentProps } from 'react';
 
@@ -7,6 +6,7 @@ import { EnvironmentName } from '~/components/EnvironmentName';
 import { PlatformName } from '~/components/PlatformName';
 import { Tag } from '~/ui/Tag';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/ui/Tooltip';
+import { cva, type VariantProps } from '~/utils/classname';
 
 const bundleTagVariants = cva('', {
   variants: {

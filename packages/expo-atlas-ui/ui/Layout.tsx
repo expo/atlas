@@ -1,6 +1,7 @@
-import { cva, cx, type VariantProps } from 'class-variance-authority';
 import { Link } from 'expo-router';
 import { type HTMLAttributes, type PropsWithChildren } from 'react';
+
+import { cva, cn, type VariantProps } from '~/utils/classname';
 
 const layoutVariants = cva('', {
   variants: {
@@ -29,7 +30,7 @@ export function Layout({
 
 export function LayoutHeader(props: PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={cx('flex flex-row justify-between my-6 px-8', props.className)}>
+    <div className={cn('flex flex-row justify-between my-6 px-8', props.className)}>
       {props.children}
     </div>
   );
@@ -37,7 +38,7 @@ export function LayoutHeader(props: PropsWithChildren<{ className?: string }>) {
 
 export function LayoutTitle(props: PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={cx('flex flex-row flex-wrap items-center gap-3 min-h-10', props.className)}>
+    <div className={cn('flex flex-row flex-wrap items-center gap-3 min-h-10', props.className)}>
       {props.children}
     </div>
   );
@@ -49,7 +50,7 @@ export function LayoutNavigation({
 }: PropsWithChildren & { className?: string }) {
   return (
     <header
-      className={cx(
+      className={cn(
         'h-16 flex flex-shrink-0 items-center justify-between gap-2 border-b border-b-secondary bg-default px-4',
         className
       )}
@@ -71,7 +72,7 @@ function ExpoLogoBig({ className, ...props }: HTMLAttributes<SVGSVGElement>) {
       viewBox="0 0 71 20"
       fill="none"
       role="img"
-      className={cx('icon-md text-default', className)}
+      className={cn('icon-md text-default', className)}
       {...props}
     >
       <path
@@ -88,7 +89,7 @@ function ExpoLogoSmall({ className, ...props }: HTMLAttributes<SVGSVGElement>) {
       viewBox="0 0 20 20"
       fill="none"
       role="img"
-      className={cx('icon-md text-default', className)}
+      className={cn('icon-md text-default', className)}
       {...props}
     >
       <path

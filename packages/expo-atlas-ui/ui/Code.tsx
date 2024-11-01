@@ -1,7 +1,7 @@
-import { cx } from 'class-variance-authority';
 import { type ComponentProps, type PropsWithChildren } from 'react';
 
-import { Button } from './Button';
+import { Button } from '~/ui/Button';
+import { cn } from '~/utils/classname';
 
 export function CodeHeader(props: PropsWithChildren) {
   return (
@@ -19,7 +19,7 @@ export function CodeAction({ className, ...props }: ComponentProps<typeof Button
   return (
     <Button
       variant="quaternary"
-      className={cx('m-0 border-l border-secondary rounded-none', className)}
+      className={cn('m-0 border-l border-secondary rounded-none', className)}
       {...props}
     />
   );

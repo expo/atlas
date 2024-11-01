@@ -1,7 +1,6 @@
 // see: https://ui.shadcn.com/docs/components/select
 
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { cx } from 'class-variance-authority';
 // @ts-expect-error
 import CheckIcon from 'lucide-react/dist/esm/icons/check';
 // @ts-expect-error
@@ -9,6 +8,8 @@ import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
 // @ts-expect-error
 import ChevronUpIcon from 'lucide-react/dist/esm/icons/chevron-up';
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react';
+
+import { cn } from '~/utils/classname';
 
 export const Select = SelectPrimitive.Root;
 
@@ -22,7 +23,7 @@ export const SelectTrigger = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
-    className={cx(
+    className={cn(
       'h-10 px-3 py-2 w-full flex items-center justify-between whitespace-nowrap group',
       'text-sm shadow-sm border rounded-md border-default bg-transparent hover:bg-subtle focus:bg-subtle transition-colors ring-offset-background',
       'hover:text-default data-[state=closed]:text-secondary focus:outline-none focus:ring-1 focus:ring-ring',
@@ -45,7 +46,7 @@ export const SelectScrollUpButton = forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
-    className={cx('flex cursor-default items-center justify-center py-1', className)}
+    className={cn('flex cursor-default items-center justify-center py-1', className)}
     {...props}
   >
     <ChevronUpIcon className="text-icon-default" size={16} />
@@ -59,7 +60,7 @@ export const SelectScrollDownButton = forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
-    className={cx('flex cursor-default items-center justify-center py-1', className)}
+    className={cn('flex cursor-default items-center justify-center py-1', className)}
     {...props}
   >
     <ChevronDownIcon className="text-icon-default" size={16} />
@@ -74,7 +75,7 @@ export const SelectContent = forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
-      className={cx(
+      className={cn(
         'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-default bg-default text-popover-foreground shadow-md ',
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         'data-[side=bottom]:slide-in-from-top-1/3 data-[side=left]:slide-in-from-right-1/3 data-[side=right]:slide-in-from-left-1/3 data-[side=top]:slide-in-from-bottom-1/3',
@@ -87,7 +88,7 @@ export const SelectContent = forwardRef<
     >
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
-        className={cx(
+        className={cn(
           'p-1',
           position === 'popper' &&
             'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
@@ -107,7 +108,7 @@ export const SelectLabel = forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cx(
+    className={cn(
       'px-2 py-1 text-2xs leading-[1.6154] tracking-[-0.003rem] font-semibold text-secondary truncate',
       className
     )}
@@ -122,7 +123,7 @@ export const SelectItem = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
-    className={cx(
+    className={cn(
       'relative w-full py-1.5 pl-2 pr-8 flex items-center cursor-pointer select-none rounded-sm text-sm text-secondary outline-none transition-colors',
       'hover:bg-subtle focus:bg-subtle focus:text-default hover:text-default',
       'data-[state=checked]:bg-subtle data-[state=checked]:text-default data-[state=checked]:cursor-default',
@@ -147,7 +148,7 @@ export const SelectSeparator = forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cx('-mx-1 my-1 h-px bg-muted', className)}
+    className={cn('-mx-1 my-1 h-px bg-muted', className)}
     {...props}
   />
 ));
