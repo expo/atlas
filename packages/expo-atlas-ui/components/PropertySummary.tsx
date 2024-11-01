@@ -1,5 +1,6 @@
-import { cx } from 'class-variance-authority';
 import { Children, ReactNode, type PropsWithChildren } from 'react';
+
+import { cn } from '~/utils/classname';
 
 /**
  * Render various properties or attributes of a certain entity.
@@ -10,7 +11,7 @@ export function PropertySummary(
 ) {
   return (
     <div
-      className={cx(
+      className={cn(
         'inline-flex items-center font-sm text-secondary gap-2 text-nowrap',
         props.className
       )}

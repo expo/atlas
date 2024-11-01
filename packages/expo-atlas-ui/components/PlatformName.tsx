@@ -1,6 +1,7 @@
-import { cva } from 'class-variance-authority';
 import type { AtlasBundle } from 'expo-atlas';
 import type { PropsWithChildren } from 'react';
+
+import { cva } from '~/utils/classname';
 
 type PlatformNameProps = PropsWithChildren<{
   platform: AtlasBundle['platform'];

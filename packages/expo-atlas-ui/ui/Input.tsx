@@ -1,8 +1,9 @@
-import { cx } from 'class-variance-authority';
 import { HTMLProps } from 'react';
 
+import { cn } from '~/utils/classname';
+
 export function Input(props: HTMLProps<HTMLInputElement>) {
-  const classes = cx(
+  const classes = cn(
     'text-[16px] leading-[1.625] tracking-[-0.011rem]',
     'relative w-full rounded-md border border-default bg-default p-3 text-default shadow-xs outline-0 transition-colors',
     'focus:border-palette-blue9',

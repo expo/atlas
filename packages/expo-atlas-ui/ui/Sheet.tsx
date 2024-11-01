@@ -1,10 +1,11 @@
 // see: https://ui.shadcn.com/docs/components/sheet
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { cva, cx, type VariantProps } from 'class-variance-authority';
 // @ts-expect-error
 import CloseIcon from 'lucide-react/dist/esm/icons/x';
 import { forwardRef, type ComponentPropsWithoutRef } from 'react';
+
+import { cva, cn, type VariantProps } from '~/utils/classname';
 
 export const Sheet = DialogPrimitive.Root;
 
@@ -21,7 +22,7 @@ export const SheetOverlay = () => null;
 //   React.ComponentPropsWithoutRef<typeof Dialog.Overlay>
 // >(({ className, ...props }, ref) => (
 //   <Dialog.Overlay
-//     className={cx(
+//     className={cn(
 //       'fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
 //       className
 //     )}
@@ -74,13 +75,13 @@ export const SheetContent = forwardRef<
 SheetContent.displayName = DialogPrimitive.Content.displayName;
 
 export const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cx('flex flex-col space-y-2 text-center sm:text-left', className)} {...props} />
+  <div className={cn('flex flex-col space-y-2 text-center sm:text-left', className)} {...props} />
 );
 SheetHeader.displayName = 'SheetHeader';
 
 export const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cx('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)}
+    className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)}
     {...props}
   />
 );
@@ -92,7 +93,7 @@ export const SheetTitle = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cx('text-lg font-semibold text-foreground', className)}
+    className={cn('text-lg font-semibold text-foreground', className)}
     {...props}
   />
 ));
@@ -104,7 +105,7 @@ export const SheetDescription = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cx('text-sm text-muted-foreground', className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ));

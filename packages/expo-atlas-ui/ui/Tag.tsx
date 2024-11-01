@@ -1,5 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import { type ComponentProps, forwardRef } from 'react';
+
+import { cva, type VariantProps } from '~/utils/classname';
 
 const tagVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-full font-semibold',

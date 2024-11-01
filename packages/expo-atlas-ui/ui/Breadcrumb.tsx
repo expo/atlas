@@ -1,7 +1,6 @@
 // see: https://ui.shadcn.com/docs/components/breadcrumb
 
 import { Slot } from '@radix-ui/react-slot';
-import { cx } from 'class-variance-authority';
 // @ts-expect-error
 import ChevronRightIcon from 'lucide-react/dist/esm/icons/chevron-right';
 // @ts-expect-error
@@ -12,6 +11,8 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from 'react';
+
+import { cn } from '~/utils/classname';
 
 export const Breadcrumb = forwardRef<
   HTMLElement,
@@ -25,7 +26,7 @@ export const BreadcrumbList = forwardRef<HTMLOListElement, ComponentPropsWithout
   ({ className, ...props }, ref) => (
     <ol
       ref={ref}
-      className={cx(
+      className={cn(
         'flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5',
         className
       )}
@@ -37,7 +38,7 @@ BreadcrumbList.displayName = 'BreadcrumbList';
 
 export const BreadcrumbItem = forwardRef<HTMLLIElement, ComponentPropsWithoutRef<'li'>>(
   ({ className, ...props }, ref) => (
-    <li ref={ref} className={cx('inline-flex items-center gap-1.5', className)} {...props} />
+    <li ref={ref} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
   )
 );
 BreadcrumbItem.displayName = 'BreadcrumbItem';
@@ -53,7 +54,7 @@ export const BreadcrumbLink = forwardRef<
   return (
     <Comp
       ref={ref}
-      className={cx('transition-colors hover:text-foreground', className)}
+      className={cn('transition-colors hover:text-foreground', className)}
       {...props}
     />
   );
@@ -67,7 +68,7 @@ export const BreadcrumbPage = forwardRef<HTMLSpanElement, ComponentPropsWithoutR
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cx('font-normal text-foreground', className)}
+      className={cn('font-normal text-foreground', className)}
       {...props}
     />
   )
@@ -75,7 +76,7 @@ export const BreadcrumbPage = forwardRef<HTMLSpanElement, ComponentPropsWithoutR
 BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 export const BreadcrumbSeparator = ({ children, className, ...props }: ComponentProps<'li'>) => (
-  <li role="presentation" aria-hidden="true" className={cx('[&>svg]:size-4', className)} {...props}>
+  <li role="presentation" aria-hidden="true" className={cn('[&>svg]:size-4', className)} {...props}>
     {children ?? <ChevronRightIcon />}
   </li>
 );
@@ -85,7 +86,7 @@ export const BreadcrumbEllipsis = ({ className, ...props }: ComponentProps<'span
   <span
     role="presentation"
     aria-hidden="true"
-    className={cx('flex h-9 w-9 items-center justify-center', className)}
+    className={cn('flex h-9 w-9 items-center justify-center', className)}
     {...props}
   >
     <EllipsisHorizontalIcon className="h-4 w-4" />

@@ -1,4 +1,3 @@
-import { cva, cx } from 'class-variance-authority';
 import type { AtlasModule, PartialAtlasBundle } from 'expo-atlas';
 // @ts-expect-error
 import ChevronDownIcon from 'lucide-react/dist/esm/icons/chevron-down';
@@ -7,6 +6,7 @@ import { type ComponentProps, useState, useRef, useLayoutEffect } from 'react';
 import { ModuleReferenceList } from './ModuleReferenceList';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '~/ui/Collapsible';
+import { cva, cn } from '~/utils/classname';
 
 type ModuleReferenceProps = {
   bundle: PartialAtlasBundle;
@@ -16,7 +16,7 @@ type ModuleReferenceProps = {
 
 export function ModuleReference(props: ModuleReferenceProps) {
   return (
-    <div className={cx('lg:grid lg:grid-cols-2', props.className)}>
+    <div className={cn('lg:grid lg:grid-cols-2', props.className)}>
       <div className="mb-6 lg:mb-0">
         <ModuleReferenceCollapsible
           title="Imported by modules"
@@ -88,7 +88,7 @@ function ModuleReferenceCollapsible(props: ModuleReferenceCollapsibleProps) {
           <h3 className="font-semibold mx-2">{props.title}</h3>
           <ChevronDownIcon
             size={18}
-            className={cx(
+            className={cn(
               'text-icon-secondary transition-transform invisible',
               isOverflowing && '!visible',
               isOpen && 'rotate-180'
