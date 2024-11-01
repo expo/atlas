@@ -12,6 +12,7 @@
       "tsconfigPaths": true,
       "typedRoutes": true
     },
+    "platforms": ["web"],
     "plugins": [
       "expo-router"
     ]
