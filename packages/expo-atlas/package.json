@@ -1,7 +1,7 @@
 {
   "sideEffects": false,
   "name": "expo-atlas",
-  "version": "0.3.27",
+  "version": "0.4.0",
   "description": "Visualize React Native bundles to understand and optimize your app",
   "keywords": [
     "react-native",
