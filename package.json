@@ -21,7 +21,7 @@
     "@types/node": "^20.11.26",
     "eslint": "^8.57.0",
     "eslint-config-universe": "^13.0.0",
-    "expo-module-scripts": "^3.5.2",
+    "expo-module-scripts": "^4.0.2",
     "prettier": "^3.2.5",
     "typescript": "^5.5.4"
   },
