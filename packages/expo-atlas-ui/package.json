@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "build": "expo export --platform web --output-dir ../expo-atlas/build/atlas-ui",
+    "build": "expo export --platform web --output-dir=dist && mv dist ../expo-atlas/build/atlas-ui",
     "clean": "git clean -xdf build",
     "lint": "eslint . --ext js,ts,tsx",
     "start": "expo start",
