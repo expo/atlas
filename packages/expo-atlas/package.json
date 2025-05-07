@@ -50,7 +50,7 @@
     "connect": "^3.7.0",
     "express": "^4.19.2",
     "freeport-async": "^2.0.0",
-    "getenv": "^1.0.0",
+    "getenv": "^2.0.0",
     "morgan": "^1.10.0",
     "open": "^8.4.2",
     "serve-static": "^1.15.0",
