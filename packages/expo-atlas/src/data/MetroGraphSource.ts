@@ -164,12 +164,16 @@ export function convertModule(
     relativePath: convertPathToPosix(path.relative(sharedRoot, module.path)),
     package: getPackageNameFromPath(module.path),
     size: module.output.reduce((bytes, output) => bytes + Buffer.byteLength(output.data.code), 0),
-    imports: Array.from(module.dependencies.values()).map((module) => ({
-      id: createModuleId(module.absolutePath),
-      absolutePath: module.absolutePath,
-      relativePath: convertPathToPosix(path.relative(sharedRoot, module.absolutePath)),
-      package: getPackageNameFromPath(module.absolutePath),
-    })),
+    imports: Array.from(module.dependencies.values())
+      // For now, filter out unresolved dependencies from the graph
+      // TODO(cedric): add support for showing unresolved dependencies in Atlas
+      .filter((dependency) => !!dependency.absolutePath)
+      .map((module) => ({
+        id: createModuleId(module.absolutePath),
+        absolutePath: module.absolutePath,
+        relativePath: convertPathToPosix(path.relative(sharedRoot, module.absolutePath)),
+        package: getPackageNameFromPath(module.absolutePath),
+      })),
     importedBy: Array.from(module.inverseDependencies)
       .filter((path) => options.graph.dependencies.has(path))
       .map((absolutePath) => ({
