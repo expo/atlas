@@ -2,9 +2,6 @@
 
 Inspect your Metro bundle, on module level.
 
-> [!Warning]
-> This project is unstable and might not work for your project.
-
 ## 🚀 How to use it
 
 Atlas is built into Expo starting from SDK 51, and enabled when defining the environment variable `EXPO_UNSTABLE_ATLAS=true`.
