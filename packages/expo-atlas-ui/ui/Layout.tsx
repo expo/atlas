@@ -7,7 +7,7 @@ const layoutVariants = cva('', {
   variants: {
     variant: {
       default: '',
-      viewport: 'flex flex-col h-full',
+      viewport: 'flex flex-col flex-1',
     },
   },
   defaultVariants: {

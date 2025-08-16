@@ -13,21 +13,25 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: var(--expo-theme-background-screen);
-  color: var(--expo-theme-text-default);
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    background-color: var(--expo-theme-background-screen);
+    color: var(--expo-theme-text-default);
+  }
 }
 
-html, body, #root {
+/* html, body, #root {
   height: auto;
   min-height: 100vh;
   margin: 0;
   padding: 0;
-}
+} */
 
-#root {
+/* #root {
   display: flex;
-}
+} */
 
 @layer components {
   .shiki code {
