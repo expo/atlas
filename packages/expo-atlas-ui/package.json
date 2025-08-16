@@ -14,7 +14,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/styleguide": "^8.2.5",
+    "@expo/styleguide": "8.2.5",
     "@expo/styleguide-native": "^7.0.1",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-collapsible": "^1.1.0",
