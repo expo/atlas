@@ -33,8 +33,8 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
             Bundle
           </Link>
         </BreadcrumbLink>
-        {links.map((link) => (
-          <Fragment key={link.filePath}>
+        {links.map(({ key, ...link }) => (
+          <Fragment key={key}>
             <BreadcrumbSeparator className="text-secondary" />
             <BreadcrumbItem>
               {!link.href ? (
