@@ -88,7 +88,7 @@
       "name": "expo-atlas-ui",
       "version": "0.0.0",
       "dependencies": {
-        "@expo/styleguide": "^8.2.5",
+        "@expo/styleguide": "8.2.5",
         "@expo/styleguide-native": "^7.0.1",
         "@radix-ui/react-checkbox": "^1.1.1",
         "@radix-ui/react-collapsible": "^1.1.0",
@@ -455,11 +455,11 @@
 
     "@expo/spawn-async": ["@expo/spawn-async@1.7.2", "", { "dependencies": { "cross-spawn": "^7.0.3" } }, "sha512-QdWi16+CHB9JYP7gma19OVVg0BFkvU8zNj9GjWorYI8Iv8FUxjOCcYRuAmX4s/h91e4e7BPsskc8cSrZYho9Ew=="],
 
-    "@expo/styleguide": ["@expo/styleguide@8.3.0", "", { "dependencies": { "@expo/styleguide-base": "^1.0.1", "tailwind-merge": "^2.5.4" }, "peerDependencies": { "next": ">= 13", "react": ">= 16" } }, "sha512-VCMoM2ayHyWnzaza2JR7tv3ZBbgv1o32BUzOFDPCzg3vN0Bigp/Uk5Pq33vhyLM9UrTrfDnFSDx0srOwcIfD8Q=="],
+    "@expo/styleguide": ["@expo/styleguide@8.2.5", "", { "dependencies": { "@expo/styleguide-base": "^1.0.1", "tailwind-merge": "^2.3.0" }, "peerDependencies": { "next": ">= 13", "react": ">= 16" } }, "sha512-z2/7bXei5Ub85yjt0/hNO9yZHuZGImmGBtCxE+1v+fBkk5rPRC8wFELRcvr8PDNJalgIgwKi8ht9U3pD1/BYmg=="],
 
     "@expo/styleguide-base": ["@expo/styleguide-base@1.0.1", "", { "dependencies": { "@radix-ui/colors": "^0.1.8" }, "peerDependencies": { "react": ">= 16" } }, "sha512-Iu52/esfpMXB5cOT3oyTvcSdkwok9re9Wtu4Tz7cmeumjh+81kTIB1GHZn8W1RFhSx9dys0NXr3UqPD8MkngtQ=="],
 
-    "@expo/styleguide-native": ["@expo/styleguide-native@7.0.2", "", { "peerDependencies": { "react": "*", "react-native-svg": "*" } }, "sha512-7uoM7FjchfqPOvlpKm7GqvmDbRSRZTeHexKIs7TEY0P57WtUxgufQivZu/b1cJgZG6jOQLn90ksyvksJGjPLMg=="],
+    "@expo/styleguide-native": ["@expo/styleguide-native@7.0.1", "", { "peerDependencies": { "react": "*", "react-native-svg": "*" } }, "sha512-VpBhS69z2fG7Z+yWdmMgnTUtZZQ0O2tv3NUL/n7sByTLyhn8ZUP3///T20WACuUNglL2Cuf9Na9muv9+0EADog=="],
 
     "@expo/sudo-prompt": ["@expo/sudo-prompt@9.3.2", "", {}, "sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw=="],
 
