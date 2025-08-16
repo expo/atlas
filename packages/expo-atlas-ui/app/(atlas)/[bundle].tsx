@@ -27,7 +27,7 @@ export default function BundlePage() {
   const treeHasData = !!modules.data?.data?.children?.length;
 
   return (
-    <Layout variant="viewport">
+    <Layout>
       <LayoutNavigation>
         <BundleSelectForm />
       </LayoutNavigation>

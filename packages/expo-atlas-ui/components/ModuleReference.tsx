@@ -16,7 +16,7 @@ type ModuleReferenceProps = {
 
 export function ModuleReference(props: ModuleReferenceProps) {
   return (
-    <div className={cn('lg:grid lg:grid-cols-2', props.className)}>
+    <div className={cn('grid grid-cols-1 lg:grid-cols-2', props.className)}>
       <div className="mb-6 lg:mb-0">
         <ModuleReferenceCollapsible
           title="Imported by modules"

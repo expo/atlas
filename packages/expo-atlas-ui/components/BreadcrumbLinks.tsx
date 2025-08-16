@@ -28,13 +28,13 @@ export function BreadcrumbLinks(props: BreadcrumbLinksProps) {
         <BreadcrumbLink asChild>
           <Link
             className="text-lg font-bold text-default underline-offset-4 hover:underline"
-            href={{ pathname: '/(atlas)/[bundle]/', params: { bundle: props.bundle.id } }}
+            href={{ pathname: '/(atlas)/[bundle]', params: { bundle: props.bundle.id } }}
           >
             Bundle
           </Link>
         </BreadcrumbLink>
-        {links.map((link) => (
-          <Fragment key={link.filePath}>
+        {links.map(({ key, ...link }) => (
+          <Fragment key={key}>
             <BreadcrumbSeparator className="text-secondary" />
             <BreadcrumbItem>
               {!link.href ? (

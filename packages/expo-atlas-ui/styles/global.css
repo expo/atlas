@@ -1,21 +1,31 @@
+/* Import the Expo-required radix styles from `@expo/style-guide/dist/expo-theme.css` */
+@import url('@radix-ui/colors/greenDark.css');
+@import url('@radix-ui/colors/yellowDark.css');
+@import url('@radix-ui/colors/redDark.css');
+@import url('@radix-ui/colors/blueDark.css');
+@import url('@radix-ui/colors/orangeDark.css');
+@import url('@radix-ui/colors/purpleDark.css');
+@import url('@radix-ui/colors/pinkDark.css');
+@import url('@radix-ui/colors/slateDark.css');
+@import url('@radix-ui/colors/grayDark.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: var(--expo-theme-background-screen);
-  color: var(--expo-theme-text-default);
-}
+@layer base {
+  :root {
+    color-scheme: dark;
 
-html, body, #root {
-  height: auto;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
+    background-color: var(--expo-theme-background-screen);
+    color: var(--expo-theme-text-default);
+  }
 
-#root {
-  display: flex;
+  /* Correct the scrolling behavior with Expo Router's `<ModalsRenderer>` */
+  #root > div > div {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
 }
 
 @layer components {
