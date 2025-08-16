@@ -20,10 +20,15 @@
     "@types/bun": "^1.0.8",
     "@types/node": "^20.11.26",
     "eslint": "^8.57.0",
-    "eslint-config-universe": "^13.0.0",
-    "expo-module-scripts": "^4.0.2",
+    "eslint-config-universe": "^15.0.3",
+    "expo-module-scripts": "^5.0.0",
     "prettier": "^3.2.5",
     "typescript": "^5.5.4"
+  },
+  "catalogs": {
+    "expo": {
+      "expo": "54.0.0-preview.1"
+    }
   },
   "prettier": {
     "printWidth": 100,

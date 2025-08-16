@@ -1,3 +1,4 @@
+// @ts-expect-error - Freeport async types missing
 import freeport from 'freeport-async';
 import path from 'path';
 
