@@ -1,3 +1,14 @@
+/* Import the Expo-required radix styles from `@expo/style-guide/dist/expo-theme.css` */
+@import url('@radix-ui/colors/greenDark.css');
+@import url('@radix-ui/colors/yellowDark.css');
+@import url('@radix-ui/colors/redDark.css');
+@import url('@radix-ui/colors/blueDark.css');
+@import url('@radix-ui/colors/orangeDark.css');
+@import url('@radix-ui/colors/purpleDark.css');
+@import url('@radix-ui/colors/pinkDark.css');
+@import url('@radix-ui/colors/slateDark.css');
+@import url('@radix-ui/colors/grayDark.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
