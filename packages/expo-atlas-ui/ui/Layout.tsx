@@ -1,28 +1,15 @@
 import { Link } from 'expo-router';
 import { type HTMLAttributes, type PropsWithChildren } from 'react';
 
-import { cva, cn, type VariantProps } from '~/utils/classname';
-
-const layoutVariants = cva('', {
-  variants: {
-    variant: {
-      default: '',
-      viewport: 'flex flex-col flex-1',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
+import { cn } from '~/utils/classname';
 
 export function Layout({
-  variant,
   className,
   children,
   ...props
-}: PropsWithChildren<VariantProps<typeof layoutVariants> & { className?: string }>) {
+}: PropsWithChildren<{ className?: string }>) {
   return (
-    <main className={layoutVariants({ variant, className })} {...props}>
+    <main className={cn('flex flex-col flex-1', className)} {...props}>
       {children}
     </main>
   );

@@ -20,18 +20,13 @@
     background-color: var(--expo-theme-background-screen);
     color: var(--expo-theme-text-default);
   }
+
+  /* Correct the scrolling behavior with Expo Router's `<ModalsRenderer>` */
+  #root > div > div {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
 }
-
-/* html, body, #root {
-  height: auto;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-} */
-
-/* #root {
-  display: flex;
-} */
 
 @layer components {
   .shiki code {
