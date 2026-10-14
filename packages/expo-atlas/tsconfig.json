@@ -1,8 +1,7 @@
 {
-  "extends": "@tsconfig/recommended/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./build",
-    "resolveJsonModule": true
+    "outDir": "./build"
   },
   "include": ["./src", "./package.json"],
   "exclude": ["**/__mocks__/*", "**/__tests__/*"]

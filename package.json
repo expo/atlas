@@ -18,13 +18,13 @@
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.10",
-    "@types/bun": "^1.0.8",
-    "@types/node": "^20.11.26",
+    "@types/bun": "^1.4.3",
+    "@types/node": "^26.5.5",
     "eslint": "^8.57.0",
     "eslint-config-universe": "^13.0.0",
     "expo-module-scripts": "^4.0.2",
     "prettier": "^3.2.5",
-    "typescript": "^5.5.4"
+    "typescript": "~6.0.3"
   },
   "prettier": {
     "printWidth": 100,
