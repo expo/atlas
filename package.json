@@ -17,6 +17,7 @@
     "typecheck": "bun run --filter 'expo-atlas*' typecheck"
   },
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.10",
     "@types/bun": "^1.0.8",
     "@types/node": "^20.11.26",
     "eslint": "^8.57.0",
