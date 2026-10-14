@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "postinstall": "expo customize tsconfig.json"
   },
   "dependencies": {
     "@expo/styleguide": "^8.2.5",
