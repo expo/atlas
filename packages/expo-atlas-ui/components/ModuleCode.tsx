@@ -11,9 +11,19 @@ type ModuleCodeProps = {
   module: AtlasModule;
 };
 
+// see: metro-transform-worker
+interface JsOutput {
+  readonly type: 'js/script' | 'js/module' | 'js/module/asset';
+  readonly data: { code: string };
+}
+
+function outputIsJs(output: NonNullable<AtlasModule['output']>[number]): output is JsOutput {
+  return output.type.startsWith('js');
+}
+
 export function ModuleCode({ module }: ModuleCodeProps) {
-  const output = module.output?.find((output) => output.type.startsWith('js'));
-  const outputCode = output?.data.code || '[not available]';
+  const output = module.output?.find((output) => outputIsJs(output));
+  const outputCode = output?.data?.code || '[not available]';
   const outputFormat = useFormattedCode(outputCode);
 
   const sourceHighlight = useHighlightedCode(
