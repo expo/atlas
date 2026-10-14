@@ -60,7 +60,8 @@
     "@types/morgan": "^1.9.10",
     "@types/stream-json": "^1.7.7",
     "expo": "~57.0.28",
-    "metro": "^0.81.0"
+    "metro": "^0.84.5",
+    "metro-transform-worker": "^0.84.5"
   },
   "peerDependencies": {
     "expo": "*"
