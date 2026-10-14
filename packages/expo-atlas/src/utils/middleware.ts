@@ -1,11 +1,11 @@
-import { createRequestHandler } from '@expo/server/build/vendor/http';
+import { createRequestHandler } from 'expo-server/adapter/http';
 import connect from 'connect';
 import morgan from 'morgan';
 import path from 'path';
 import serveStaticHandler from 'serve-static';
 
 import { env } from './env';
-import { type AtlasSource } from '../data/types';
+import type { AtlasSource } from '../data/types';
 
 const ATLAS_UI_PATH = path.resolve(__dirname, '../../../build/atlas-ui');
 

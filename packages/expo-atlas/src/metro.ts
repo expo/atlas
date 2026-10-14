@@ -1,4 +1,4 @@
-import { type MetroConfig } from 'metro-config';
+import type { MetroConfig } from 'metro-config';
 
 import {
   createAtlasFile,
@@ -31,7 +31,7 @@ type ExpoAtlasOptions = Partial<{
  *   module.exports = withExpoAtlas(config)
  * ```
  */
-export function withExpoAtlas(config: MetroConfig, options: ExpoAtlasOptions = {}) {
+export function withExpoAtlas<Config extends MetroConfig>(config: Config, options: ExpoAtlasOptions = {}): Config {
   const projectRoot = config.projectRoot;
   const originalSerializer = config.serializer?.customSerializer ?? (() => {});
 

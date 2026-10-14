@@ -1,8 +1,8 @@
-import freeport from 'freeport-async';
 import path from 'path';
 
 import { type Input } from './bin';
 import { getAtlasPath, validateAtlasFile } from '../data/AtlasFileSource';
+import { findFreePort } from '../utils/ports';
 
 export type Options = Awaited<ReturnType<typeof resolveOptions>>;
 
@@ -21,7 +21,7 @@ async function resolveAtlasFile(input: Input) {
 async function resolvePort(input: Pick<Input, '--port'>) {
   if (input['--port']) return input['--port'];
 
-  const port = await freeport(3000, { hostnames: [null, 'localhost'] });
+  const port = await findFreePort(3000, [null, 'localhost']);
   if (port) return port;
 
   throw new Error(`Could not find a free port starting from 3000`);

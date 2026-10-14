@@ -43,24 +43,24 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@expo/server": "^0.5.0",
+    "expo-server": "^57.0.3",
     "arg": "^5.0.2",
     "chalk": "^4.1.2",
-    "compression": "^1.7.4",
     "connect": "^3.7.0",
-    "express": "^4.19.2",
-    "freeport-async": "^2.0.0",
-    "getenv": "^2.0.0",
     "morgan": "^1.10.0",
     "open": "^8.4.2",
-    "serve-static": "^1.15.0",
+    "serve-static": "^2.2.1",
     "stream-json": "^1.8.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
+    "@types/connect": "^3.4.38",
+    "@types/morgan": "^1.9.10",
+    "@types/serve-static": "^2.2.0",
     "@types/stream-json": "^1.7.7",
-    "expo": "~52.0.4",
-    "metro": "^0.81.0"
+    "expo": "~57.0.28",
+    "metro": "^0.84.5",
+    "metro-config": "^0.84.5",
+    "metro-transform-worker": "^0.84.5"
   },
   "peerDependencies": {
     "expo": "*"

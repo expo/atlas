@@ -1,4 +1,4 @@
-import type metro from 'metro';
+import type * as metro from 'metro';
 import type { MetroConfig } from 'metro-config';
 import path from 'path';
 
@@ -7,8 +7,10 @@ import { bufferIsUtf8 } from '../utils/buffer';
 import { getUrlFromJscSafeUrl } from '../utils/jsc';
 import { getPackageNameFromPath } from '../utils/package';
 import { convertPathToPosix, findSharedRoot } from '../utils/paths';
+import type { ResolvedDependency } from 'metro/private/DeltaBundler/types';
+import type { JsOutput } from 'metro-transform-worker';
 
-type MetroGraph = metro.Graph | metro.ReadOnlyGraph;
+type MetroGraph = metro.ReadOnlyGraph;
 type MetroModule = metro.Module;
 
 type ConvertGraphToAtlasOptions = {
@@ -140,7 +142,11 @@ export function collectEntryPointModules(
     const module = options.graph.dependencies.get(modulePath);
     if (module && !modules.has(modulePath) && !moduleIsVirtual(module)) {
       modules.set(modulePath, convertModule(options, module, sharedRoot));
-      module.dependencies.forEach((modulePath) => discover(modulePath.absolutePath));
+      module.dependencies.forEach((dependency) => {
+        if (dependencyIsResolved(dependency)) {
+          discover(dependency.absolutePath);
+        }
+      });
     }
   }
 
@@ -163,11 +169,14 @@ export function convertModule(
     absolutePath: module.path,
     relativePath: convertPathToPosix(path.relative(sharedRoot, module.path)),
     package: getPackageNameFromPath(module.path),
-    size: module.output.reduce((bytes, output) => bytes + Buffer.byteLength(output.data.code), 0),
+    size: module.output.reduce((bytes, output) => {
+      if (!outputHasCode(output)) return bytes;
+      return bytes + Buffer.byteLength(output.data.code);
+    }, 0),
     imports: Array.from(module.dependencies.values())
       // For now, filter out unresolved dependencies from the graph
       // TODO(cedric): add support for showing unresolved dependencies in Atlas
-      .filter((dependency) => !!dependency.absolutePath)
+      .filter((dependency) => dependencyIsResolved(dependency))
       .map((module) => ({
         id: createModuleId(module.absolutePath),
         absolutePath: module.absolutePath,
@@ -185,7 +194,7 @@ export function convertModule(
     source: getModuleSourceContent(options, module),
     output: module.output.map((output) => ({
       type: output.type,
-      data: { code: output.data.code },
+      data: outputHasCode(output) ? { code: output.data.code } : { code: '' },
     })),
   };
 }
@@ -252,6 +261,22 @@ function getSharedRoot(options: Pick<ConvertGraphToAtlasOptions, 'projectRoot' |
 /** Determine if the module is a virtual module, like shims or canaries, which should be excluded from results */
 function moduleIsVirtual(module: MetroModule) {
   return module.path.startsWith('\0');
+}
+
+/**
+ * Determine if the module dependency is resolved, which filters optional dependencies out.
+ * @see https://github.com/react/metro/pull/1522
+ */
+function dependencyIsResolved(dependency: metro.Dependency): dependency is ResolvedDependency {
+  return 'absolutePath' in dependency && !!dependency.absolutePath;
+}
+
+/**
+ * Determine if the output entry is the expected "JsOutput" from the transform worker.
+ * This means, we should be able to access the output JS code.
+ */
+function outputHasCode(output: metro.MixedOutput): output is JsOutput {
+  return !!output.data && typeof output.data === 'object' && 'code' in output.data;
 }
 
 /** Determine the bundle target environment based on the `transformOptions.customTransformOptions` */

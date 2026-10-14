@@ -12,9 +12,12 @@
       "tsconfigPaths": true,
       "typedRoutes": true
     },
-    "platforms": ["web"],
+    "platforms": [
+      "web"
+    ],
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-status-bar"
     ]
   }
 }
