@@ -1,32 +1,29 @@
 #!/usr/bin/env node
-import arg from 'arg';
 import open from 'open';
 import path from 'path';
-import { styleText } from 'util';
+import { parseArgs, styleText } from 'util';
 
 import { createServer } from './createServer';
 import { resolveOptions } from './resolveOptions';
 
-export type Input = typeof args;
+export type Input = typeof input;
 
-const args = arg({
-  // Types
-  '--help': Boolean,
-  '--port': Number,
-  '--version': Boolean,
-  '--no-open': Boolean,
-  // Aliases
-  '-h': '--help',
-  '-p': '--port',
-  '-v': '--version',
+const input = parseArgs({
+  allowPositionals: true,
+  options: {
+    port: { type: 'string', short: 'p' },
+    'no-open': { type: 'boolean' },
+    help: { type: 'boolean', short: 'h' },
+    version: { type: 'boolean', short: 'v' },
+  },
 });
 
-if (args['--version']) {
+if (input.values.version) {
   console.log(require('../../package.json').version);
   process.exit(0);
 }
 
-if (args['--help']) {
+if (input.values.help) {
   printLines([
     styleText('bold', 'Usage'),
     `  ${styleText('dim', '$')} expo-atlas ${styleText('dim', '[atlas file]')}`,
@@ -44,7 +41,7 @@ process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
 async function run() {
-  const options = await resolveOptions(args);
+  const options = await resolveOptions(input);
   const server = createServer(options);
 
   server.listen(options.port, () => {
