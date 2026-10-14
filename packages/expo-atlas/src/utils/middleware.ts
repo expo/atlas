@@ -5,7 +5,7 @@ import path from 'path';
 import serveStaticHandler from 'serve-static';
 
 import { env } from './env';
-import { type AtlasSource } from '../data/types';
+import type { AtlasSource } from '../data/types';
 
 const ATLAS_UI_PATH = path.resolve(__dirname, '../../../build/atlas-ui');
 

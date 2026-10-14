@@ -1,7 +1,7 @@
-import compression from 'compression';
-import express from 'express';
+import connect from 'connect';
+import http from 'http';
 
-import { type Options } from './resolveOptions';
+import type { Options } from './resolveOptions';
 import { AtlasFileSource } from '../data/AtlasFileSource';
 import { createAtlasMiddleware } from '../utils/middleware';
 
@@ -12,14 +12,17 @@ export function createServer(options: Options) {
   const middleware = createAtlasMiddleware(source);
   const baseUrl = '/_expo/atlas'; // Keep in sync with webui `app.json` `baseUrl`
 
-  const app = express();
+  const app = connect();
 
-  app.disable('x-powered-by'); // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
-  app.use(compression());
   app.use(baseUrl, middleware);
+  app.use((req, res, next) => {
+    if (req.url?.startsWith(baseUrl)) {
+      return next();
+    }
 
-  // Add catch-all to redirect to the webui
-  app.use((req, res, next) => (!req.url.startsWith(baseUrl) ? res.redirect(baseUrl) : next()));
+    res.writeHead(302, { Location: baseUrl });
+    res.end();
+  });
 
-  return app;
+  return http.createServer(app);
 }
