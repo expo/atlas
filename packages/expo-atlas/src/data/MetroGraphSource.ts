@@ -1,6 +1,6 @@
 import type * as metro from 'metro';
 import type { MetroConfig } from 'metro-config';
-import path from 'path';
+import path from 'node:path';
 
 import type { AtlasBundle, AtlasModule, AtlasSource } from './types';
 import { bufferIsUtf8 } from '../utils/buffer';

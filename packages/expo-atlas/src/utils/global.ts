@@ -1,4 +1,4 @@
-import { AtlasSource } from '../data/types';
+import type { AtlasSource } from '../data/types';
 
 declare global {
   /**

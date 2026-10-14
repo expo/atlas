@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 /** Format the path in posix format. */
 export function convertPathToPosix(path: string) {

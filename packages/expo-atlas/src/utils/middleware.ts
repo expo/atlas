@@ -1,7 +1,7 @@
 import { createRequestHandler } from 'expo-server/adapter/http';
 import connect from 'connect';
 import morgan from 'morgan';
-import path from 'path';
+import path from 'node:path';
 import serveStaticHandler from 'serve-static';
 
 import { env } from './env';
