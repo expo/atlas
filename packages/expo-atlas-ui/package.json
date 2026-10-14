@@ -53,7 +53,8 @@
     "@babel/core": "^7.25.2",
     "@types/picomatch": "^3.0.1",
     "@types/react": "~19.2.4",
-    "expo-atlas": "workspace:*"
+    "expo-atlas": "workspace:*",
+    "metro-cache": "^0.84.5"
   },
   "eslintConfig": {
     "extends": "universe",
