@@ -8,7 +8,7 @@ inputs:
 
   node-version:
     description: Version of Node to install
-    default: 20.x
+    default: 26.x
 
 runs:
   using: composite
