@@ -1,4 +1,4 @@
-import { createRequestHandler } from '@expo/server/build/vendor/http';
+import { createRequestHandler } from 'expo-server/adapter/http';
 import connect from 'connect';
 import morgan from 'morgan';
 import path from 'path';
