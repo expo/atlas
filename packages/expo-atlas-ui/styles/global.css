@@ -2,6 +2,283 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* Expo dark theme */
+  :root {
+    color-scheme: dark;
+
+    --expo-color-white: #fff;
+    --expo-color-black: #000;
+
+    /* Radix colors extracted from `@radix-ui/colors@2.1.0` */
+    /* Green dark */
+    --green1: hsl(146, 30.0%, 7.4%);
+    --green2: hsl(154, 31.8%, 8.6%);
+    --green3: hsl(154, 37.6%, 11.5%);
+    --green4: hsl(155, 42%, 32%);
+    --green5: hsl(154, 43.7%, 15.7%);
+    --green6: hsl(154, 46.7%, 18.7%);
+    --green7: hsl(153, 50.3%, 24.4%);
+    --green8: hsl(151, 52.2%, 36.1%);
+    --green9: hsl(151, 55.0%, 41.5%);
+    --green10: hsl(151, 55.2%, 46.7%);
+    --green11: hsl(151, 65.0%, 54.0%);
+    --green12: hsl(144, 70.0%, 82.0%);
+
+    /* Yellow dark */
+    --yellow1: hsl(45, 100%, 5.5%);
+    --yellow2: hsl(44, 78.9%, 7.5%);
+    --yellow3: hsl(44, 61.9%, 10.6%);
+    --yellow4: hsl(44, 57.5%, 13.0%);
+    --yellow5: hsl(45, 57.0%, 15.2%);
+    --yellow6: hsl(46, 57.5%, 18.3%);
+    --yello-7: hsl(47, 58.5%, 24.0%);
+    --yellow8: hsl(50, 59.8%, 35.1%);
+    --yello-9: hsl(53, 96.0%, 58.0%);
+    --yello-10: hsl(53, 96.8%, 67.5%);
+    --yellow11: hsl(55, 100%, 60.0%);
+    --yellow12: hsl(53, 100%, 84.0%);
+
+    /* Red dark */
+    --red1: hsl(353, 23.0%, 9.8%);
+    --red2: hsl(354, 30.2%, 12.4%);
+    --red3: hsl(353, 40.8%, 16.4%);
+    --red4: hsl(353, 46.3%, 19.2%);
+    --red5: hsl(353, 51.2%, 22.1%);
+    --red6: hsl(353, 57.3%, 26.2%);
+    --red7: hsl(354, 65.7%, 33.2%);
+    --red8: hsl(358, 75.0%, 47.1%);
+    --red9: hsl(358, 75.0%, 59.0%);
+    --red10: hsl(359, 84.8%, 67.6%);
+    --red11: hsl(358, 100%, 76.0%);
+    --red12: hsl(350, 100%, 91.0%);
+
+    /* Blue dark */
+    --blue1: hsl(212, 35.0%, 9.2%);
+    --blue2: hsl(216, 50.0%, 11.8%);
+    --blue3: hsl(214, 57.6%, 15.6%);
+    --blue4: hsl(214, 62.3%, 18.4%);
+    --blue5: hsl(213, 66.6%, 21.1%);
+    --blue6: hsl(212, 72.6%, 25.2%);
+    --blue7: hsl(211, 81.3%, 32.4%);
+    --blue8: hsl(211, 85.2%, 47.8%);
+    --blue9: hsl(206, 100%, 50.0%);
+    --blue10: hsl(206, 100%, 61.8%);
+    --blue11: hsl(205, 100%, 71.0%);
+    --blue12: hsl(205, 100%, 88.0%);
+
+    /* Orange dark */
+    --orange1: hsl(30, 70.0%, 7.2%);
+    --orange2: hsl(29, 81.4%, 8.4%);
+    --orange3: hsl(26, 68.4%, 12.0%);
+    --orange4: hsl(25, 64.6%, 14.9%);
+    --orange5: hsl(25, 64.3%, 17.8%);
+    --orange6: hsl(25, 65.7%, 21.9%);
+    --orange7: hsl(25, 67.7%, 29.4%);
+    --orange8: hsl(25, 70.3%, 44.9%);
+    --orange9: hsl(24, 94.0%, 50.0%);
+    --orange10: hsl(24, 100%, 58.5%);
+    --orange11: hsl(24, 100%, 70.0%);
+    --orange12: hsl(30, 100%, 88.0%);
+
+      /* Purple dark */
+    --purple1: hsl(284, 20.0%, 9.6%);
+    --purple2: hsl(284, 31.1%, 12.0%);
+    --purple3: hsl(282, 35.1%, 16.8%);
+    --purple4: hsl(281, 36.9%, 20.1%);
+    --purple5: hsl(280, 38.1%, 23.0%);
+    --purple6: hsl(278, 39.5%, 27.3%);
+    --purple7: hsl(276, 41.1%, 35.1%);
+    --purple8: hsl(272, 42.7%, 50.0%);
+    --purple9: hsl(272, 51.0%, 54.0%);
+    --purple10: hsl(271, 57.8%, 61.2%);
+    --purple11: hsl(270, 90.0%, 78.0%);
+    --purple12: hsl(275, 75.0%, 91.5%);
+
+    /* Pink dark */
+    --pink1: hsl(318, 25.0%, 9.6%);
+    --pink2: hsl(318, 32.3%, 12.2%);
+    --pink3: hsl(318, 37.1%, 15.7%);
+    --pink4: hsl(319, 39.8%, 18.1%);
+    --pink5: hsl(319, 42.3%, 20.8%);
+    --pink6: hsl(319, 45.8%, 24.9%);
+    --pink7: hsl(320, 51.2%, 32.2%);
+    --pink8: hsl(322, 60.0%, 46.1%);
+    --pink9: hsl(322, 65.0%, 54.5%);
+    --pink10: hsl(324, 71.5%, 63.2%);
+    --pink11: hsl(325, 90.0%, 75.0%);
+    --pink12: hsl(325, 90.0%, 90.5%);
+
+    /* Slate dark */
+    --slate1: hsl(240, 5.0%, 9.8%);
+    --slate2: hsl(240, 6.9%, 11.4%);
+    --slate3: hsl(227, 6.7%, 16.4%);
+    --slate4: hsl(222, 6.6%, 19.4%);
+    --slate5: hsl(218, 6.5%, 22.1%);
+    --slate6: hsl(214, 6.4%, 25.1%);
+    --slate7: hsl(209, 6.2%, 29.4%);
+    --slate8: hsl(202, 5.8%, 37.5%);
+    --slate9: hsl(220, 6.0%, 44.0%);
+    --slate10: hsl(218, 5.3%, 51.5%);
+    --slate11: hsl(220, 7.0%, 70.0%);
+    --slate12: hsl(220, 7.0%, 93.5%);
+
+    /* Gray dark */
+    --gray1: hsl(0, 0%, 9.5%);
+    --gray2: hsl(0, 0%, 10.5%);
+    --gray3: hsl(0, 0%, 15.8%);
+    --gray4: hsl(0, 0%, 18.9%);
+    --gray5: hsl(0, 0%, 21.7%);
+    --gray6: hsl(0, 0%, 24.7%);
+    --gray7: hsl(0, 0%, 29.1%);
+    --gray8: hsl(0, 0%, 37.5%);
+    --gray9: hsl(0, 0%, 43.0%);
+    --gray10: hsl(0, 0%, 50.7%);
+    --gray11: hsl(0, 0%, 69.5%);
+    --gray12: hsl(0, 0%, 93.5%);
+
+
+    /* App Icon Backgrounds */
+    --expo-color-app-cyan: #07c0cb;
+    --expo-color-app-light-blue: #1e92c4;
+    --expo-color-app-dark-blue: #0b67af;
+    --expo-color-app-indigo: #4b50b2;
+    --expo-color-app-purple: #8945a3;
+    --expo-color-app-pink: #c04891;
+    --expo-color-app-orange: #e96d3c;
+    --expo-color-app-gold: #f38f2f;
+    --expo-color-app-yellow: #eebc01;
+    --expo-color-app-lime: #aabd04;
+    --expo-color-app-light-green: #6aa72a;
+    --expo-color-app-dark-green: #3a8e39;
+
+    /* Backgrounds */
+    --expo-theme-background-default: var(--slate1);
+    --expo-theme-background-screen: #0C0D0E;
+    --expo-theme-background-subtle: var(--slate2);
+    --expo-theme-background-element: var(--slate3);
+    --expo-theme-background-hover: var(--slate4);
+    --expo-theme-background-selected: var(--slate5);
+    --expo-theme-background-overlay: var(--slate2);
+    --expo-theme-background-success: var(--green3);
+    --expo-theme-background-warning: var(--yellow3);
+    --expo-theme-background-danger: var(--red3);
+    --expo-theme-background-info: var(--blue3);
+
+    /* Icons */
+    --expo-theme-icon-default: var(--slate11);
+    --expo-theme-icon-secondary: var(--slate10);
+    --expo-theme-icon-tertiary: var(--slate9);
+    --expo-theme-icon-quaternary: var(--slate8);
+    --expo-theme-icon-success: var(--green10);
+    --expo-theme-icon-warning: var(--yellow11);
+    --expo-theme-icon-danger: var(--red10);
+    --expo-theme-icon-info: var(--blue10);
+
+    /* Text */
+    --expo-theme-text-default: var(--slate12);
+    --expo-theme-text-secondary: var(--slate11);
+    --expo-theme-text-tertiary: var(--slate10);
+    --expo-theme-text-quaternary: var(--slate9);
+    --expo-theme-text-link: var(--blue11);
+    --expo-theme-text-success: var(--green11);
+    --expo-theme-text-warning: var(--yellow11);
+    --expo-theme-text-danger: var(--red11);
+    --expo-theme-text-info: var(--blue11);
+
+    /* Borders */
+    --expo-theme-border-default: var(--slate7);
+    --expo-theme-border-secondary: var(--slate6);
+    --expo-theme-border-success: var(--green7);
+    --expo-theme-border-warning: var(--yellow7);
+    --expo-theme-border-danger: var(--red7);
+    --expo-theme-border-info: var(--blue7);
+
+    /* Buttons */
+    --expo-theme-button-primary-background: var(--blue8);
+    --expo-theme-button-primary-border: var(--blue8);
+    --expo-theme-button-primary-hover: var(--blue7);
+    --expo-theme-button-primary-icon: var(--blue12);
+    --expo-theme-button-primary-text: var(--expo-color-white);
+    --expo-theme-button-primary-disabled-background: var(--blue7);
+    --expo-theme-button-primary-disabled-border: var(--blue7);
+    --expo-theme-button-primary-disabled-text: var(--slate11);
+
+    --expo-theme-button-secondary-background: var(--slate3);
+    --expo-theme-button-secondary-border: var(--slate8);
+    --expo-theme-button-secondary-hover: var(--slate4);
+    --expo-theme-button-secondary-icon: var(--slate12);
+    --expo-theme-button-secondary-text: var(--expo-color-white);
+    --expo-theme-button-secondary-disabled-background: var(--slate1);
+    --expo-theme-button-secondary-disabled-border: var(--slate7);
+    --expo-theme-button-secondary-disabled-text: var(--slate11);
+
+    --expo-theme-button-tertiary-background: transparent;
+    --expo-theme-button-tertiary-border: transparent;
+    --expo-theme-button-tertiary-hover: var(--blue4);
+    --expo-theme-button-tertiary-icon: var(--blue10);
+    --expo-theme-button-tertiary-text: var(--blue11);
+    --expo-theme-button-tertiary-disabled-background: transparent;
+    --expo-theme-button-tertiary-disabled-border: transparent;
+    --expo-theme-button-tertiary-disabled-text: var(--blue9);
+
+    --expo-theme-button-quaternary-background: transparent;
+    --expo-theme-button-quaternary-border: transparent;
+    --expo-theme-button-quaternary-hover: var(--slate4);
+    --expo-theme-button-quaternary-icon: var(--slate12);
+    --expo-theme-button-quaternary-text: var(--expo-color-white);
+    --expo-theme-button-quaternary-disabled-background: transparent;
+    --expo-theme-button-quaternary-disabled-border: transparent;
+    --expo-theme-button-quaternary-disabled-text: var(--slate11);
+
+    --expo-theme-button-primary-destructive-background: var(--red8);
+    --expo-theme-button-primary-destructive-border: var(--red8);
+    --expo-theme-button-primary-destructive-hover: var(--red7);
+    --expo-theme-button-primary-destructive-icon: var(--red12);
+    --expo-theme-button-primary-destructive-text: var(--expo-color-white);
+    --expo-theme-button-primary-destructive-disabled-background: var(--red6);
+    --expo-theme-button-primary-destructive-disabled-border: var(--red6);
+    --expo-theme-button-primary-destructive-disabled-text: var(--red12);
+
+    --expo-theme-button-secondary-destructive-background: var(--red3);
+    --expo-theme-button-secondary-destructive-border: var(--red7);
+    --expo-theme-button-secondary-destructive-hover: var(--red2);
+    --expo-theme-button-secondary-destructive-icon: var(--red9);
+    --expo-theme-button-secondary-destructive-text: var(--red11);
+    --expo-theme-button-secondary-destructive-disabled-background: var(--red2);
+    --expo-theme-button-secondary-destructive-disabled-border: var(--red6);
+    --expo-theme-button-secondary-destructive-disabled-text: var(--red10);
+
+    /* Dark shadows */
+    --expo-theme-shadows-none: 0 0 transparent;
+    --expo-theme-shadows-xs: 0 1px 3px rgba(0, 0, 0, 0.3),
+      0 1px 2px rgba(0, 0, 0, 0.3);
+    --expo-theme-shadows-sm: 0 3px 6px rgba(0, 0, 0, 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.25);
+    --expo-theme-shadows-md: 0 10px 20px rgba(0, 0, 0, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.25);
+    --expo-theme-shadows-lg: 0 15px 25px rgba(0, 0, 0, 0.5),
+      0 5px 10px rgba(0, 0, 0, 0.25);
+    --expo-theme-shadows-xl: 0 20px 40px rgba(0, 0, 0, 0.5);
+
+    /* Heading Font sizing */
+    --expo-theme-heading-base-font-size: 12px;
+  }
+}
+
+@media (min-width: 401px) {
+  :root {
+    --expo-theme-heading-base-font-size: 14px;
+  }
+}
+
+@media (min-width: 901px) {
+  :root {
+    --expo-theme-heading-base-font-size: 16px;
+  }
+}
+
+
 body {
   background-color: var(--expo-theme-background-screen);
   color: var(--expo-theme-text-default);

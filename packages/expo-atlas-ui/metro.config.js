@@ -1,12 +1,9 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { FileStore } = require('metro-cache');
-const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 // Load Expo's default config, with NativeWind support
-const config = withNativeWind(getDefaultConfig(__dirname, { isCSSEnabled: true }), {
-  input: './styles/global.css',
-});
+const config = getDefaultConfig(__dirname, { isCSSEnabled: true });
 
 // Move the Metro cache to `node_modules/.cache`
 config.cacheStores = [
