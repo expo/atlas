@@ -44,7 +44,6 @@
   "license": "MIT",
   "dependencies": {
     "expo-server": "^57.0.3",
-    "arg": "^5.0.2",
     "connect": "^3.7.0",
     "morgan": "^1.10.0",
     "open": "^8.4.2",
