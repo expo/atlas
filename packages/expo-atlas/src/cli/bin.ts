@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import arg from 'arg';
-import chalk from 'chalk';
 import open from 'open';
 import path from 'path';
+import { styleText } from 'util';
 
 import { createServer } from './createServer';
 import { resolveOptions } from './resolveOptions';
@@ -28,14 +28,14 @@ if (args['--version']) {
 
 if (args['--help']) {
   printLines([
-    chalk.bold('Usage'),
-    `  ${chalk.dim('$')} expo-atlas ${chalk.dim('[atlas file]')}`,
+    styleText('bold', 'Usage'),
+    `  ${styleText('dim', '$')} expo-atlas ${styleText('dim', '[atlas file]')}`,
     '',
-    chalk.bold('Options'),
-    `  --port${chalk.dim(', -p')}      Port to listen on`,
+    styleText('bold', 'Options'),
+    `  --port${styleText('dim', ', -p')}      Port to listen on`,
     `  --no-open       Do not open the browser automatically`,
-    `  --help${chalk.dim(', -h')}      Displays this message`,
-    `  --version${chalk.dim(', -v')}   Displays the current version`,
+    `  --help${styleText('dim', ', -h')}      Displays this message`,
+    `  --version${styleText('dim', ', -v')}   Displays the current version`,
   ]);
   process.exit(0);
 }
@@ -51,8 +51,8 @@ async function run() {
     const href = `http://localhost:${options.port}`;
 
     printLines([
-      `Expo Atlas is ready on: ${chalk.underline(href)}`,
-      `  ${chalk.dim(`Using: ${options.atlasFile}`)}`,
+      `Expo Atlas is ready on: ${styleText('underline', href)}`,
+      `  ${styleText('dim', `Using: ${options.atlasFile}`)}`,
     ]);
 
     if (options.browserOpen) {
