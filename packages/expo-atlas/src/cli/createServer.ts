@@ -1,5 +1,5 @@
 import connect from 'connect';
-import http from 'http';
+import http from 'node:http';
 
 import type { Options } from './resolveOptions';
 import { AtlasFileSource } from '../data/AtlasFileSource';

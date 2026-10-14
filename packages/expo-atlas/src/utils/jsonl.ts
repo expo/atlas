@@ -1,7 +1,7 @@
-import events from 'events';
-import fs from 'fs';
-import readline from 'readline';
-import stream from 'stream';
+import events from 'node:events';
+import fs from 'node:fs';
+import readline from 'node:readline';
+import stream from 'node:stream';
 import { disassembler } from 'stream-json/Disassembler';
 import { stringer } from 'stream-json/Stringer';
 

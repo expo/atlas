@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import open from 'open';
-import path from 'path';
-import { parseArgs, styleText } from 'util';
+import path from 'node:path';
+import { parseArgs, styleText } from 'node:util';
 
 import { createServer } from './createServer';
 import { resolveOptions } from './resolveOptions';
