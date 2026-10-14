@@ -51,7 +51,7 @@
     },
     "packages/expo-atlas": {
       "name": "expo-atlas",
-      "version": "0.4.3",
+      "version": "0.5.0",
       "bin": "build/src/cli/bin.js",
       "dependencies": {
         "connect": "^3.7.0",
